@@ -86,6 +86,8 @@ typedef struct
     uint16_t mem[PROGMEM_SIZE];
 } PROGMEM;
 
+void* PROGMEM_init(PROGMEM* p);
+
 uint16_t PROGMEM_read_addr(PROGMEM* p, int addr);
 
 int PROGMEM_write_addr(PROGMEM* p, int addr, uint16_t data);

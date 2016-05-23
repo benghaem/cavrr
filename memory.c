@@ -178,6 +178,9 @@ void DATAMEM_print_region(DATAMEM* d, int startAddr, int stopAddr){
 // AVR PROGRAM MEMORY                //
 // --------------------------------- //
 
+void* PROGMEM_init(PROGMEM* p){
+    return memset(&(p->mem[0]),0,sizeof(p->mem));
+}
 
 uint16_t PROGMEM_read_addr(PROGMEM* p, int addr){
     if (addr >= 0 && addr < PROGMEM_SIZE){
