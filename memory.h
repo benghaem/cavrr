@@ -60,11 +60,11 @@ int DATAMEM_write_reg_Z(DATAMEM* d, uint16_t z);
 
 uint8_t DATAMEM_read_io(DATAMEM* d, int addr);
 
-uint8_t DATAMEM_read_io_bit(DATAMEM* d, int addr, int bit);
+int DATAMEM_read_io_bit(DATAMEM* d, int addr, int bit);
 
-void DATAMEM_write_io(DATAMEM* d, int addr, uint8_t data);
+int DATAMEM_write_io(DATAMEM* d, int addr, uint8_t data);
 
-void DATAMEM_write_io_bit(DATAMEM* d, int addr, int bit, int data);
+int DATAMEM_write_io_bit(DATAMEM* d, int addr, int bit, int data);
 
 uint8_t DATAMEM_read_sram(DATAMEM* d, int addr);
 
