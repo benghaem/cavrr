@@ -1,5 +1,9 @@
 #include "memory.h"
 
+// --------------------------------- //
+// AVR DATA MEMORY (REG, IO, SRAM)   //
+// --------------------------------- //
+
 //read from address in data memory
 uint8_t DATAMEM_read_addr(DATAMEM* d, int offset, int addr){
     int target = offset + addr;
@@ -26,6 +30,10 @@ int DATAMEM_write_addr(DATAMEM* d, int offset, int addr, uint8_t data){
         return -1;
     }
 }
+
+// --------------------------------- //
+// AVR GENERAL REGISTERS             //
+// --------------------------------- //
 
 uint8_t DATAMEM_read_reg(DATAMEM* d, int addr){
     if (addr >= 0 && addr < RFILE_SIZE){
@@ -81,6 +89,10 @@ int DATAMEM_write_reg_Z(DATAMEM* d, uint16_t Z){
     return DATAMEM_write_reg16(d, REG_ZL, REG_ZH, Z);
 }
 
+// --------------------------------- //
+// AVR IO REGISTERS                  //
+// --------------------------------- //
+
 uint8_t DATAMEM_read_io(DATAMEM* d, int addr){
     if (addr >= 0 && addr < IOFILE_SIZE){
         return DATAMEM_read_addr(d, IOFILE_OFFSET, addr);
@@ -118,6 +130,45 @@ int DATAMEM_write_io_bit(DATAMEM* d, int addr, int bit, int data){
             updated_reg = current_reg ^ ((current_reg ^ isolated_bit) & mask);
             return DATAMEM_write_io(d, addr, updated_reg);
         }
+    }
+    return -1;
+}
+
+// --------------------------------- //
+// AVR SRAM                          //
+// --------------------------------- //
+
+uint8_t DATAMEM_read_sram(DATAMEM* d, int addr){
+    if (addr >= 0 && addr < SRAM_SIZE){
+        return DATAMEM_read_addr(d, addr, SRAM_OFFSET);
+    }
+    return 0;
+}
+
+int DATAMEM_write_sram(DATAMEM* d, int addr, uint8_t data){
+    if (addr >= 0 && addr < SRAM_SIZE){
+        return DATAMEM_write_addr(d, addr, SRAM_OFFSET, data);
+    }
+    return -1;
+}
+
+
+// --------------------------------- //
+// AVR PROGRAM MEMORY                //
+// --------------------------------- //
+
+
+uint16_t PROGMEM_read_addr(PROGMEM* p, int addr){
+    if (addr >= 0 && addr < PROGMEM_SIZE){
+         return p->mem[addr];
+    }
+    return 0;
+}
+
+int PROGMEM_write_addr(PROGMEM* p, int addr, uint16_t data){
+    if (addr >= 0 && addr < PROGMEM_SIZE){
+        p->mem[addr] = data;
+        return addr;
     }
     return -1;
 }

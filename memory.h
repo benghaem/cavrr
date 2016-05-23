@@ -68,7 +68,7 @@ int DATAMEM_write_io_bit(DATAMEM* d, int addr, int bit, int data);
 
 uint8_t DATAMEM_read_sram(DATAMEM* d, int addr);
 
-void DATAMEM_write_sram(DATAMEM* d, int addr, uint8_t data);
+int DATAMEM_write_sram(DATAMEM* d, int addr, uint8_t data);
 
 // Contiguous data memory for AVR
 typedef struct
@@ -76,3 +76,6 @@ typedef struct
     uint16_t mem[PROGMEM_SIZE];
 } PROGMEM;
 
+uint16_t PROGMEM_read_addr(PROGMEM* p, int addr);
+
+int PROGMEM_write_addr(PROGMEM* p, int addr, uint16_t data);
