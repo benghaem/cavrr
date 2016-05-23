@@ -4,6 +4,9 @@
 //Named registers also have named values for their bits
 //Named bits are shown below as REGISTERNAME_BITNAME
 
+#ifndef IOREG_H
+#define IOREG_H
+
 #define SREG          0x3F
 #define SREG_I        7
 #define SREG_T        6
@@ -265,3 +268,5 @@
 #define ADCSRB_ADTS2  2
 #define ADCSRB_ADTS1  1
 #define ADCSRB_ADTS0  0
+
+#endif /* IOREG.h */
