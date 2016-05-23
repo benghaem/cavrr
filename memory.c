@@ -1,8 +1,17 @@
 #include "memory.h"
-
+#include "IOREG.h"
+#include <stdio.h>
+#include <string.h>
 // --------------------------------- //
 // AVR DATA MEMORY (REG, IO, SRAM)   //
 // --------------------------------- //
+
+void* DATAMEM_init(DATAMEM* d){
+    void* ret = memset(&(d->mem[0]),0,sizeof(d->mem));
+    //Set OCR1C to all 1's initial. See page 92 of datasheet
+    DATAMEM_write_io(d, OCR1C, 0xFF);
+    return ret;
+}
 
 //read from address in data memory
 uint8_t DATAMEM_read_addr(DATAMEM* d, int offset, int addr){
@@ -150,6 +159,18 @@ int DATAMEM_write_sram(DATAMEM* d, int addr, uint8_t data){
         return DATAMEM_write_addr(d, addr, SRAM_OFFSET, data);
     }
     return -1;
+}
+
+// --------------------------------- //
+// DATAMEM DEBUG EXTRAS              //
+// --------------------------------- //
+
+void DATAMEM_print_region(DATAMEM* d, int startAddr, int stopAddr){
+    uint8_t value;
+    for (; startAddr < stopAddr; startAddr++){
+        value = d->mem[startAddr];
+        printf("%i : %X\n", startAddr, value);
+    }
 }
 
 

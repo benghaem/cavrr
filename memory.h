@@ -1,6 +1,9 @@
 //memory.h
 #include <stdint.h>
 
+#ifndef MEMORY_H
+#define MEMORY_H
+
 // 256 SRAM (ATtiny45)
 // 32 + 64 + 256 = 352 [REG + IO + SRAM]
 #define DATAMEM_SIZE 352
@@ -31,6 +34,8 @@ typedef struct
 {
     uint8_t mem[DATAMEM_SIZE];
 } DATAMEM;
+
+void* DATAMEM_init(DATAMEM *d);
 
 // Read data from address (addresses the entire data memory)
 uint8_t DATAMEM_read_addr(DATAMEM* d, int offset, int addr);
@@ -70,6 +75,11 @@ uint8_t DATAMEM_read_sram(DATAMEM* d, int addr);
 
 int DATAMEM_write_sram(DATAMEM* d, int addr, uint8_t data);
 
+//DEBUG EXTRAS
+//prints from [start, stop)
+//ex: [1,4) -> 1,2,3
+void DATAMEM_print_region(DATAMEM* d, int startAddr, int stopAddr);
+
 // Contiguous data memory for AVR
 typedef struct
 {
@@ -79,3 +89,5 @@ typedef struct
 uint16_t PROGMEM_read_addr(PROGMEM* p, int addr);
 
 int PROGMEM_write_addr(PROGMEM* p, int addr, uint16_t data);
+
+#endif /* memory.h */
