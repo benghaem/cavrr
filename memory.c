@@ -58,18 +58,20 @@ int DATAMEM_write_reg(DATAMEM* d, int addr, uint8_t data){
     return -1;
 }
 
+// NOTE: Little Endian
 uint16_t DATAMEM_read_reg16(DATAMEM* d, int addrLow, int addrHigh){
     uint16_t L = DATAMEM_read_addr(d, RFILE_OFFSET, addrLow);
     uint16_t H = DATAMEM_read_addr(d, RFILE_OFFSET, addrHigh);
-    H = H << 8;
-    return H + L;
+    L = L << 8;
+    return L + H;
 }
 
+// NOTE Little Endian
 int DATAMEM_write_reg16(DATAMEM* d, int addrLow, int addrHigh, uint16_t data){
-    //mask to remove upper 8 bits from L
-    uint8_t L = data & 0xFF;
+    //mask to remove upper 8 bits from L (Little Endian)
+    uint8_t L = (data & 0xFF00) >> 8;
     //mask to remove lower 8 bits then to move within 8bit space
-    uint8_t H = (data & 0xFF00) >> 8;
+    uint8_t H = data & 0xFF;
     DATAMEM_write_reg(d, addrHigh, H);
     return DATAMEM_write_reg(d, addrLow, L);
 }
