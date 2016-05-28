@@ -4,14 +4,14 @@ import time
 
 
 class outputBuffer():
-    b = ""
+    b = [""] * 10
 
-    def printToBuff(self, s):
-        self.b = self.b + str(s) + "\n"
+    def printToBuff(self, i, s):
+        self.b[i] = self.b[i] + str(s) + "\n"
 
-    def writeToFile(self, filename):
+    def writeToFile(self, i, filename):
         with open(filename, 'w') as f:
-            f.write(self.b)
+            f.write(self.b[i])
             f.close()
 
 def getBinaryString(val, bits):
@@ -28,6 +28,23 @@ def allSame(l):
                 return False
             last = item
     return True
+
+def allSameOp(instrList, opMap):
+    if len(instrList) > 0:
+        last = opMap[instrList[0]]
+        for item in instrList:
+            if opMap[item] != last:
+                return False
+            last = opMap[item]
+    return True
+
+def capturesOpPart(op_part, cmp_op_part):
+    captures = True
+    for biti in range(4):
+        if op_part[biti] != 'x':
+            captures = captures & (op_part[biti] == cmp_op_part[biti])
+    return captures
+
 
 # combination, location 0,1,2,3, value of combination
 def printBitTestArgs(comb, loc, val, offset, ob):
@@ -55,7 +72,66 @@ def printBitTestArgs(comb, loc, val, offset, ob):
         base = "high"
     if loc == 2 or loc == 3:
         base = "low"
-    ob.printToBuff(offset + "if(bit_test(" +base + ", " + str(hex(intValue)) +", " + str(hex(intMask)) + ")){")
+    ob.printToBuff(1, offset + "if(bit_test(" +base + ", " + str(hex(intValue)) + ", " + str(hex(intMask)) + ")){")
+
+
+
+
+# from a list of instructions that could not be subdivided by the normal method
+# we now attempt to select the important instructions from that set
+
+# 1. Select instructions with the most free bits
+# 2. Go across each slot and ensure that these instructions
+#    capture all the other instructions
+# 3. If they each only capture a subset determine the bits we can use to differentiate them
+
+
+
+def selectionMethodTwo(instrList, opMap, level, ob):
+
+    offset = "    " * level
+
+    #print(offset + "trying method two on " + str(instrList))
+
+    countMap = {}
+
+    max_free = 0
+
+    for instr in instrList:
+        op = opMap[instr]
+        free_total = sum([op_part.count('x') for op_part in op])
+        countMap[instr] = free_total
+
+        if free_total > max_free:
+            max_free = free_total
+
+    max_free_subset = []
+
+    for key, value in countMap.items():
+        if value == max_free:
+            max_free_subset.append(key)
+
+    captureMap = {}
+
+    for instr in max_free_subset:
+        for cmpInstr in max_free_subset:
+            test = True
+            op = opMap[instr]
+            cmpOp = opMap[cmpInstr]
+            for i in range(4):
+      #          print("comparing ops", op[i], cmpOp[i])
+                if not capturesOpPart(op[i], cmpOp[i]):
+     #               print("does not capture")
+                    test = False
+                    break
+            if test:
+                captureMap[instr] = captureMap.get(instr, []) + [cmpInstr]
+
+    #for key, value in captureMap.items():
+    #   print(key, value)
+
+    #print(offset + "method two produced this subset: " + str(max_free_subset))
+    return max_free_subset
 
 # select the location with the lowest number of free bits  next and then check
 # for a set of static bits of size 4 - free bits
@@ -79,7 +155,7 @@ def determineSelectionOrder(instrList, opMap, level, ob):
 
     printOffset = "    " * level
 
-    # print(printOffset + " attempting to determine selection order")
+    #print(printOffset + " attempting to determine selection order on " + str(instrList))
 
     if not allSame(instrList):
 
@@ -149,26 +225,41 @@ def determineSelectionOrder(instrList, opMap, level, ob):
                 for k, v in sorted(newListsMap.items()):
                     if len(v) > 0:
                         printBitTestArgs(comb, min_index, k, printOffset, ob)
-                        ob.printToBuff(printOffset +"/*"+ str(k)
+                        ob.printToBuff(1, printOffset +"/*"+ str(k)
                               + " on bits: " + str(comb)
                               + " from op part: "
                               + str(min_index) + "\n" + printOffset + "--> " + str(v) + "*/")
                         ret = determineSelectionOrder(v, opMap, level+1, ob)
                         if ret == 2 or ret == 3:
-                            instrForPrint = ""
+                            instrForPrint = "UNKNOWN"
                             if ret == 2:
                                 instrForPrint = str(v[0])
                             if ret == 3:
                                 if len(v) > 0:
-                                    print("Multiple options detected:")
-                                    for i2, v2  in enumerate(v):
-                                        print(i2,v2)
-                                    print("Input number to select")
-                                    indexChoice = int(input())
-                                    instrForPrint = v[indexChoice]
-                            ob.printToBuff(printOffset + "instr = " + instrForPrint + ";")
+                                    subset = selectionMethodTwo(v,opMap, level+1, ob)
+                                    if len(subset) == 1:
+                                        instrForPrint = subset[0]
+                                    else:
+                                        if allSameOp(subset,opMap):
+                                            ob.printToBuff(1, printOffset + "// NOTE: Instruction codes equal")
+                                            print("Multiple op-code equal options detected")
+                                            for i2, v2 in enumerate(subset):
+                                                print(i2, v2)
+                                            print("input number to select")
+                                            indexChoice = int(input())
+                                            instrForPrint = v[indexChoice]
+                                            print("selected: " + v[indexChoice])
 
-                        ob.printToBuff(printOffset+"}")
+                                        determineSelectionOrder(subset,opMap, level+1, ob)
+                                    #print("Multiple options detected:")
+                                    #for i2, v2  in enumerate(v):
+                                    #    print(i2,v2)
+                                    #print("Input number to select")
+                                    #indexChoice = int(input())
+                                    #instrForPrint = v[indexChoice]
+                            ob.printToBuff(1, printOffset + "instr = " + instrForPrint + ";")
+                            ob.printToBuff(2, instrForPrint)
+                        ob.printToBuff(1, printOffset+"}")
                 # done printing
                 return 4
             elif len(successfullSearches) == 1:
@@ -199,7 +290,8 @@ ob = outputBuffer()
 t = datetime.datetime.now()
 datestr = time.strftime("%b %d, %Y @ %H:%M", t.timetuple())
 
-ob.printToBuff("// Generated on " + datestr + " by genInstrSelect.py")
+ob.printToBuff(1, "// Generated on " + datestr + " by genInstrSelect.py")
 determineSelectionOrder(instrList, opMap, 0,ob)
 
-ob.writeToFile("genoutput.c")
+ob.writeToFile(1, "genoutput.c")
+ob.writeToFile(2, "instructions-list.txt")
