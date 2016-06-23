@@ -25,7 +25,6 @@ bin/instruction_print.o: instruction.h instruction_print.c
 
 #######################
 
-
 clean:
 	rm -rf bin/*
 
