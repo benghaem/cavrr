@@ -1,7 +1,7 @@
 import datetime
 import itertools
 import time
-
+import sys
 
 class outputBuffer():
     b = [""] * 10
@@ -41,7 +41,7 @@ def allSameOp(instrList, opMap):
 def capturesOpPart(op_part, cmp_op_part):
     captures = True
     for biti in range(4):
-        if op_part[biti] != 'x':
+        if op_part[biti] != 'x' and cmp_op_part[biti] != 'x':
             captures = captures & (op_part[biti] == cmp_op_part[biti])
     return captures
 
@@ -126,7 +126,7 @@ def selectionMethodTwo(instrList, opMap, level, ob):
                     break
             if test:
                 captureMap[instr] = captureMap.get(instr, []) + [cmpInstr]
-
+    print(captureMap)
     #for key, value in captureMap.items():
     #   print(key, value)
 
@@ -247,16 +247,10 @@ def determineSelectionOrder(instrList, opMap, level, ob):
                                                 print(i2, v2)
                                             print("input number to select")
                                             indexChoice = int(input())
-                                            instrForPrint = v[indexChoice]
-                                            print("selected: " + v[indexChoice])
-
-                                        determineSelectionOrder(subset,opMap, level+1, ob)
-                                    #print("Multiple options detected:")
-                                    #for i2, v2  in enumerate(v):
-                                    #    print(i2,v2)
-                                    #print("Input number to select")
-                                    #indexChoice = int(input())
-                                    #instrForPrint = v[indexChoice]
+                                            instrForPrint = subset[indexChoice]
+                                            print("selected: " + subset[indexChoice])
+                                        else:
+                                            determineSelectionOrder(subset,opMap, level+1, ob)
                             ob.printToBuff(1, printOffset + "instr = " + instrForPrint + ";")
                             ob.printToBuff(2, instrForPrint)
                         ob.printToBuff(1, printOffset+"}")
@@ -275,7 +269,7 @@ def determineSelectionOrder(instrList, opMap, level, ob):
 instrList = []
 opMap = {}
 
-with open("instruction-primary-opcodes.csv", 'r') as f:
+with open(sys.argv[1], 'r') as f:
 
     for l in f:
         data = l.split(",")
@@ -293,5 +287,5 @@ datestr = time.strftime("%b %d, %Y @ %H:%M", t.timetuple())
 ob.printToBuff(1, "// Generated on " + datestr + " by genInstrSelect.py")
 determineSelectionOrder(instrList, opMap, 0,ob)
 
-ob.writeToFile(1, "genoutput.c")
+ob.writeToFile(1, "genoutput.c.gen")
 ob.writeToFile(2, "instructions-list.txt")
