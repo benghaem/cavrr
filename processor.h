@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include "memory.h"
 #include "instruction.h"
+#include "operation.h"
 
 typedef uint16_t PC;
 
@@ -19,7 +20,7 @@ typedef enum{
 typedef struct{
     PC pc;
     PSTATE state;
-    OPERATION oper;
+    OP oper;
     DATAMEM dmem;
     PROGMEM pmem;
 }PROCESSOR;
@@ -31,3 +32,12 @@ void PROCESSOR_loop(PROCESSOR* p);
 void PROCESSOR_fetch(PROCESSOR* p);
 
 void PROCESSOR_exec(PROCESSOR* p);
+
+
+// --------------------------------- //
+// Px Functions (op execution)       //
+// --------------------------------- //
+
+void PxADD(PROCESSOR* p);
+
+void PxNOP(PROCESSOR* p);

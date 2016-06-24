@@ -1,4 +1,5 @@
 #include "processor.h"
+#include "operation.h"
 
 
 //Update the program counter to a new value
@@ -55,6 +56,8 @@ void PROCESSOR_fetch(PROCESSOR* p){
 
     INSTRUCTION next = INSTRUCTION_decode_bytes(bits);
 
+
+    //if the instruction is 32b
     if (INSTRUCTION_is_32b(next)){
         PC_increment(&p->pc);
         ex_bits = PROGMEM_read_addr(&p->pmem, p->pc);
@@ -65,6 +68,23 @@ void PROCESSOR_fetch(PROCESSOR* p){
     p->oper.ex_bits = ex_bits;
 
     p->state = EXEC;
+    PC_increment(&p->pc);
 }
+
+void PROCESSOR_exec(PROCESSOR* p){
+    switch (p->oper.inst){
+        case ADD:
+            PxADD(p);
+            break;
+        default:
+            PxNOP(p);
+            break;
+    }
+}
+
+
+// --------------------------------- //
+// Px Functions (op execution)       //
+// --------------------------------- //
 
 

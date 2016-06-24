@@ -106,12 +106,3 @@ INSTRUCTION INSTRUCTION_decode_bytes(uint16_t bytes);
 int INSTRUCTION_is_32b(INSTRUCTION instr);
 
 void INSTRUCTION_print(INSTRUCTION instr);
-
-typedef struct
-{
-
-    INSTRUCTION inst;
-    uint16_t bits;
-    uint16_t ex_bits;
-
-} OPERATION;
