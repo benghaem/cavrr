@@ -709,16 +709,16 @@ INSTRUCTION INSTRUCTION_decode_bytes(uint16_t bytes){
 }
 
 int INSTRUCTION_is_32b(INSTRUCTION instr){
-    int state = 0;
+    int is_32b = 0;
     switch (instr){
         case CALL:
         case JMP:
         case STS:
         case LDS:
-            state = 1;
+            is_32b = 1;
             break;
         default:
             break;
     }
-    return state;
+    return is_32b;
 }
