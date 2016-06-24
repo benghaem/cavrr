@@ -1,10 +1,8 @@
 #include "instruction.h"
 #include <stdio.h>
+
 void INSTRUCTION_print(INSTRUCTION instr){
     switch(instr){
-        case ADC:
-            printf("ADC");
-            break;
         case ADD:
             printf("ADD");
             break;
@@ -128,6 +126,9 @@ void INSTRUCTION_print(INSTRUCTION instr){
         case LD3:
             printf("LD3");
             break;
+        case LDD_4:
+            printf("LDD_4");
+            break;
         case LDD_Y2:
             printf("LDD_Y2");
             break;
@@ -139,6 +140,9 @@ void INSTRUCTION_print(INSTRUCTION instr){
             break;
         case LDD_Z3:
             printf("LDD_Z3");
+            break;
+        case LDD_Z4:
+            printf("LDD_Z4");
             break;
         case LDI:
             printf("LDI");
@@ -203,6 +207,9 @@ void INSTRUCTION_print(INSTRUCTION instr){
         case RJMP:
             printf("RJMP");
             break;
+        case ROL:
+            printf("ROL");
+            break;
         case ROR:
             printf("ROR");
             break;
@@ -257,11 +264,17 @@ void INSTRUCTION_print(INSTRUCTION instr){
         case ST_Y3:
             printf("ST_Y3");
             break;
+        case ST_Y4:
+            printf("ST_Y4");
+            break;
         case ST_Z2:
             printf("ST_Z2");
             break;
         case ST_Z3:
             printf("ST_Z3");
+            break;
+        case ST_Z4:
+            printf("ST_Z4");
             break;
         case SUB:
             printf("SUB");
@@ -271,9 +284,6 @@ void INSTRUCTION_print(INSTRUCTION instr){
             break;
         case SWAP:
             printf("SWAP");
-            break;
-        case UNKNOWN:
-            printf("UNKNOWN");
             break;
         case WDR:
             printf("WDR");

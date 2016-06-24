@@ -2,7 +2,6 @@
 #include <stdint.h>
 
 typedef enum{
-    ADC,
     ADD,
     ADIW,
     AND,
@@ -44,10 +43,12 @@ typedef enum{
     LD1,
     LD2,
     LD3,
+    LDD_4,
     LDD_Y2,
     LDD_Y3,
     LDD_Z2,
     LDD_Z3,
+    LDD_Z4,
     LDI,
     LDS,
     LPM1,
@@ -69,6 +70,7 @@ typedef enum{
     RET,
     RETI,
     RJMP,
+    ROL,
     ROR,
     SBC,
     SBCI,
@@ -87,17 +89,21 @@ typedef enum{
     STS,
     ST_Y2,
     ST_Y3,
+    ST_Y4,
     ST_Z2,
     ST_Z3,
+    ST_Z4,
     SUB,
     SUBI,
     SWAP,
-    UNKNOWN,
     WDR,
     XCH,
+    UNKNOWN,
 } INSTRUCTION;
 
 INSTRUCTION INSTRUCTION_decode_bytes(uint16_t bytes);
+
+int INSTRUCTION_is_32b(INSTRUCTION instr);
 
 void INSTRUCTION_print(INSTRUCTION instr);
 

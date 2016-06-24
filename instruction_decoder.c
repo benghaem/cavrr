@@ -135,7 +135,7 @@ INSTRUCTION INSTRUCTION_decode_bytes(uint16_t bytes){
             /*11 on bits: (0, 1) from op part: 1
             --> ['ADC', 'ROL']*/
             // NOTE: Instruction codes equal
-            instr = ADC;
+            instr = ROL;
             }
         }
         if(bit_test(high, 0x30, 0xf0)){
@@ -176,8 +176,35 @@ INSTRUCTION INSTRUCTION_decode_bytes(uint16_t bytes){
     }
     if(bit_test(high, 0x80, 0xd0)){
     /*100 on bits: (0, 1, 3) from op part: 0
-    --> ['LDD_Y1', 'LDD_4', 'LDD_Z1', 'LDD_Z4', 'LDS16b', 'MULS', 'ST_Y1', 'ST_Y4', 'ST_Z1', 'ST_Z4', 'STS16b']*/
-    instr = UNKNOWN;
+    --> ['LDD_Y1', 'LDD_4', 'LDD_Z1', 'LDD_Z4', 'ST_Y1', 'ST_Y4', 'ST_Z1', 'ST_Z4']*/
+        if(bit_test(high, 0x0, 0x2)){
+        /*0 on bits: (2,) from op part: 1
+        --> ['LDD_Y1', 'LDD_4', 'LDD_Z1', 'LDD_Z4']*/
+            if(bit_test(low, 0x0, 0x8)){
+            /*0 on bits: (0,) from op part: 3
+            --> ['LDD_Z1', 'LDD_Z4']*/
+            instr = LDD_Z4;
+            }
+            if(bit_test(low, 0x8, 0x8)){
+            /*1 on bits: (0,) from op part: 3
+            --> ['LDD_Y1', 'LDD_4']*/
+            instr = LDD_4;
+            }
+        }
+        if(bit_test(high, 0x2, 0x2)){
+        /*1 on bits: (2,) from op part: 1
+        --> ['ST_Y1', 'ST_Y4', 'ST_Z1', 'ST_Z4']*/
+            if(bit_test(low, 0x0, 0x8)){
+            /*0 on bits: (0,) from op part: 3
+            --> ['ST_Z1', 'ST_Z4']*/
+            instr = ST_Z4;
+            }
+            if(bit_test(low, 0x8, 0x8)){
+            /*1 on bits: (0,) from op part: 3
+            --> ['ST_Y1', 'ST_Y4']*/
+            instr = ST_Y4;
+            }
+        }
     }
     if(bit_test(high, 0x90, 0xd0)){
     /*101 on bits: (0, 1, 3) from op part: 0
@@ -681,4 +708,17 @@ INSTRUCTION INSTRUCTION_decode_bytes(uint16_t bytes){
     return instr;
 }
 
-
+int INSTRUCTION_is_32b(INSTRUCTION instr){
+    int state = 0;
+    switch (instr){
+        case CALL:
+        case JMP:
+        case STS:
+        case LDS:
+            state = 1;
+            break;
+        default:
+            break;
+    }
+    return state;
+}
