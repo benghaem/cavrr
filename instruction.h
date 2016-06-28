@@ -98,11 +98,11 @@ typedef enum{
     SWAP,
     WDR,
     XCH,
-    UNKNOWN,
+    UNKNOWN
 } INSTRUCTION;
 
 INSTRUCTION INSTRUCTION_decode_bytes(uint16_t bytes);
 
 int INSTRUCTION_is_32b(INSTRUCTION instr);
 
-void INSTRUCTION_print(INSTRUCTION instr);
+char* INSTRUCTION_str(INSTRUCTION instr);

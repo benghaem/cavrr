@@ -4,16 +4,18 @@
 
 INSTRUCTION INSTRUCTION_decode_bytes(uint16_t bytes){
     INSTRUCTION instr = UNKNOWN;
-    //little endian inputs
+    /* little endian inputs */
     uint8_t low = (bytes & 0xFF00) >> 8;
     uint8_t high = bytes & 0xFF;
 
-    // high part 0 -> 0xF0
-    // high part 1 -> 0x0F
-    // low  part 2 -> 0xF0
-    // low  part 3 -> 0x0F
+    /*
+    high part 0 -> 0xF0
+    high part 1 -> 0x0F
+    low  part 2 -> 0xF0
+    low  part 3 -> 0x0F
+    */
 
-    // Generated on May 27, 2016 @ 16:21 by genInstrSelect.py
+    /* Generated on May 27, 2016 @ 16:21 by genInstrSelect.py */
     if(bit_test(high, 0x0, 0xd0)){
     /*000 on bits: (0, 1, 3) from op part: 0
     --> ['ADD', 'AND', 'CLR', 'CPC', 'EOR', 'FMUL', 'FMULS', 'FMULSU', 'LSL', 'MOV', 'MOVW', 'MULSU', 'NOP', 'OR', 'SBC', 'TST']*/
@@ -79,7 +81,7 @@ INSTRUCTION INSTRUCTION_decode_bytes(uint16_t bytes){
             if(bit_test(high, 0xc, 0xc)){
             /*11 on bits: (0, 1) from op part: 1
             --> ['ADD', 'LSL']*/
-            // NOTE: Instruction codes equal
+            /* NOTE: Instruction codes equal */
             instr = ADD;
             }
         }
@@ -89,13 +91,13 @@ INSTRUCTION INSTRUCTION_decode_bytes(uint16_t bytes){
             if(bit_test(high, 0x0, 0xc)){
             /*00 on bits: (0, 1) from op part: 1
             --> ['AND', 'TST']*/
-            // NOTE: Instruction codes equal
+            /* NOTE: Instruction codes equal */
             instr = AND;
             }
             if(bit_test(high, 0x4, 0xc)){
             /*01 on bits: (0, 1) from op part: 1
             --> ['CLR', 'EOR']*/
-            // NOTE: Instruction codes equal
+            /* NOTE: Instruction codes equal */
             instr = EOR;
             }
             if(bit_test(high, 0x8, 0xc)){
@@ -134,7 +136,7 @@ INSTRUCTION INSTRUCTION_decode_bytes(uint16_t bytes){
             if(bit_test(high, 0xc, 0xc)){
             /*11 on bits: (0, 1) from op part: 1
             --> ['ADC', 'ROL']*/
-            // NOTE: Instruction codes equal
+            /* NOTE: Instruction codes equal */
             instr = ROL;
             }
         }
@@ -155,7 +157,7 @@ INSTRUCTION INSTRUCTION_decode_bytes(uint16_t bytes){
         if(bit_test(high, 0x60, 0xf0)){
         /*0110 on bits: (0, 1, 2, 3) from op part: 0
         --> ['ORI', 'SBR']*/
-        // NOTE: Instruction codes equal
+        /* NOTE: Instruction codes equal */
         instr = ORI;
         }
     }
@@ -170,7 +172,7 @@ INSTRUCTION INSTRUCTION_decode_bytes(uint16_t bytes){
         if(bit_test(high, 0x70, 0xf0)){
         /*0111 on bits: (0, 1, 2, 3) from op part: 0
         --> ['ANDI', 'CBR']*/
-        // NOTE: Instruction codes equal
+        /* NOTE: Instruction codes equal */
         instr = ANDI;
         }
     }
@@ -545,7 +547,7 @@ INSTRUCTION INSTRUCTION_decode_bytes(uint16_t bytes){
                             if(bit_test(low, 0xe0, 0xf0)){
                             /*1110 on bits: (0, 1, 2, 3) from op part: 2
                             --> ['SPM', 'SPM2']*/
-                            // NOTE: Instruction codes equal
+                            /* NOTE: Instruction codes equal */
                             instr = SPM;
                             }
                             if(bit_test(low, 0xf0, 0xf0)){
