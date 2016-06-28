@@ -4,6 +4,8 @@
 #ifndef BITUTIL_H
 #define BITUTIL_H
 
+#define bit( I, b ) ( I >> b & 0x1 )
+
 int bit_test(unsigned long target, unsigned long test, unsigned long mask);
 
 unsigned long bit_create(unsigned int* bits, unsigned int size);
