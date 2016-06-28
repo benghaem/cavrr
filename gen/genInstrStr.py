@@ -1,7 +1,7 @@
 print("#include \"instruction.h\"")
-print("""void INSTRUCTION_print(INSTRUCTION instr){
+print("""char* INSTRUCTION_str(INSTRUCTION instr){
     switch(instr){"""
-     )
+    )
 with open("instructions-list.txt.gen", 'r') as f:
     instrList = []
     for instr in f:
@@ -10,8 +10,7 @@ with open("instructions-list.txt.gen", 'r') as f:
 
     for instr in sorted(instrList):
         print("        case " + instr.strip() + ":")
-        print("            printf(\"" + instr.strip() + "\");")
-        print("            break;")
+        print("            return \"" + instr.strip() + "\";")
 
 print("""    }
 }"""
