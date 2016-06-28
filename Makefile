@@ -1,5 +1,5 @@
 CC=clang
-CCFLAGS=-g
+CCFLAGS=-g -ansi -pedantic-errors
 
 all: bitutil instruction
 
@@ -15,13 +15,13 @@ bin/bitutil.o: util/bitutil.h util/bitutil.c
 
 # Instruction Related #
 
-instruction: bin/instruction_decoder.o bin/instruction_print.o
+instruction: bin/instruction_decoder.o bin/instruction_str.o
 
 bin/instruction_decoder.o: instruction.h instruction_decoder.c
 	$(CC) $(CCFLAGS) -c instruction_decoder.c -o bin/instruction_decoder.o
 
-bin/instruction_print.o: instruction.h instruction_print.c
-	$(CC) $(CCFLAGS) -c instruction_print.c -o bin/instruction_print.o
+bin/instruction_str.o: instruction.h instruction_str.c
+	$(CC) $(CCFLAGS) -c instruction_str.c -o bin/instruction_str.o
 
 #######################
 
