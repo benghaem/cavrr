@@ -1,16 +1,8 @@
 #include <stdint.h>
+#include "sel.h"
 
 #ifndef BITUTIL_H
 #define BITUTIL_H
-
-typedef struct{
-    unsigned int sel_start;
-    unsigned int sel_end;
-} sel_t;
-
-sel_t sel_range(unsigned int start, unsigned int end);
-
-sel_t sel_loc(unsigned int loc);
 
 int bit_test(unsigned long target, unsigned long test, unsigned long mask);
 
@@ -18,7 +10,7 @@ unsigned long bit_create(unsigned int* bits, unsigned int size);
 
 uint16_t bit_isolate16(unsigned int part_count, ...);
 
-//assumes a c style string of length 3
+/* assumes a c style string of length 3 */
 uint8_t ascii_byte_to_int(char* str);
 
 #endif /* bitutil.h */

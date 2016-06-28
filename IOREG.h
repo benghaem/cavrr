@@ -1,8 +1,9 @@
-//ATtiny 25 / 45 / 85 IO Register Names
-//generated from: http://www.atmel.com/Images/Atmel-2586-AVR-8-bit-Microcontroller-ATtiny25-ATtiny45-ATtiny85_Datasheet.pdf
-
-//Named registers also have named values for their bits
-//Named bits are shown below as REGISTERNAME_BITNAME
+/* ATtiny 25 / 45 / 85 IO Register Names
+ * generated from: http://www.atmel.com/Images/Atmel-2586-AVR-8-bit-Microcontroller-ATtiny25-ATtiny45-ATtiny85_Datasheet.pdf
+ *
+ * Named registers also have named values for their bits
+ * Named bits are shown below as REGISTERNAME_BITNAME
+ */
 
 #ifndef IOREG_H
 #define IOREG_H

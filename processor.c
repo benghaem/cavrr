@@ -78,6 +78,7 @@ void PROCESSOR_exec(PROCESSOR* p){
             break;
         default:
             PxNOP(p);
+            INSTRUCTION_str(p->oper.inst);
             break;
     }
 }
@@ -88,3 +89,33 @@ void PROCESSOR_exec(PROCESSOR* p){
 // --------------------------------- //
 
 
+/* --------------------------------- */
+/* ADD 0000 | 11rd | dddd | rrrr     */
+/* --> dddd | rrrr | 0000 | 11rd     */
+/* d - destination                   */
+/* r - source                        */
+/* --------------------------------- */
+void PxADD(PROCESSOR* p){
+    uint8_t r = 0;
+    uint8_t d = 0;
+    uint8_t R;
+    uint8_t Rr;
+    uint8_t Rd;
+    int H, S, V, N, Z, C;
+
+    //Isolate r and d
+    r = (( p->oper.bits & 0x0F00 ) >> 8 ) | (( p->oper.bits >> 1 ) & 0x1 );
+    d = (( p->oper.bits & 0xF000 ) >> 12 ) | ( p->oper.bits & 0x1 );
+
+    //Get values of r and d
+    Rr = DATAMEM_read_reg(&p->dmem, r);
+    Rd = DATAMEM_read_reg(&p->dmem, d);
+
+    //ADD
+    R = Rd + Rr;
+
+    //Set new value of Rd
+    DATAMEM_write_reg(&p->dmem, d, R);
+
+    //Set SREG flags
+}
