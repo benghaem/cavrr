@@ -55,10 +55,11 @@ void PROCESSOR_loop(PROCESSOR* p){
 void PROCESSOR_fetch(PROCESSOR* p){
     uint16_t bits;
     uint16_t ex_bits;
+    INSTRUCTION next;
 
     bits = PROGMEM_read_addr(&p->pmem, p->pc);
 
-    INSTRUCTION next = INSTRUCTION_decode_bytes(bits);
+    next = INSTRUCTION_decode_bytes(bits);
 
 
     /* if the instruction is 32b */

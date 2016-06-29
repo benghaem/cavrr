@@ -7,9 +7,6 @@
 int main(int argc, char** argv){
 
     PROCESSOR p;
-    /* Init processor in debug mode */
-    PROCESSOR_init(&p, 1);
-
     PROGMEM* pm = &p.pmem;
     int pm_addr = 0;
 
@@ -20,6 +17,9 @@ int main(int argc, char** argv){
     if (argc < 1){
         printf("not enough arguments\n");
     }
+
+    /* Init processor in debug mode */
+    PROCESSOR_init(&p, 1);
 
     if(IHEX_open(&ih,argv[1])){
         printf("Opened: %s\n", argv[1]);

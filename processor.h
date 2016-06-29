@@ -14,7 +14,7 @@ typedef enum{
     FETCH,
     EXEC,
     WAITING,
-    HALT,
+    HALT
 } PSTATE;
 
 typedef struct{
@@ -35,9 +35,9 @@ void PROCESSOR_fetch(PROCESSOR* p);
 void PROCESSOR_exec(PROCESSOR* p);
 
 
-// --------------------------------- //
-// Px Functions (op execution)       //
-// --------------------------------- //
+/* ---------------------------------  */
+/* Px Functions (op execution)        */
+/* ---------------------------------  */
 
 void PxADD(PROCESSOR* p);
 

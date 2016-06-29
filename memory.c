@@ -2,18 +2,20 @@
 #include "IOREG.h"
 #include <stdio.h>
 #include <string.h>
-// --------------------------------- //
-// AVR DATA MEMORY (REG, IO, SRAM)   //
-// --------------------------------- //
+
+
+/*  ---------------------------------  */
+/*  AVR DATA MEMORY (REG, IO, SRAM)    */
+/*  ---------------------------------  */
 
 void* DATAMEM_init(DATAMEM* d){
     void* ret = memset(&(d->mem[0]),0,sizeof(d->mem));
-    //Set OCR1C to all 1's initial. See page 92 of datasheet
+    /* Set OCR1C to all 1's initial. See page 92 of datasheet */
     DATAMEM_write_io(d, OCR1C, 0xFF);
     return ret;
 }
 
-//read from address in data memory
+/* read from address in data memory */
 uint8_t DATAMEM_read_addr(DATAMEM* d, int offset, int addr){
     int target = offset + addr;
     if (target >= 0 && target < DATAMEM_SIZE){
@@ -22,16 +24,16 @@ uint8_t DATAMEM_read_addr(DATAMEM* d, int offset, int addr){
     return 0;
 }
 
-// write to any address in data memory
-// we can provide a offset to select
-// a specific subset of memory
-//
-// returns:
-//  -1 on error
-//  the address minus the offset on success
+/*  write to any address in data memory */
+/*  we can provide a offset to select */
+/*  a specific subset of memory */
+/*  */
+/*  returns: */
+/*   -1 on error */
+/*   the address minus the offset on success */
 int DATAMEM_write_addr(DATAMEM* d, int offset, int addr, uint8_t data){
     int target = offset + addr;
-    // safety check on ranges
+    /*  safety check on ranges */
     if (target >= 0 && target < DATAMEM_SIZE){
         d->mem[target] = data;
         return target - offset;
@@ -40,9 +42,9 @@ int DATAMEM_write_addr(DATAMEM* d, int offset, int addr, uint8_t data){
     }
 }
 
-// --------------------------------- //
-// AVR GENERAL REGISTERS             //
-// --------------------------------- //
+/*  ---------------------------------  */
+/*  AVR GENERAL REGISTERS              */
+/*  ---------------------------------  */
 
 uint8_t DATAMEM_read_reg(DATAMEM* d, int addr){
     if (addr >= 0 && addr < RFILE_SIZE){
@@ -58,7 +60,7 @@ int DATAMEM_write_reg(DATAMEM* d, int addr, uint8_t data){
     return -1;
 }
 
-// NOTE: Little Endian
+/*  NOTE: Little Endian */
 uint16_t DATAMEM_read_reg16(DATAMEM* d, int addrLow, int addrHigh){
     uint16_t L = DATAMEM_read_addr(d, RFILE_OFFSET, addrLow);
     uint16_t H = DATAMEM_read_addr(d, RFILE_OFFSET, addrHigh);
@@ -66,11 +68,11 @@ uint16_t DATAMEM_read_reg16(DATAMEM* d, int addrLow, int addrHigh){
     return L + H;
 }
 
-// NOTE Little Endian
+/*  NOTE Little Endian */
 int DATAMEM_write_reg16(DATAMEM* d, int addrLow, int addrHigh, uint16_t data){
-    //mask to remove upper 8 bits from L (Little Endian)
+    /* mask to remove upper 8 bits from L (Little Endian) */
     uint8_t L = (data & 0xFF00) >> 8;
-    //mask to remove lower 8 bits then to move within 8bit space
+    /* mask to remove lower 8 bits then to move within 8bit space */
     uint8_t H = data & 0xFF;
     DATAMEM_write_reg(d, addrHigh, H);
     return DATAMEM_write_reg(d, addrLow, L);
@@ -100,9 +102,9 @@ int DATAMEM_write_reg_Z(DATAMEM* d, uint16_t Z){
     return DATAMEM_write_reg16(d, REG_ZL, REG_ZH, Z);
 }
 
-// --------------------------------- //
-// AVR IO REGISTERS                  //
-// --------------------------------- //
+/*  ---------------------------------  */
+/*  AVR IO REGISTERS                   */
+/*  ---------------------------------  */
 
 uint8_t DATAMEM_read_io(DATAMEM* d, int addr){
     if (addr >= 0 && addr < IOFILE_SIZE){
@@ -136,8 +138,8 @@ int DATAMEM_write_io_bit(DATAMEM* d, int addr, int bit, int data){
         if (data == 0 || data == 1){
             mask = 0x1 << bit;
             isolated_bit = data << bit;
-            //the idea here is to recognize the bit that needs to be changed
-            //and whether or not we should swap it from the current value
+            /* the idea here is to recognize the bit that needs to be changed */
+            /* and whether or not we should swap it from the current value */
             updated_reg = current_reg ^ ((current_reg ^ isolated_bit) & mask);
             return DATAMEM_write_io(d, addr, updated_reg);
         }
@@ -145,9 +147,9 @@ int DATAMEM_write_io_bit(DATAMEM* d, int addr, int bit, int data){
     return -1;
 }
 
-// --------------------------------- //
-// AVR SRAM                          //
-// --------------------------------- //
+/*  ---------------------------------  */
+/*  AVR SRAM                           */
+/*  ---------------------------------  */
 
 uint8_t DATAMEM_read_sram(DATAMEM* d, int addr){
     if (addr >= 0 && addr < SRAM_SIZE){
@@ -163,9 +165,9 @@ int DATAMEM_write_sram(DATAMEM* d, int addr, uint8_t data){
     return -1;
 }
 
-// --------------------------------- //
-// DATAMEM DEBUG EXTRAS              //
-// --------------------------------- //
+/*  ---------------------------------  */
+/*  DATAMEM DEBUG EXTRAS               */
+/*  ---------------------------------  */
 
 void DATAMEM_print_region(DATAMEM* d, int startAddr, int stopAddr){
     uint8_t value;
@@ -176,9 +178,9 @@ void DATAMEM_print_region(DATAMEM* d, int startAddr, int stopAddr){
 }
 
 
-// --------------------------------- //
-// AVR PROGRAM MEMORY                //
-// --------------------------------- //
+/*  ---------------------------------  */
+/*  AVR PROGRAM MEMORY                 */
+/*  ---------------------------------  */
 
 void* PROGMEM_init(PROGMEM* p){
     return memset(&(p->mem[0]),0,sizeof(p->mem));
