@@ -17,7 +17,7 @@ int main(int argc, char** argv){
         printf("Opened: %s\n", argv[1]);
         while(!IHEX_at_end(&ih)){
             op = (IHEX_get_byte(&ih) << 8) + IHEX_get_byte(&ih);
-            printf("%X\n",op);
+            printf("%X --> ",op);
             instr = INSTRUCTION_decode_bytes(op);
             INSTRUCTION_print(instr);
             printf("\n");
@@ -26,8 +26,3 @@ int main(int argc, char** argv){
 
     return 0;
 }
-
-
-
-
-
