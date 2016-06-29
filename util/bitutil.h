@@ -1,5 +1,4 @@
 #include <stdint.h>
-#include "sel.h"
 
 #ifndef BITUTIL_H
 #define BITUTIL_H
