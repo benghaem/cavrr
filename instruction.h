@@ -1,6 +1,9 @@
 #include "memory.h"
 #include <stdint.h>
 
+#ifndef INSTRUCTION_H
+#define INSTRUCTION_H
+
 typedef enum{
     ADD,
     ADIW,
@@ -106,3 +109,5 @@ INSTRUCTION INSTRUCTION_decode_bytes(uint16_t bytes);
 int INSTRUCTION_is_32b(INSTRUCTION instr);
 
 char* INSTRUCTION_str(INSTRUCTION instr);
+
+#endif /* instruction.h */
