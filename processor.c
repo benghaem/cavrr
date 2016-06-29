@@ -139,12 +139,12 @@ void PxADD(PROCESSOR* p){
 
     /* Set SREG flags */
 
-    H = bit(Rd,3) & bit(Rr,3) | bit(Rr,3) & ~bit(R,3) | ~bit(R,3) & bit(Rd,3);
-    V = bit(Rd,7) & bit(Rr,7) & ~bit(R,7) | ~bit(Rd,7) & ~bit(Rr,7) & bit(R,7);
+    H = (bit(Rd,3) & bit(Rr,3)) | (bit(Rr,3) & ~bit(R,3)) | (~bit(R,3) & bit(Rd,3));
+    V = (bit(Rd,7) & bit(Rr,7) & ~bit(R,7)) | (~bit(Rd,7) & ~bit(Rr,7) & bit(R,7));
     N = bit(R,7);
     S = N ^ V;
     Z = (R = 0) ? 1 : 0;
-    C = bit(Rd,7) & bit(Rr,7) | bit(Rr,7) & ~bit(R,7) | ~bit(R,7) & bit(Rd,7);
+    C = (bit(Rd,7) & bit(Rr,7)) | (bit(Rr,7) & ~bit(R,7)) | (~bit(R,7) & bit(Rd,7));
 
     DATAMEM_write_io_bit(&p->dmem, SREG, SREG_H, H);
     DATAMEM_write_io_bit(&p->dmem, SREG, SREG_V, V);
