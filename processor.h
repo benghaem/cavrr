@@ -23,9 +23,10 @@ typedef struct{
     OP oper;
     DATAMEM dmem;
     PROGMEM pmem;
+    int debug;
 }PROCESSOR;
 
-void PROCESSOR_init(PROCESSOR* p);
+void PROCESSOR_init(PROCESSOR* p, int debug);
 
 void PROCESSOR_loop(PROCESSOR* p);
 
@@ -39,5 +40,9 @@ void PROCESSOR_exec(PROCESSOR* p);
 // --------------------------------- //
 
 void PxADD(PROCESSOR* p);
+
+void PxBREAK(PROCESSOR* p);
+
+void PxMOV(PROCESSOR* p);
 
 void PxNOP(PROCESSOR* p);

@@ -2,6 +2,7 @@
 #include "operation.h"
 #include "util/bitutil.h"
 #include "IOREG.h"
+#include <stdio.h>
 
 /* Update the program counter to a new value */
 void PC_update(PC* pc, uint16_t val){
@@ -13,7 +14,7 @@ void PC_update(PC* pc, uint16_t val){
 
 /* Increment the program counter by one */
 void PC_increment(PC* pc){
-    *pc++;
+    *pc = *pc + 1;
     if (*pc > 0x07FF){
         *pc = 0;
     }
@@ -21,12 +22,14 @@ void PC_increment(PC* pc){
 }
 
 /* Initialize the processor */
-void PROCESSOR_init(PROCESSOR* p){
+void PROCESSOR_init(PROCESSOR* p, int debug){
     /* set to first state */
     p->state = FETCH;
     /* initialize the memory regions */
     DATAMEM_init(&(p->dmem));
     PROGMEM_init(&(p->pmem));
+
+    p->debug = debug;
     return;
 }
 
@@ -70,18 +73,33 @@ void PROCESSOR_fetch(PROCESSOR* p){
 
     p->state = EXEC;
     PC_increment(&p->pc);
+    return;
 }
 
 void PROCESSOR_exec(PROCESSOR* p){
+
+    if (p->debug){
+        printf("Executing: %s\n",INSTRUCTION_str(p->oper.inst));
+    }
+
     switch (p->oper.inst){
         case ADD:
             PxADD(p);
             break;
-        default:
+        case NOP:
             PxNOP(p);
-            INSTRUCTION_str(p->oper.inst);
+            break;
+        case BREAK:
+            PxBREAK(p);
+            p->state = HALT;
+            return;
+        default:
+            printf("EXEC: Not implemented\n");
             break;
     }
+
+    p->state = FETCH;
+    return;
 }
 
 
@@ -134,5 +152,23 @@ void PxADD(PROCESSOR* p){
     DATAMEM_write_io_bit(&p->dmem, SREG, SREG_Z, Z);
     DATAMEM_write_io_bit(&p->dmem, SREG, SREG_C, C);
 
+    return;
+}
+
+/*---------------------------------*/
+/* BREAK 1001 | 0101 | 1001 | 1000 */
+/* --> 1001 | 1000 | 1001 | 0101   */
+/*---------------------------------*/
+void PxBREAK(PROCESSOR* p){
+    /* BREAK */
+    return;
+}
+
+/*---------------------------------*/
+/* NOP 0000 | 0000 | 0000 | 0000   */
+/* --> 0000 | 0000 | 0000 | 0000   */
+/*---------------------------------*/
+void PxNOP(PROCESSOR* p){
+    /* NOP */
     return;
 }
