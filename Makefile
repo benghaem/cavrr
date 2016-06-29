@@ -1,7 +1,16 @@
 CC=clang
 CCFLAGS=-g -ansi -pedantic-errors
 
-all: bitutil instruction
+all: bin/memory.o bitutil instruction bin/processor.o bin/intelhex.o bin/processor_test
+
+core: bin/memory.o bitutil instruction bin/processor.o bin/intelhex.o
+
+# memory related
+
+bin/memory.o: memory.c memory.h
+	$(CC) $(CCFLAGS) -c memory.c -o bin/memory.o
+
+##################
 
 
 # bitutil related #
@@ -25,7 +34,29 @@ bin/instruction_str.o: instruction.h instruction_str.c
 
 #######################
 
+# Processor Related #
+
+bin/processor.o: processor.c processor.h
+	$(CC) $(CCFLAGS) -c processor.c -o bin/processor.o
+
+
+#######################
+
+# Intel HEX
+
+bin/intelhex.o: util/intelhex.c util/intelhex.h
+	$(CC) $(CCFLAGS) -c util/intelhex.c -o bin/intelhex.o
+
+
+######################
+
+# Processor test program
+
+bin/processor_test: test/processor_test.c core
+	$(CC) $(CCFLAGS) test/processor_test.c bin/*.o -o bin/processor_test
+
+
 clean:
 	rm -rf bin/*
 
-.PHONY: all clean bitutil instruction
+.PHONY: all clean bitutil instruction core

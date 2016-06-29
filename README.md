@@ -8,9 +8,25 @@ Currently the following high level concepts have been implemented:
 * Memory interactions
 * IO Register Naming
 * Intel HEX file format decoding
+* Basic processor execution loop
 
------
+## Building
 
-##Building
+The test program can be built using the included makefile
 
-Currently there is not much to build, but check back soon!
+`make`
+
+## Instruction Listing
+
+Here is a list of the currently implemented instructions.
+An instruction followed by a (p) denotes a partial implemention.
+
+* ADD
+* BREAK (p)
+* NOP
+
+
+### Partial Implementation Details
+
+* BREAK -> Does not check lock bits or JTAGEN / OCDEN fuses before entering
+stopped state
