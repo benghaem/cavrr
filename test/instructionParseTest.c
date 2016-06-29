@@ -19,7 +19,7 @@ int main(int argc, char** argv){
             op = (IHEX_get_byte(&ih) << 8) + IHEX_get_byte(&ih);
             printf("%X --> ",op);
             instr = INSTRUCTION_decode_bytes(op);
-            INSTRUCTION_print(instr);
+            printf("%s",INSTRUCTION_str(instr));
             printf("\n");
         }
     }
