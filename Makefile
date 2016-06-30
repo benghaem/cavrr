@@ -1,9 +1,17 @@
 CC=clang
 CCFLAGS=-g -ansi -pedantic-errors
+CCTESTFLAGS=-g
 
 all: bin/memory.o bitutil instruction bin/processor.o bin/intelhex.o bin/processor_test
 
 core: bin/memory.o bitutil instruction bin/processor.o bin/intelhex.o
+
+
+bin/test: test/test.c test/instr/*.c
+	$(CC) $(CCTESTFLAGS) test/test.c test/instr/*.c bin/*.o -l cmocka -o bin/test
+
+test: bin/test
+	./bin/test
 
 # memory related
 
@@ -59,4 +67,4 @@ bin/processor_test: test/integration/processor_test.c core
 clean:
 	rm -rf bin/*
 
-.PHONY: all clean bitutil instruction core
+.PHONY: all clean bitutil instruction core test
