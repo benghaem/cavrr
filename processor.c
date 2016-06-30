@@ -22,26 +22,26 @@ void PC_increment(PC* pc){
 }
 
 /* Initialize the processor */
-void PROCESSOR_init(PROCESSOR* p, int debug){
+void processor_init(struct processor* p, int debug){
     /* set to first state */
     p->state = FETCH;
     /* initialize the memory regions */
-    DATAMEM_init(&(p->dmem));
-    PROGMEM_init(&(p->pmem));
+    datamem_init(&(p->dmem));
+    progmem_init(&(p->pmem));
 
     p->debug = debug;
     return;
 }
 
 /* Run the processor state machine loop */
-void PROCESSOR_loop(PROCESSOR* p){
+void processor_loop(struct processor* p){
     while (p->state != HALT){
         switch (p->state){
             case FETCH:
-                PROCESSOR_fetch(p);
+                processor_fetch(p);
                 break;
             case EXEC:
-                PROCESSOR_exec(p);
+                processor_exec(p);
                 break;
             default:
                 break;
@@ -52,20 +52,20 @@ void PROCESSOR_loop(PROCESSOR* p){
 
 /* Fetch the next instruction from the data memory */
 /* and transform into an operation */
-void PROCESSOR_fetch(PROCESSOR* p){
+void processor_fetch(struct processor* p){
     uint16_t bits;
     uint16_t ex_bits;
-    INSTRUCTION next;
+    enum instruction next;
 
-    bits = PROGMEM_read_addr(&p->pmem, p->pc);
+    bits = progmem_read_addr(&p->pmem, p->pc);
 
-    next = INSTRUCTION_decode_bytes(bits);
+    next = instruction_decode_bytes(bits);
 
 
     /* if the instruction is 32b */
-    if (INSTRUCTION_is_32b(next)){
+    if (instruction_is_32b(next)){
         PC_increment(&p->pc);
-        ex_bits = PROGMEM_read_addr(&p->pmem, p->pc);
+        ex_bits = progmem_read_addr(&p->pmem, p->pc);
     }
 
     p->oper.inst = next;
@@ -77,10 +77,10 @@ void PROCESSOR_fetch(PROCESSOR* p){
     return;
 }
 
-void PROCESSOR_exec(PROCESSOR* p){
+void processor_exec(struct processor* p){
 
     if (p->debug){
-        printf("Executing: %s\n",INSTRUCTION_str(p->oper.inst));
+        printf("Executing: %s\n",instruction_str(p->oper.inst));
     }
 
     switch (p->oper.inst){
@@ -115,7 +115,7 @@ void PROCESSOR_exec(PROCESSOR* p){
 /* d - destination                 */
 /* r - source                      */
 /*---------------------------------*/
-void PxADD(PROCESSOR* p){
+void PxADD(struct processor* p){
     uint8_t r = 0;
     uint8_t d = 0;
     uint8_t R;
@@ -128,14 +128,14 @@ void PxADD(PROCESSOR* p){
     d = (( p->oper.bits & 0xF000 ) >> 12 ) | ( p->oper.bits & 0x1 );
 
     /* Get values of r and d */
-    Rr = DATAMEM_read_reg(&p->dmem, r);
-    Rd = DATAMEM_read_reg(&p->dmem, d);
+    Rr = datamem_read_reg(&p->dmem, r);
+    Rd = datamem_read_reg(&p->dmem, d);
 
     /* ADD */
     R = Rd + Rr;
 
     /* Set new value of Rd */
-    DATAMEM_write_reg(&p->dmem, d, R);
+    datamem_write_reg(&p->dmem, d, R);
 
     /* Set SREG flags */
 
@@ -146,12 +146,12 @@ void PxADD(PROCESSOR* p){
     Z = (R = 0) ? 1 : 0;
     C = (bit(Rd,7) & bit(Rr,7)) | (bit(Rr,7) & ~bit(R,7)) | (~bit(R,7) & bit(Rd,7));
 
-    DATAMEM_write_io_bit(&p->dmem, SREG, SREG_H, H);
-    DATAMEM_write_io_bit(&p->dmem, SREG, SREG_V, V);
-    DATAMEM_write_io_bit(&p->dmem, SREG, SREG_N, N);
-    DATAMEM_write_io_bit(&p->dmem, SREG, SREG_S, S);
-    DATAMEM_write_io_bit(&p->dmem, SREG, SREG_Z, Z);
-    DATAMEM_write_io_bit(&p->dmem, SREG, SREG_C, C);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_H, H);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_V, V);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_N, N);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_S, S);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_Z, Z);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_C, C);
 
     return;
 }
@@ -160,7 +160,7 @@ void PxADD(PROCESSOR* p){
 /* BREAK 1001 | 0101 | 1001 | 1000 */
 /* --> 1001 | 1000 | 1001 | 0101   */
 /*---------------------------------*/
-void PxBREAK(PROCESSOR* p){
+void PxBREAK(struct processor* p){
     /* BREAK */
     return;
 }
@@ -169,7 +169,7 @@ void PxBREAK(PROCESSOR* p){
 /* NOP 0000 | 0000 | 0000 | 0000   */
 /* --> 0000 | 0000 | 0000 | 0000   */
 /*---------------------------------*/
-void PxNOP(PROCESSOR* p){
+void PxNOP(struct processor* p){
     /* NOP */
     return;
 }

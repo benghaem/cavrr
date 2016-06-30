@@ -2,8 +2,8 @@
 #include "util/bitutil.h"
 #include <stdio.h>
 
-INSTRUCTION INSTRUCTION_decode_bytes(uint16_t bytes){
-    INSTRUCTION instr = UNKNOWN;
+enum instruction instruction_decode_bytes(uint16_t bytes){
+    enum instruction instr = UNKNOWN;
     /* little endian inputs */
     uint8_t low = (bytes & 0xFF00) >> 8;
     uint8_t high = bytes & 0xFF;
@@ -710,7 +710,7 @@ INSTRUCTION INSTRUCTION_decode_bytes(uint16_t bytes){
     return instr;
 }
 
-int INSTRUCTION_is_32b(INSTRUCTION instr){
+int instruction_is_32b(enum instruction instr){
     int is_32b = 0;
     switch (instr){
         case CALL:

@@ -5,21 +5,21 @@
 
 int main(int argc, char** argv){
 
-    IHEX ih;
+    ihex ih;
     uint16_t op;
-    INSTRUCTION instr;
+    enum instruction instr;
 
     if (argc < 1){
         printf("not enough arguments\n");
     }
 
-    if(IHEX_open(&ih,argv[1])){
+    if(ihex_open(&ih,argv[1])){
         printf("Opened: %s\n", argv[1]);
-        while(!IHEX_at_end(&ih)){
-            op = (IHEX_get_byte(&ih) << 8) + IHEX_get_byte(&ih);
+        while(!ihex_at_end(&ih)){
+            op = (ihex_get_byte(&ih) << 8) + ihex_get_byte(&ih);
             printf("%X --> ",op);
-            instr = INSTRUCTION_decode_bytes(op);
-            printf("%s",INSTRUCTION_str(instr));
+            instr = instruction_decode_bytes(op);
+            printf("%s",instruction_str(instr));
             printf("\n");
         }
     }

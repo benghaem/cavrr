@@ -10,19 +10,19 @@ typedef struct{
     int in_data;
     int at_end;
     int valid;
-} IHEX;
+} ihex;
 
-int IHEX_open(IHEX *ih, char* filename);
+int ihex_open(ihex *ih, char* filename);
 
-int IHEX_close(IHEX *ih);
+int ihex_close(ihex *ih);
 
-int IHEX_validate_checksum(IHEX* ih);
+int ihex_validate_checksum(ihex* ih);
 
-void IHEX_consume_start(IHEX* ih);
+void ihex_consume_start(ihex* ih);
 
-uint8_t IHEX_get_byte(IHEX* ih);
+uint8_t ihex_get_byte(ihex* ih);
 
-int IHEX_at_end(IHEX* ih);
+int ihex_at_end(ihex* ih);
 
 #endif
 

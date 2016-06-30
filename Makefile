@@ -52,8 +52,8 @@ bin/intelhex.o: util/intelhex.c util/intelhex.h
 
 # Processor test program
 
-bin/processor_test: test/processor_test.c core
-	$(CC) $(CCFLAGS) test/processor_test.c bin/*.o -o bin/processor_test
+bin/processor_test: test/integration/processor_test.c core
+	$(CC) $(CCFLAGS) test/integration/processor_test.c bin/*.o -o bin/processor_test
 
 
 clean:

@@ -9,40 +9,40 @@ void PC_update(PC* p, uint16_t val);
 
 void PC_increment(PC* p);
 
-typedef enum{
+enum pstate{
     INIT,
     FETCH,
     EXEC,
     WAITING,
     HALT
-} PSTATE;
+};
 
-typedef struct{
+struct processor{
     PC pc;
-    PSTATE state;
-    OP oper;
-    DATAMEM dmem;
-    PROGMEM pmem;
+    enum pstate state;
+    struct operation oper;
+    struct datamem dmem;
+    struct progmem pmem;
     int debug;
-}PROCESSOR;
+};
 
-void PROCESSOR_init(PROCESSOR* p, int debug);
+void processor_init(struct processor* p, int debug);
 
-void PROCESSOR_loop(PROCESSOR* p);
+void processor_loop(struct processor* p);
 
-void PROCESSOR_fetch(PROCESSOR* p);
+void processor_fetch(struct processor* p);
 
-void PROCESSOR_exec(PROCESSOR* p);
+void processor_exec(struct processor* p);
 
 
 /* ---------------------------------  */
 /* Px Functions (op execution)        */
 /* ---------------------------------  */
 
-void PxADD(PROCESSOR* p);
+void PxADD(struct processor* p);
 
-void PxBREAK(PROCESSOR* p);
+void PxBREAK(struct processor* p);
 
-void PxMOV(PROCESSOR* p);
+void PxMOV(struct processor* p);
 
-void PxNOP(PROCESSOR* p);
+void PxNOP(struct processor* p);

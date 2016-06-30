@@ -3,7 +3,7 @@
 #include <string.h>
 
 /* Open an intel hex formatted file */
-int IHEX_open(IHEX *ih, char* filename){
+int ihex_open(ihex *ih, char* filename){
     ih->data_sum = 0;
     ih->data_remaining = 0;
     ih->in_data = 0;
@@ -20,19 +20,19 @@ int IHEX_open(IHEX *ih, char* filename){
 }
 
 /* Close the file */
-int IHEX_close(IHEX *ih){
+int ihex_close(ihex *ih){
     return fclose(ih->fp);
 }
 
 /* Getter to check if at the end of a file */
-int IHEX_at_end(IHEX* ih){
+int ihex_at_end(ihex* ih){
     return ih->at_end;
 }
 
 /* Function consumes the front of each line read in
  * The programmer should not have to call this function directly
  */
-void IHEX_consume_start(IHEX* ih){
+void ihex_consume_start(ihex* ih){
     char single[2];
     char bytestr[3];
     char wordstr[5];
@@ -73,7 +73,7 @@ void IHEX_consume_start(IHEX* ih){
  * currently does not validate checksum
  * just consumes the values
  */
-int IHEX_validate_checksum(IHEX* ih){
+int ihex_validate_checksum(ihex* ih){
     char bytestr[3];
 
     /* eat checksum */
@@ -89,10 +89,10 @@ int IHEX_validate_checksum(IHEX* ih){
 
 
 /* Function to get the next byte of the file. This function will always return so
- * one should check IHEX_at_end before running. This function will automatically call
- * IHEX_consume_start when needed
+ * one should check ihex_at_end before running. This function will automatically call
+ * ihex_consume_start when needed
  */
-uint8_t IHEX_get_byte(IHEX* ih){
+uint8_t ihex_get_byte(ihex* ih){
     char bytestr[3];
     uint8_t ret = 0;
     uint8_t recordtype;
@@ -117,9 +117,9 @@ uint8_t IHEX_get_byte(IHEX* ih){
              */
             if(ih->data_remaining == 0){
                 /* checksum stuff here */
-                IHEX_validate_checksum(ih);
+                ihex_validate_checksum(ih);
                 /* then setup for the next read */
-                IHEX_consume_start(ih);
+                ihex_consume_start(ih);
             }
         }
     }
@@ -127,9 +127,9 @@ uint8_t IHEX_get_byte(IHEX* ih){
      * and then get bytes
      */
     else{
-        IHEX_consume_start(ih);
+        ihex_consume_start(ih);
         /* we can then get the byte as we will be in data */
-        ret = IHEX_get_byte(ih);
+        ret = ihex_get_byte(ih);
     }
     return ret;
 }

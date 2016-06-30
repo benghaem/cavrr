@@ -1,5 +1,5 @@
-print("#include \"instruction.h\"")
-print("""char* INSTRUCTION_str(INSTRUCTION instr){
+print("#include \"instruction.h\"")x
+print("""char* instruction_str(enum instruction instr){
     switch(instr){"""
     )
 with open("instructions-list.txt.gen", 'r') as f:

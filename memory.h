@@ -30,66 +30,64 @@
 
 /* Single contiguous data memory for AVR */
 /* 8 Bit wide */
-typedef struct
-{
+struct datamem{
     uint8_t mem[DATAMEM_SIZE];
-} DATAMEM;
+} datamem;
 
-void* DATAMEM_init(DATAMEM *d);
+void* datamem_init(struct datamem* d);
 
 /* Read data from address (addresses the entire data memory) */
-uint8_t DATAMEM_read_addr(DATAMEM* d, int offset, int addr);
+uint8_t datamem_read_addr(struct datamem* d, int offset, int addr);
 
 /* Write data to address (addresses the entire data memory) */
-int DATAMEM_write_addr(DATAMEM* d, int offset, int addr, uint8_t data);
+int datamem_write_addr(struct datamem* d, int offset, int addr, uint8_t data);
 
-uint8_t DATAMEM_read_reg(DATAMEM* d, int addr);
+uint8_t datamem_read_reg(struct datamem* d, int addr);
 
-int DATAMEM_write_reg(DATAMEM* d, int addr, uint8_t data);
+int datamem_write_reg(struct datamem* d, int addr, uint8_t data);
 
-uint16_t DATAMEM_read_reg16(DATAMEM* d, int addrLow, int addrHigh);
+uint16_t datamem_read_reg16(struct datamem* d, int addrLow, int addrHigh);
 
-int DATAMEM_write_reg16(DATAMEM* d, int addrLow, int addrHigh, uint16_t data);
+int datamem_write_reg16(struct datamem* d, int addrLow, int addrHigh, uint16_t data);
 
-uint16_t DATAMEM_read_reg_X(DATAMEM* d);
+uint16_t datamem_read_reg_X(struct datamem* d);
 
-uint16_t DATAMEM_read_reg_Y(DATAMEM* d);
+uint16_t datamem_read_reg_Y(struct datamem* d);
 
-uint16_t DATAMEM_read_reg_Z(DATAMEM* d);
+uint16_t datamem_read_reg_Z(struct datamem* d);
 
-int DATAMEM_write_reg_X(DATAMEM* d, uint16_t x);
+int datamem_write_reg_X(struct datamem* d, uint16_t x);
 
-int DATAMEM_write_reg_Y(DATAMEM* d, uint16_t y);
+int datamem_write_reg_Y(struct datamem* d, uint16_t y);
 
-int DATAMEM_write_reg_Z(DATAMEM* d, uint16_t z);
+int datamem_write_reg_Z(struct datamem* d, uint16_t z);
 
-uint8_t DATAMEM_read_io(DATAMEM* d, int addr);
+uint8_t datamem_read_io(struct datamem* d, int addr);
 
-int DATAMEM_read_io_bit(DATAMEM* d, int addr, int bit);
+int datamem_read_io_bit(struct datamem* d, int addr, int bit);
 
-int DATAMEM_write_io(DATAMEM* d, int addr, uint8_t data);
+int datamem_write_io(struct datamem* d, int addr, uint8_t data);
 
-int DATAMEM_write_io_bit(DATAMEM* d, int addr, int bit, int data);
+int datamem_write_io_bit(struct datamem* d, int addr, int bit, int data);
 
-uint8_t DATAMEM_read_sram(DATAMEM* d, int addr);
+uint8_t datamem_read_sram(struct datamem* d, int addr);
 
-int DATAMEM_write_sram(DATAMEM* d, int addr, uint8_t data);
+int datamem_write_sram(struct datamem* d, int addr, uint8_t data);
 
 /* DEBUG EXTRAS
  * prints from [start, stop)
  *  ex: [1,4) -> 1,2,3 */
-void DATAMEM_print_region(DATAMEM* d, int startAddr, int stopAddr);
+void datamem_print_region(struct datamem* d, int startAddr, int stopAddr);
 
 /* Contiguous data memory for AVR */
-typedef struct
-{
+struct progmem{
     uint16_t mem[PROGMEM_SIZE];
-} PROGMEM;
+} progmem;
 
-void* PROGMEM_init(PROGMEM* p);
+void* progmem_init(struct progmem* p);
 
-uint16_t PROGMEM_read_addr(PROGMEM* p, int addr);
+uint16_t progmem_read_addr(struct progmem* p, int addr);
 
-int PROGMEM_write_addr(PROGMEM* p, int addr, uint16_t data);
+int progmem_write_addr(struct progmem* p, int addr, uint16_t data);
 
 #endif /* memory.h */

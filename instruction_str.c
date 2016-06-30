@@ -1,5 +1,5 @@
 #include "instruction.h"
-char* INSTRUCTION_str(INSTRUCTION instr){
+char* instruction_str(enum instruction instr){
     switch(instr){
         case ADD:
             return "ADD";

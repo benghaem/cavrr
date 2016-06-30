@@ -4,7 +4,7 @@
 #ifndef INSTRUCTION_H
 #define INSTRUCTION_H
 
-typedef enum{
+enum instruction{
     ADD,
     ADIW,
     AND,
@@ -102,12 +102,12 @@ typedef enum{
     WDR,
     XCH,
     UNKNOWN
-} INSTRUCTION;
+};
 
-INSTRUCTION INSTRUCTION_decode_bytes(uint16_t bytes);
+enum instruction instruction_decode_bytes(uint16_t bytes);
 
-int INSTRUCTION_is_32b(INSTRUCTION instr);
+int instruction_is_32b(enum instruction instr);
 
-char* INSTRUCTION_str(INSTRUCTION instr);
+char* instruction_str(enum instruction instr);
 
 #endif /* instruction.h */

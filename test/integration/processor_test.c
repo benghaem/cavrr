@@ -1,42 +1,42 @@
-#include "../processor.h"
-#include "../instruction.h"
+#include "../../processor.h"
+#include "../../instruction.h"
 #include <stdio.h>
-#include "../util/intelhex.h"
+#include "../../util/intelhex.h"
 #include <unistd.h>
 
 int main(int argc, char** argv){
 
-    PROCESSOR p;
-    PROGMEM* pm = &p.pmem;
+    struct processor p;
+    struct progmem* pm = &p.pmem;
     int pm_addr = 0;
 
-    IHEX ih;
+    ihex ih;
     uint16_t op;
-    INSTRUCTION instr;
+    enum instruction instr;
 
     if (argc < 1){
         printf("not enough arguments\n");
     }
 
     /* Init processor in debug mode */
-    PROCESSOR_init(&p, 1);
+    processor_init(&p, 1);
 
-    if(IHEX_open(&ih,argv[1])){
+    if(ihex_open(&ih,argv[1])){
         printf("Opened: %s\n", argv[1]);
-        while(!IHEX_at_end(&ih)){
-            op = (IHEX_get_byte(&ih) << 8) + IHEX_get_byte(&ih);
+        while(!ihex_at_end(&ih)){
+            op = (ihex_get_byte(&ih) << 8) + ihex_get_byte(&ih);
             printf("%X --> ",op);
-            PROGMEM_write_addr(pm,pm_addr,op);
+            progmem_write_addr(pm,pm_addr,op);
             pm_addr++;
-            instr = INSTRUCTION_decode_bytes(op);
-            printf("%s",INSTRUCTION_str(instr));
+            instr = instruction_decode_bytes(op);
+            printf("%s",instruction_str(instr));
             printf("\n");
         }
     }
 
-    PROGMEM_write_addr(pm,pm_addr,0x9895);
+    progmem_write_addr(pm,pm_addr,0x9895);
 
-    PROCESSOR_loop(&p);
+    processor_loop(&p);
 
     return 0;
 }
