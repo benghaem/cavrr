@@ -1,4 +1,4 @@
-## avremu: An ATTiny45 Emulator Written in C
+## cavrr: An ATTiny45 Emulator Written in C
 
 This is my attempt to write a functional emulator of the ATTiny45 in C. My goal is to learn more about the AVR architecture and practice C in general. 
 
