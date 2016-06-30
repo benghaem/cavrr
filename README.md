@@ -1,4 +1,4 @@
-## cavrr: An ATTiny45 Emulator Written in C
+## cavrr: An ATTiny45 Emulator Written in C [![Build Status](https://travis-ci.org/benghaem/cavrr.svg?branch=master)](https://travis-ci.org/benghaem/cavrr)
 
 This is my attempt to write a functional emulator of the ATTiny45 in C. My goal is to learn more about the AVR architecture and practice C in general. 
 
@@ -12,9 +12,17 @@ Currently the following high level concepts have been implemented:
 
 ## Building
 
-The test program can be built using the included makefile
+The current emulator can be built using the included makefile
 
 `make`
+
+## Test Suite
+
+The automatic test suite can be built by running:
+
+`make test`
+
+(Requires [cmocka](https://github.com/clibs/cmocka))
 
 ## Instruction Listing
 
