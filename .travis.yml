@@ -13,4 +13,5 @@ install:
     - make
     - sudo make install
     - cd ../../
+    - mkdir bin
 script: make && make test

@@ -12,7 +12,11 @@ Currently the following high level concepts have been implemented:
 
 ## Building
 
-The current emulator can be built using the included makefile
+First create a bin directory:
+
+`mkdir bin`
+
+Then current emulator can be built using the included makefile
 
 `make`
 
