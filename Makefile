@@ -7,7 +7,7 @@ all: bin/memory.o bitutil instruction bin/processor.o bin/intelhex.o bin/process
 core: bin/memory.o bitutil instruction bin/processor.o bin/intelhex.o
 
 
-bin/test: test/test.c test/instr/*.c
+bin/test: test/test.c test/instr/ bin/
 	$(CC) $(CCTESTFLAGS) test/test.c test/instr/*.c bin/*.o -l cmocka -o bin/test
 
 test: bin/test
@@ -60,7 +60,7 @@ bin/intelhex.o: util/intelhex.c util/intelhex.h
 
 # Processor test program
 
-bin/processor_test: test/integration/processor_test.c core
+bin/processor_test: test/integration/processor_test.c bin/
 	$(CC) $(CCFLAGS) test/integration/processor_test.c bin/*.o -o bin/processor_test
 
 

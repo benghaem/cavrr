@@ -43,5 +43,9 @@ void instr_add_test_exec(void **state) {
 
     result = datamem_read_reg(dmem, 0);
 
+
+    //check result
     assert_int_equal(result, 4);
+    //check program counter increment
+    assert_int_equal(p.pc, 1);
 }

@@ -4,23 +4,6 @@
 #include "IOREG.h"
 #include <stdio.h>
 
-/* Update the program counter to a new value */
-void PC_update(PC* pc, uint16_t val){
-    /* mask out bits above 11 */
-    /* 0000 0111 1111 1111 */
-    *pc = val & 0x07FF;
-    return;
-}
-
-/* Increment the program counter by one */
-void PC_increment(PC* pc){
-    *pc = *pc + 1;
-    if (*pc > 0x07FF){
-        *pc = 0;
-    }
-    return;
-}
-
 /* Initialize the processor */
 void processor_init(struct processor* p, int debug){
     /* set to first state */
@@ -64,8 +47,8 @@ void processor_fetch(struct processor* p){
 
     /* if the instruction is 32b */
     if (instruction_is_32b(next)){
-        PC_increment(&p->pc);
-        ex_bits = progmem_read_addr(&p->pmem, p->pc);
+        /* read the next address as well */
+        ex_bits = progmem_read_addr(&p->pmem, p->pc + 1);
     }
 
     p->oper.inst = next;
@@ -73,7 +56,6 @@ void processor_fetch(struct processor* p){
     p->oper.ex_bits = ex_bits;
 
     p->state = EXEC;
-    PC_increment(&p->pc);
     return;
 }
 
@@ -92,7 +74,6 @@ void processor_exec(struct processor* p){
             break;
         case BREAK:
             PxBREAK(p);
-            p->state = HALT;
             return;
         default:
             printf("EXEC: Not implemented\n");
@@ -100,6 +81,23 @@ void processor_exec(struct processor* p){
     }
 
     p->state = FETCH;
+    return;
+}
+
+/* Update the program counter to a new value */
+void processor_pc_update(struct processor* p, uint16_t val){
+    /* mask out bits above 11 */
+    /* 0000 0111 1111 1111 */
+    p->pc = val & 0x07FF;
+    return;
+}
+
+/* Increment the program counter by value*/
+void processor_pc_increment(struct processor* p, int v){
+    p->pc += v;
+    if (p->pc > 0x07FF){
+        p->pc = 0;
+    }
     return;
 }
 
@@ -153,6 +151,8 @@ void PxADD(struct processor* p){
     datamem_write_io_bit(&p->dmem, SREG, SREG_Z, Z);
     datamem_write_io_bit(&p->dmem, SREG, SREG_C, C);
 
+    processor_pc_increment(p, 1);
+
     return;
 }
 
@@ -162,6 +162,11 @@ void PxADD(struct processor* p){
 /*---------------------------------*/
 void PxBREAK(struct processor* p){
     /* BREAK */
+
+    p->state = HALT;
+
+    processor_pc_increment(p, 1);
+
     return;
 }
 
@@ -171,5 +176,8 @@ void PxBREAK(struct processor* p){
 /*---------------------------------*/
 void PxNOP(struct processor* p){
     /* NOP */
+
+    processor_pc_increment(p, 1);
+
     return;
 }
