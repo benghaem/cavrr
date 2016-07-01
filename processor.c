@@ -6,6 +6,11 @@
 
 /* Initialize the processor */
 void processor_init(struct processor* p, int debug){
+    struct operation nop = {NOP,0x0,0x0};
+    /* Initialize program counter */
+    p->pc = 0;
+    /* Init operation with nop */
+    p->oper = nop;
     /* set to first state */
     p->state = FETCH;
     /* initialize the memory regions */
@@ -68,6 +73,9 @@ void processor_exec(struct processor* p){
     switch (p->oper.inst){
         case ADD:
             PxADD(p);
+            break;
+        case MOV:
+            PxMOV(p);
             break;
         case NOP:
             PxNOP(p);
@@ -164,6 +172,30 @@ void PxBREAK(struct processor* p){
     /* BREAK */
 
     p->state = HALT;
+
+    processor_pc_increment(p, 1);
+
+    return;
+}
+
+/*---------------------------------*/
+/* MOV 0010 | 11rd | dddd | rrrr   */
+/* --> dddd | rrrr | 0010 | 11rd   */
+/* d - destination                 */
+/* r - source                      */
+/*---------------------------------*/
+void PxMOV(struct processor* p){
+    uint8_t r;
+    uint8_t d;
+    uint8_t Rr;
+
+    /* Isolate r and d */
+    r = (( p->oper.bits & 0x0F00 ) >> 8 ) | (( p->oper.bits >> 1 ) & 0x1 );
+    d = (( p->oper.bits & 0xF000 ) >> 12 ) | ( p->oper.bits & 0x1 );
+
+    Rr = datamem_read_reg(&p->dmem, r);
+
+    datamem_write_reg(&p->dmem, d, Rr);
 
     processor_pc_increment(p, 1);
 
