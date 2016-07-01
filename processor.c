@@ -160,8 +160,8 @@ void PxADD(struct processor* p){
     int H, S, V, N, Z, C;
 
     /* Isolate r and d */
-    r = (( p->oper.bits & 0x0F00 ) >> 8 ) | (( p->oper.bits >> 1 ) & 0x1 );
-    d = (( p->oper.bits & 0xF000 ) >> 12 ) | ( p->oper.bits & 0x1 );
+    r = (( p->oper.bits & 0x0F00 ) >> 8 ) | ((( p->oper.bits >> 1 ) & 0x1 ) << 4);
+    d = (( p->oper.bits & 0xF000 ) >> 12 ) | (( p->oper.bits & 0x1 ) << 4);
 
     /* Get values of r and d */
     Rr = datamem_read_reg(&p->dmem, r);
@@ -222,8 +222,8 @@ void PxMOV(struct processor* p){
     uint8_t Rr;
 
     /* Isolate r and d */
-    r = (( p->oper.bits & 0x0F00 ) >> 8 ) | (( p->oper.bits >> 1 ) & 0x1 );
-    d = (( p->oper.bits & 0xF000 ) >> 12 ) | ( p->oper.bits & 0x1 );
+    r = (( p->oper.bits & 0x0F00 ) >> 8 ) | ((( p->oper.bits >> 1 ) & 0x1 ) << 4);
+    d = (( p->oper.bits & 0xF000 ) >> 12 ) | (( p->oper.bits & 0x1 ) << 4);
 
     Rr = datamem_read_reg(&p->dmem, r);
 
