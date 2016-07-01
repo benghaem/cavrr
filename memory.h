@@ -39,16 +39,20 @@ void* datamem_init(struct datamem* d);
 /* Read data from address (addresses the entire data memory) */
 uint8_t datamem_read_addr(struct datamem* d, int offset, int addr);
 
+uint16_t datamem_read_addr16(struct datamem* d, int offset, int addr_low, int addr_high);
+
 /* Write data to address (addresses the entire data memory) */
 int datamem_write_addr(struct datamem* d, int offset, int addr, uint8_t data);
+
+int datamem_write_addr16(struct datamem* d, int offset, int addr_low, int addr_high, uint16_t data);
 
 uint8_t datamem_read_reg(struct datamem* d, int addr);
 
 int datamem_write_reg(struct datamem* d, int addr, uint8_t data);
 
-uint16_t datamem_read_reg16(struct datamem* d, int addrLow, int addrHigh);
+uint16_t datamem_read_reg16(struct datamem* d, int addr_low, int addr_high);
 
-int datamem_write_reg16(struct datamem* d, int addrLow, int addrHigh, uint16_t data);
+int datamem_write_reg16(struct datamem* d, int addr_low, int addr_high, uint16_t data);
 
 uint16_t datamem_read_reg_X(struct datamem* d);
 
@@ -66,9 +70,13 @@ uint8_t datamem_read_io(struct datamem* d, int addr);
 
 int datamem_read_io_bit(struct datamem* d, int addr, int bit);
 
+uint16_t datamem_read_io_SP(struct datamem* d);
+
 int datamem_write_io(struct datamem* d, int addr, uint8_t data);
 
 int datamem_write_io_bit(struct datamem* d, int addr, int bit, int data);
+
+int datamem_write_io_SP(struct datamem* d, uint16_t sp);
 
 uint8_t datamem_read_sram(struct datamem* d, int addr);
 

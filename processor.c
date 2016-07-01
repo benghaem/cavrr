@@ -3,6 +3,7 @@
 #include "util/bitutil.h"
 #include "IOREG.h"
 #include <stdio.h>
+#include "memory.h"
 
 /* Initialize the processor */
 void processor_init(struct processor* p, int debug){
@@ -80,6 +81,9 @@ void processor_exec(struct processor* p){
         case NOP:
             PxNOP(p);
             break;
+        case PUSH:
+            PxPUSH(p);
+            break;
         case BREAK:
             PxBREAK(p);
             return;
@@ -93,10 +97,10 @@ void processor_exec(struct processor* p){
 }
 
 /* Update the program counter to a new value */
-void processor_pc_update(struct processor* p, uint16_t val){
-    /* mask out bits above 11 */
+void processor_pc_update(struct processor* p, uint16_t pc){
+    /* mask out bits above 10 */
     /* 0000 0111 1111 1111 */
-    p->pc = val & 0x07FF;
+    p->pc = pc & 0x07FF;
     return;
 }
 
@@ -106,6 +110,32 @@ void processor_pc_increment(struct processor* p, int v){
     if (p->pc > 0x07FF){
         p->pc = 0;
     }
+    return;
+}
+
+uint16_t processor_sp_read(struct processor *p){
+    return datamem_read_io_SP(&p->dmem);
+}
+
+void processor_sp_update(struct processor *p, uint16_t sp){
+    /* mask out bits above 8 for the 45 */
+    /* 0000 0001 1111 1111 */
+    sp = sp & 0x01FF;
+    datamem_write_io_SP(&p->dmem, sp);
+    return;
+}
+
+void processor_sp_decrement(struct processor *p, int v){
+    uint16_t sp = datamem_read_io_SP(&p->dmem);
+    sp -= v;
+    datamem_write_io_SP(&p->dmem, sp);
+    return;
+}
+
+void processor_sp_increment(struct processor *p, int v){
+    uint16_t sp = datamem_read_io_SP(&p->dmem);
+    sp += v;
+    datamem_write_io_SP(&p->dmem, sp);
     return;
 }
 
@@ -164,6 +194,7 @@ void PxADD(struct processor* p){
     return;
 }
 
+
 /*---------------------------------*/
 /* BREAK 1001 | 0101 | 1001 | 1000 */
 /* --> 1001 | 1000 | 1001 | 0101   */
@@ -177,6 +208,7 @@ void PxBREAK(struct processor* p){
 
     return;
 }
+
 
 /*---------------------------------*/
 /* MOV 0010 | 11rd | dddd | rrrr   */
@@ -202,6 +234,7 @@ void PxMOV(struct processor* p){
     return;
 }
 
+
 /*---------------------------------*/
 /* NOP 0000 | 0000 | 0000 | 0000   */
 /* --> 0000 | 0000 | 0000 | 0000   */
@@ -213,3 +246,30 @@ void PxNOP(struct processor* p){
 
     return;
 }
+
+
+/*----------------------------------*/
+/* PUSH 1001 | 001r | rrrr | 1111   */
+/*  --> rrrr | 1111 | 1001 | 001r   */
+/* r - source                       */
+/*----------------------------------*/
+void PxPUSH(struct processor* p){
+    uint8_t r;
+    uint8_t Rr;
+    uint16_t stack_addr;
+
+    /* Isolate r */
+    r = (( p->oper.bits & 0xF000 ) >> 12 ) | (( p->oper.bits & 0x1 ) << 4);
+
+    Rr = datamem_read_reg(&p->dmem, r);
+
+    stack_addr = processor_sp_read(p);
+
+    datamem_write_addr(&p->dmem, 0, stack_addr, Rr);
+
+    processor_pc_increment(p, 1);
+    processor_sp_decrement(p, 1);
+
+    return;
+}
+

@@ -28,10 +28,17 @@ void processor_fetch(struct processor* p);
 
 void processor_exec(struct processor* p);
 
-void processor_pc_update(struct processor* p, uint16_t val);
+void processor_pc_update(struct processor* p, uint16_t pc);
 
 void processor_pc_increment(struct processor* p, int v);
 
+uint16_t processor_sp_read(struct processor* p);
+
+void processor_sp_update(struct processor* p, uint16_t sp);
+
+void processor_sp_decrement(struct processor* p, int v);
+
+void processor_sp_increment(struct processor* p, int v);
 
 /* ---------------------------------  */
 /* Px Functions (op execution)        */
@@ -44,3 +51,5 @@ void PxBREAK(struct processor* p);
 void PxMOV(struct processor* p);
 
 void PxNOP(struct processor* p);
+
+void PxPUSH(struct processor* p);

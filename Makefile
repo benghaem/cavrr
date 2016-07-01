@@ -7,8 +7,8 @@ all: bin/memory.o bitutil instruction bin/processor.o bin/intelhex.o bin/process
 core: bin/memory.o bitutil instruction bin/processor.o bin/intelhex.o
 
 
-bin/test: test/test.c test/instr/ bin/
-	$(CC) $(CCTESTFLAGS) test/test.c test/instr/*.c bin/*.o -l cmocka -o bin/test
+bin/test: test/test.c test/instr/ bin/ test/general/
+	$(CC) $(CCTESTFLAGS) test/test.c test/instr/*.c test/general/*.c bin/*.o -l cmocka -o bin/test
 
 test: bin/test
 	./bin/test

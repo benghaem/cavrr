@@ -12,6 +12,8 @@ void* datamem_init(struct datamem* d){
     void* ret = memset(&(d->mem[0]),0,sizeof(d->mem));
     /* Set OCR1C to all 1's initial. See page 92 of datasheet */
     datamem_write_io(d, OCR1C, 0xFF);
+    /* Set SPH / SPL to last data memory location */
+    datamem_write_io_SP(d, DATAMEM_SIZE - 1);
     return ret;
 }
 
@@ -22,6 +24,13 @@ uint8_t datamem_read_addr(struct datamem* d, int offset, int addr){
         return d->mem[offset+addr];
     }
     return 0;
+}
+
+uint16_t datamem_read_addr16(struct datamem* d, int offset, int addr_low, int addr_high){
+    uint16_t L = datamem_read_addr(d, offset, addr_low);
+    uint16_t H = datamem_read_addr(d, offset, addr_high);
+    H = H << 8;
+    return H | L;
 }
 
 /*  write to any address in data memory */
@@ -42,6 +51,18 @@ int datamem_write_addr(struct datamem* d, int offset, int addr, uint8_t data){
     }
 }
 
+int datamem_write_addr16(struct datamem* d, int offset, int addr_low, int addr_high, uint16_t data){
+    /* mask to select upper 8 bits from data */
+    uint8_t H = (data & 0xFF00) >> 8;
+    /* mask to select */
+    uint8_t L = data & 0xFF;
+
+    /* TODO: rework return codes here */
+
+    datamem_write_addr(d, offset, addr_high, H);
+    return datamem_write_addr(d, offset, addr_low, L);
+}
+
 /*  ---------------------------------  */
 /*  AVR GENERAL REGISTERS              */
 /*  ---------------------------------  */
@@ -60,22 +81,12 @@ int datamem_write_reg(struct datamem* d, int addr, uint8_t data){
     return -1;
 }
 
-/*  NOTE: Little Endian */
-uint16_t datamem_read_reg16(struct datamem* d, int addrLow, int addrHigh){
-    uint16_t L = datamem_read_addr(d, RFILE_OFFSET, addrLow);
-    uint16_t H = datamem_read_addr(d, RFILE_OFFSET, addrHigh);
-    L = L << 8;
-    return L + H;
+uint16_t datamem_read_reg16(struct datamem* d, int addr_low, int addr_high){
+    return datamem_read_addr16(d, RFILE_OFFSET, addr_low, addr_high);
 }
 
-/*  NOTE Little Endian */
-int datamem_write_reg16(struct datamem* d, int addrLow, int addrHigh, uint16_t data){
-    /* mask to remove upper 8 bits from L (Little Endian) */
-    uint8_t L = (data & 0xFF00) >> 8;
-    /* mask to remove lower 8 bits then to move within 8bit space */
-    uint8_t H = data & 0xFF;
-    datamem_write_reg(d, addrHigh, H);
-    return datamem_write_reg(d, addrLow, L);
+int datamem_write_reg16(struct datamem* d, int addr_low, int addr_high, uint16_t data){
+    return datamem_write_addr16(d, RFILE_OFFSET, addr_low, addr_high, data);
 }
 
 uint16_t datamem_read_reg_X(struct datamem* d){
@@ -121,6 +132,10 @@ int datamem_read_io_bit(struct datamem* d, int addr, int bit){
     return -1;
 }
 
+uint16_t datamem_read_io_SP(struct datamem* d){
+    return datamem_read_addr16(d, IOFILE_OFFSET, SPL, SPH);
+}
+
 int datamem_write_io(struct datamem* d, int addr, uint8_t data){
     if (addr >= 0 && addr < IOFILE_SIZE){
         return datamem_write_addr(d,IOFILE_OFFSET, addr, data);
@@ -145,6 +160,10 @@ int datamem_write_io_bit(struct datamem* d, int addr, int bit, int data){
         }
     }
     return -1;
+}
+
+int datamem_write_io_SP(struct datamem* d, uint16_t sp){
+    return datamem_write_addr16(d, IOFILE_OFFSET, SPL, SPH, sp);
 }
 
 /*  ---------------------------------  */
