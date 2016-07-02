@@ -35,8 +35,10 @@ An instruction followed by a (p) denotes a partial implemention.
 
 * ADD
 * BREAK (p)
+* MOV
 * NOP
-
+* PUSH
+* RJMP
 
 ### Partial Implementation Details
 

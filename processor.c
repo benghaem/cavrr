@@ -84,6 +84,9 @@ void processor_exec(struct processor* p){
         case PUSH:
             PxPUSH(p);
             break;
+        case RJMP:
+            PxRJMP(p);
+            break;
         case BREAK:
             PxBREAK(p);
             return;
@@ -108,7 +111,7 @@ void processor_pc_update(struct processor* p, uint16_t pc){
 void processor_pc_increment(struct processor* p, int v){
     p->pc += v;
     if (p->pc > 0x07FF){
-        p->pc = 0;
+        p->pc = p->pc - 0x07FF;
     }
     return;
 }
@@ -273,3 +276,31 @@ void PxPUSH(struct processor* p){
     return;
 }
 
+/*----------------------------------*/
+/* RJMP 1100 | kkkk | kkkk | kkkk   */
+/*  --> kkkk | kkkk | 1100 | kkkk   */
+/* k - rel address                  */
+/*----------------------------------*/
+void PxRJMP(struct processor* p){
+    uint16_t k;
+    int16_t k_signed;
+    /* Isolate r */
+    k = (( p->oper.bits & 0xFF00 ) >> 8 ) | (( p->oper.bits & 0x000F ) << 8);
+
+    /*
+     * K is a 12bit 2's complement number so we will convert it into a signed
+     * integer
+     */
+
+    if (k >> 11 & 0x1){
+        k_signed = -1 * (((~k) & 0x7ff) + 1);
+    } else {
+        k_signed = k;
+    }
+
+    printf("K: %i, Ksigned: %i\n",k,k_signed);
+
+    processor_pc_increment(p, k_signed + 1);
+
+    return;
+}
