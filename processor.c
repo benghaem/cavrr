@@ -212,6 +212,51 @@ void PxBREAK(struct processor* p){
     return;
 }
 
+/*---------------------------------*/
+/*  IN 1011 | 0aad | dddd | aaaa   */
+/* --> dddd | aaaa | 1011 | 0aad   */
+/* d - destination                 */
+/* a - source in io space          */
+/*---------------------------------*/
+void PxIN(struct processor* p){
+    uint8_t d;
+    uint8_t a;
+    uint8_t IOa;
+
+    /* Isolate a and d */
+    a = (( p->oper.bits & 0x0F00 ) >> 8 ) | ((( p->oper.bits >> 1 ) & 0x3 ) << 4);
+    d = (( p->oper.bits & 0xF000 ) >> 12 ) | (( p->oper.bits & 0x1 ) << 4);
+
+    IOa = datamem_read_io(&p->dmem, a);
+
+    datamem_write_reg(&p->dmem, d, IOa);
+
+    processor_pc_increment(p, 1);
+
+    return;
+}
+
+/*---------------------------------*/
+/* LDI 1110 | kkkk | dddd | kkkk   */
+/* --> dddd | kkkk | 1110 | kkkk   */
+/* d - destination                 */
+/* k - immediate                   */
+/*---------------------------------*/
+void PxLDI(struct processor* p){
+    uint8_t d;
+    uint8_t k;
+
+    /* Isolate a and d */
+    k = (( p->oper.bits & 0x0F00 ) >> 8 ) | (( p->oper.bits & 0xF ) << 4);
+    d = (( p->oper.bits & 0xF000 ) >> 12 );
+
+    datamem_write_reg(&p->dmem, d, k);
+
+    processor_pc_increment(p, 1);
+
+    return;
+}
+
 
 /*---------------------------------*/
 /* MOV 0010 | 11rd | dddd | rrrr   */
@@ -231,6 +276,32 @@ void PxMOV(struct processor* p){
     Rr = datamem_read_reg(&p->dmem, r);
 
     datamem_write_reg(&p->dmem, d, Rr);
+
+    processor_pc_increment(p, 1);
+
+    return;
+}
+
+
+/*----------------------------------*/
+/* MOVW 0000 | 0001 | dddd | rrrr   */
+/*  --> dddd | rrrr | 0000 | 0001   */
+/* d - destination                  */
+/* r - source                       */
+/* Rd+1:Rd <- Rr+1:Rr               */
+/*----------------------------------*/
+void PxMOVW(struct processor* p){
+    uint8_t r;
+    uint8_t d;
+    uint16_t Rr16;
+
+    /* Isolate r and d */
+    r = (( p->oper.bits & 0x0F00 ) >> 8 );
+    d = (( p->oper.bits & 0xF000 ) >> 12 );
+
+    Rr16 = datamem_read_reg16(&p->dmem, r, r+1);
+
+    datamem_write_reg16(&p->dmem, r, r+1, Rr16);
 
     processor_pc_increment(p, 1);
 
