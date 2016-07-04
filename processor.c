@@ -102,7 +102,7 @@ void processor_exec(struct processor* p){
         default:
             printf("EXEC: Not implemented\n");
             PxBREAK(p);
-            break;
+            return;
     }
 
     p->state = FETCH;

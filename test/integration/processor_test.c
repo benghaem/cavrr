@@ -21,6 +21,8 @@ int main(int argc, char** argv){
     /* Init processor in debug mode */
     processor_init(&p, 1);
 
+    printf("cavrr processor_test v0\nBenjamin Ghaemmaghami (2016)\nhttps://github.com/benghaem/cavrr\nhttps://benghaem.com\n");
+
     if(ihex_open(&ih,argv[1])){
         printf("Opened: %s\n", argv[1]);
         while(!ihex_at_end(&ih)){
