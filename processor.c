@@ -68,15 +68,24 @@ void processor_fetch(struct processor* p){
 void processor_exec(struct processor* p){
 
     if (p->debug){
-        printf("Executing: %s\n",instruction_str(p->oper.inst));
+        printf("EXEC: %s\n",instruction_str(p->oper.inst));
     }
 
     switch (p->oper.inst){
         case ADD:
             PxADD(p);
             break;
+        case IN:
+            PxIN(p);
+            break;
+        case LDI:
+            PxLDI(p);
+            break;
         case MOV:
             PxMOV(p);
+            break;
+        case MOVW:
+            PxMOVW(p);
             break;
         case NOP:
             PxNOP(p);
@@ -92,6 +101,7 @@ void processor_exec(struct processor* p){
             return;
         default:
             printf("EXEC: Not implemented\n");
+            PxBREAK(p);
             break;
     }
 
