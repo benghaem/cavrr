@@ -707,6 +707,7 @@ enum instruction instruction_decode_bytes(uint16_t bytes){
             }
         }
     }
+    return instr;
 }
 
 int instruction_is_32b(enum instruction instr){
