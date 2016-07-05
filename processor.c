@@ -96,6 +96,9 @@ void processor_exec(struct processor* p){
         case RJMP:
             PxRJMP(p);
             break;
+        case STD_Z:
+            PxSTD_Z(p);
+            break;
         case BREAK:
             PxBREAK(p);
             return;
@@ -382,6 +385,33 @@ void PxRJMP(struct processor* p){
     printf("K: %i, Ksigned: %i\n",k,k_signed);
 
     processor_pc_increment(p, k_signed + 1);
+
+    return;
+}
+
+/*-----------------------------------*/
+/* STD_Z 10q0 | qq1r | rrrr | 0qqq   */
+/*   --> rrrr | 0qqq | 10q0 | qq1r   */
+/* r - Source register               */
+/* q - displacement                  */
+/* Also captures ST_Z q=0            */
+/*-----------------------------------*/
+void PxSTD_Z(struct processor* p){
+    uint8_t r;
+    uint8_t Rr;
+    uint8_t q;
+    uint16_t z;
+
+    /* Isolate r and q*/
+    r = (( p->oper.bits & 0xF000 ) >> 12 ) | (( p->oper.bits & 0x1 ) << 4 );
+    q = (( p->oper.bits & 0x700 ) >> 8 ) | (( p->oper.bits & 0xc ) << 1) | (( p->oper.bits & 0x20 ));
+
+    Rr = datamem_read_reg(&p->dmem, r);
+    z = datamem_read_reg_Z(&p->dmem);
+
+    datamem_write_addr(&p->dmem, 0, z + q, Rr);
+
+    processor_pc_increment(p, 1);
 
     return;
 }

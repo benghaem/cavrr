@@ -61,3 +61,5 @@ void PxNOP(struct processor* p);
 void PxPUSH(struct processor* p);
 
 void PxRJMP(struct processor* p);
+
+void PxSTD_Z(struct processor* p);
