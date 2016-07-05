@@ -1,4 +1,4 @@
-print("#include \"instruction.h\"")x
+print("#include \"instruction.h\"")
 print("""char* instruction_str(enum instruction instr){
     switch(instr){"""
     )

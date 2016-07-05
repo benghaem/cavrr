@@ -77,34 +77,34 @@ char* instruction_str(enum instruction instr){
             return "LAS";
         case LAT:
             return "LAT";
-        case LD1:
-            return "LD1";
-        case LD2:
-            return "LD2";
-        case LD3:
-            return "LD3";
-        case LDD_4:
-            return "LDD_4";
-        case LDD_Y2:
-            return "LDD_Y2";
-        case LDD_Y3:
-            return "LDD_Y3";
-        case LDD_Z2:
-            return "LDD_Z2";
-        case LDD_Z3:
-            return "LDD_Z3";
-        case LDD_Z4:
-            return "LDD_Z4";
+        case LDD_Y:
+            return "LDD_Y";
+        case LDD_Z:
+            return "LDD_Z";
         case LDI:
             return "LDI";
         case LDS:
             return "LDS";
-        case LPM1:
-            return "LPM1";
-        case LPM2:
-            return "LPM2";
-        case LPM3:
-            return "LPM3";
+        case LD_X:
+            return "LD_X";
+        case LD_Xm:
+            return "LD_Xm";
+        case LD_Xp:
+            return "LD_Xp";
+        case LD_Ym:
+            return "LD_Ym";
+        case LD_Yp:
+            return "LD_Yp";
+        case LD_Zm:
+            return "LD_Zm";
+        case LD_Zp:
+            return "LD_Zp";
+        case LPM:
+            return "LPM";
+        case LPM_Z:
+            return "LPM_Z";
+        case LPM_Zp:
+            return "LPM_Zp";
         case LSR:
             return "LSR";
         case MOV:
@@ -161,28 +161,28 @@ char* instruction_str(enum instruction instr){
             return "SLEEP";
         case SPM:
             return "SPM";
-        case SPM2_4:
-            return "SPM2_4";
-        case ST1:
-            return "ST1";
-        case ST2:
-            return "ST2";
-        case ST3:
-            return "ST3";
+        case SPM2_Z:
+            return "SPM2_Z";
+        case STD_Y:
+            return "STD_Y";
+        case STD_Z:
+            return "STD_Z";
         case STS:
             return "STS";
-        case ST_Y2:
-            return "ST_Y2";
-        case ST_Y3:
-            return "ST_Y3";
-        case ST_Y4:
-            return "ST_Y4";
-        case ST_Z2:
-            return "ST_Z2";
-        case ST_Z3:
-            return "ST_Z3";
-        case ST_Z4:
-            return "ST_Z4";
+        case ST_X:
+            return "ST_X";
+        case ST_Xm:
+            return "ST_Xm";
+        case ST_Xp:
+            return "ST_Xp";
+        case ST_Ym:
+            return "ST_Ym";
+        case ST_Yp:
+            return "ST_Yp";
+        case ST_Zm:
+            return "ST_Zm";
+        case ST_Zp:
+            return "ST_Zp";
         case SUB:
             return "SUB";
         case SUBI:
