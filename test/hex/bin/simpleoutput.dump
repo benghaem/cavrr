@@ -1,0 +1,32 @@
+
+bin/simpleoutput.o:     file format elf32-avr
+
+
+Disassembly of section .text:
+
+00000000 <main>:
+   0:	cf 93       	push	r28
+   2:	df 93       	push	r29
+   4:	cd b7       	in	r28, 0x3d	; 61
+   6:	de b7       	in	r29, 0x3e	; 62
+   8:	87 e3       	ldi	r24, 0x37	; 55
+   a:	90 e0       	ldi	r25, 0x00	; 0
+   c:	2f ef       	ldi	r18, 0xFF	; 255
+   e:	fc 01       	movw	r30, r24
+  10:	20 83       	st	Z, r18
+  12:	88 e3       	ldi	r24, 0x38	; 56
+  14:	90 e0       	ldi	r25, 0x00	; 0
+  16:	20 ef       	ldi	r18, 0xF0	; 240
+  18:	fc 01       	movw	r30, r24
+  1a:	20 83       	st	Z, r18
+  1c:	88 e3       	ldi	r24, 0x38	; 56
+  1e:	90 e0       	ldi	r25, 0x00	; 0
+  20:	28 e3       	ldi	r18, 0x38	; 56
+  22:	30 e0       	ldi	r19, 0x00	; 0
+  24:	f9 01       	movw	r30, r18
+  26:	20 81       	ld	r18, Z
+  28:	20 95       	com	r18
+  2a:	fc 01       	movw	r30, r24
+  2c:	20 83       	st	Z, r18
+  2e:	00 00       	nop
+  30:	00 c0       	rjmp	.+0      	; 0x32 <__zero_reg__+0x31>

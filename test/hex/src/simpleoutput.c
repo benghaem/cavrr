@@ -1,5 +1,5 @@
 #include <avr/io.h>
-
+#include <avr/cpufunc.h>
 int main(void){
 
     /* Enable output */
@@ -10,6 +10,6 @@ int main(void){
 
     while(1){
         PORTB = ~PORTB;
+        _NOP();
     }
-
 }
