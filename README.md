@@ -22,7 +22,7 @@ Then current emulator can be built using the included makefile
 
 ## Test Suite
 
-The automatic test suite can be built by running:
+The automated test suite can be built by running:
 
 `make test`
 
@@ -31,14 +31,23 @@ The automatic test suite can be built by running:
 ## Instruction Listing
 
 Here is a list of the currently implemented instructions.
-An instruction followed by a (p) denotes a partial implemention.
+
+(p) -> Partial implementation
+
+(!) -> No automated tests
 
 * ADD
 * BREAK (p)
+* COM (!)
+* IN (!)
+* LD Z / LDD Z + q (!)
+* LDI (!)
 * MOV
+* MOVW (!)
 * NOP
 * PUSH
 * RJMP
+* ST Z / STD Z + q (!)
 
 ### Partial Implementation Details
 
