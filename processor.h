@@ -48,7 +48,11 @@ void PxADD(struct processor* p);
 
 void PxBREAK(struct processor* p);
 
+void PxCOM(struct processor* p);
+
 void PxIN(struct processor* p);
+
+void PxLDD_Z(struct processor* p);
 
 void PxLDI(struct processor* p);
 

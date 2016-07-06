@@ -75,8 +75,14 @@ void processor_exec(struct processor* p){
         case ADD:
             PxADD(p);
             break;
+        case COM:
+            PxCOM(p);
+            break;
         case IN:
             PxIN(p);
+            break;
+        case LDD_Z:
+            PxLDD_Z(p);
             break;
         case LDI:
             PxLDI(p);
@@ -225,6 +231,44 @@ void PxBREAK(struct processor* p){
     return;
 }
 
+
+/*---------------------------------*/
+/* COM 1001 | 010d | dddd | 0000   */
+/* --> dddd | 0000 | 1001 | 010d   */
+/* d - target register             */
+/*---------------------------------*/
+void PxCOM(struct processor* p){
+    uint8_t d;
+    uint8_t Rd;
+    uint8_t R;
+    int S, V, N, Z, C;
+
+    d = (( p->oper.bits & 0xF000 ) >> 12 ) | (( p->oper.bits & 0x1 ) << 4);
+
+    Rd = datamem_read_reg(&p->dmem, d);
+
+    R = ~Rd;
+
+    datamem_write_reg(&p->dmem, d, R);
+
+    V = 0;
+    N = bit(R,7);
+    S = N ^ V;
+    Z = (R = 0) ? 1 : 0;
+    C = 1;
+
+    datamem_write_io_bit(&p->dmem, SREG, SREG_V, V);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_N, N);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_S, S);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_Z, Z);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_C, C);
+
+    processor_pc_increment(p, 1);
+
+    return;
+}
+
+
 /*---------------------------------*/
 /*  IN 1011 | 0aad | dddd | aaaa   */
 /* --> dddd | aaaa | 1011 | 0aad   */
@@ -243,6 +287,32 @@ void PxIN(struct processor* p){
     IOa = datamem_read_io(&p->dmem, a);
 
     datamem_write_reg(&p->dmem, d, IOa);
+
+    processor_pc_increment(p, 1);
+
+    return;
+}
+/*-----------------------------------*/
+/* LDD_Z 10q0 | qq1d | dddd | 0qqq   */
+/*   --> dddd | 0qqq | 10q0 | qq1d   */
+/* d - Destination register          */
+/* q - displacement                  */
+/* Also captures LD_Z q=0            */
+/*-----------------------------------*/
+void PxLDD_Z(struct processor* p){
+    uint8_t d;
+    uint8_t q;
+    uint16_t z;
+    uint8_t dataZQ;
+
+    /* Isolate d and q*/
+    d = (( p->oper.bits & 0xF000 ) >> 12 ) | (( p->oper.bits & 0x1 ) << 4 );
+    q = (( p->oper.bits & 0x700 ) >> 8 ) | (( p->oper.bits & 0xc ) << 1) | (( p->oper.bits & 0x20 ));
+
+    z = datamem_read_reg_Z(&p->dmem);
+    dataZQ = datamem_read_addr(&p->dmem, 0, z + q);
+
+    datamem_write_reg(&p->dmem, d, dataZQ);
 
     processor_pc_increment(p, 1);
 
