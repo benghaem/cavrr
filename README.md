@@ -1,6 +1,6 @@
-## cavrr: An ATTiny45 Emulator Written in C [![Build Status](https://travis-ci.org/benghaem/cavrr.svg?branch=master)](https://travis-ci.org/benghaem/cavrr)
+## cavrr: An ATtiny45 Emulator Written in C [![Build Status](https://travis-ci.org/benghaem/cavrr.svg?branch=master)](https://travis-ci.org/benghaem/cavrr)
 
-This is my attempt to write a functional emulator of the ATTiny45 in C. My goal is to learn more about the AVR architecture and practice C in general. 
+This is my attempt to write a functional emulator of the ATtiny45 in C. My goal is to learn more about the AVR architecture and practice C in general. 
 
 Currently the following high level concepts have been implemented:
 
