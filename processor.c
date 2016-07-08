@@ -38,6 +38,12 @@ void processor_loop(struct processor* p){
     }
 }
 
+/* Step the state machine forward */
+void processor_step(struct processor* p){
+    processor_fetch(p);
+    processor_exec(p);
+}
+
 
 /* Fetch the next instruction from the data memory */
 /* and transform into an operation */
@@ -45,6 +51,10 @@ void processor_fetch(struct processor* p){
     uint16_t bits;
     uint16_t ex_bits;
     enum instruction next;
+
+    if (p->debug){
+        printf("FETCH\n");
+    }
 
     bits = progmem_read_addr(&p->pmem, p->pc);
 

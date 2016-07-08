@@ -3,6 +3,9 @@
 #include "instruction.h"
 #include "operation.h"
 
+#ifndef PROCESSOR_H
+#define PROCESSOR_H
+
 enum pstate{
     INIT,
     FETCH,
@@ -23,6 +26,8 @@ struct processor{
 void processor_init(struct processor* p, int debug);
 
 void processor_loop(struct processor* p);
+
+void processor_step(struct processor* p);
 
 void processor_fetch(struct processor* p);
 
@@ -67,3 +72,5 @@ void PxPUSH(struct processor* p);
 void PxRJMP(struct processor* p);
 
 void PxSTD_Z(struct processor* p);
+
+#endif /* processor.h */

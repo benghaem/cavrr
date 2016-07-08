@@ -2,9 +2,13 @@ CC=clang
 CCFLAGS=-g -ansi -pedantic-errors
 CCTESTFLAGS=-g
 
-all: bin/memory.o bitutil instruction bin/processor.o bin/intelhex.o bin/processor_test
+all: bin/memory.o bitutil instruction bin/processor.o bin/intelhex.o bin/processor_test bin/cavrr
 
 core: bin/memory.o bitutil instruction bin/processor.o bin/intelhex.o
+
+
+bin/cavrr: cavrr.c core
+	$(CC) $(CCFLAGS) cavrr.c bin/*.o -o bin/cavrr
 
 
 bin/test: test/test.c test/instr/ bin/ test/general/
