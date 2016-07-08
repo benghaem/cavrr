@@ -23,9 +23,9 @@ And build the project
 
 ## Usage
 
-The run the binary from `bin/cavrr`. Currently the program requires one argument: a file to load.
-For example:
-`bin/cavrr test/hex/bin/simpleoutput.hex`
+Run the binary at `bin/cavrr`. Currently the program requires one argument: a file to load.
+
+For example: `bin/cavrr test/hex/bin/simpleoutput.hex`
 
 Program execution may be controlled through the built-in debugger.
 
