@@ -1,13 +1,19 @@
 #include "processor.h"
+#include "memory.h"
 #include "util/intelhex.h"
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+
+struct config{
+    char bkps[PROGMEM_SIZE];
+    char* fname;
+};
 
 const char version_string[] = "cavrr: An ATtiny45 Emulator\n"
                               "Version 0.0.0\n"
                               "Benjamin Ghaemmaghami (2016)\n"
                               "View the source at: https://github.com/benghaem/cavrr\n";
-
 
 int load_program(char* fname, struct processor* p){
     ihex ih;
@@ -48,11 +54,27 @@ void print_pc_region(struct processor* p, int rel_start, int rel_end){
     }
 }
 
+char** get_cmds(char *str){
+    /* We need enough space for a possible tokenization of all characters */
+    char **cmds = malloc(sizeof(char*) * strlen(str));
+    char *pch;
+    int n = 0;
+
+    pch = strtok(str, " \n");
+    while(pch != NULL){
+        cmds[n] = pch;
+        pch = strtok(NULL, " \n");
+        n++;
+    }
+
+    return cmds;
+}
 
 int main(int argc, char **argv){
     struct processor p;
     int running = 1;
     char cmd[100];
+    char **cmd_argv;
 
     if (argc < 1){
         printf("not enough arguments\n");
@@ -68,17 +90,21 @@ int main(int argc, char **argv){
 
     while (running){
         printf("cavrr> ");
-        scanf("%99s", cmd);
+
+        fgets(cmd, 100, stdin);
+        cmd_argv = get_cmds(cmd);
 
         if (!strcmp(cmd, "run")){
+            /* TODO: allow the ability to do something like "run filename" */
             processor_loop(&p);
-        } else if (!strcmp(cmd, "step")){
-            processor_step(&p);
-        } else if (!strcmp(cmd, "dbe")){
+        } else if (!strcmp(cmd_argv[0], "step")){
+            /* Replace this with something that respects breakpoints */
+            processor_step(&p, atoi(cmd_argv[1]));
+        } else if (!strcmp(cmd_argv[0], "dbe")){
             printf("debug enabled\n");
             p.debug = 1;
-        } else if (!strcmp(cmd, "exit")){
-            return 0;
+        } else if (!strcmp(cmd_argv[0], "exit")){
+            running = 0;
         } else if (!strcmp(cmd, "ppc")){
             printf("processor pc: %i",p.pc);
         } else if (!strcmp(cmd, "local")){
@@ -86,6 +112,8 @@ int main(int argc, char **argv){
         } else{
             printf("%s: unknown command\n", cmd);
         }
+
+        free(cmd_argv);
     }
 
 }

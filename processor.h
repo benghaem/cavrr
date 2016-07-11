@@ -27,7 +27,7 @@ void processor_init(struct processor* p, int debug);
 
 void processor_loop(struct processor* p);
 
-void processor_step(struct processor* p);
+void processor_step(struct processor* p, int n);
 
 void processor_fetch(struct processor* p);
 

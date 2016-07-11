@@ -39,11 +39,12 @@ void processor_loop(struct processor* p){
 }
 
 /* Step the state machine forward */
-void processor_step(struct processor* p){
-    processor_fetch(p);
-    processor_exec(p);
+void processor_step(struct processor* p, int n){
+    for (; n > 0; n--){
+        processor_fetch(p);
+        processor_exec(p);
+    }
 }
-
 
 /* Fetch the next instruction from the data memory */
 /* and transform into an operation */
