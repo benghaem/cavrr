@@ -2,6 +2,13 @@
 #include "util/bitutil.h"
 #include <stdio.h>
 
+/*
+ * Decodes 16bits in little endian format
+ * to an instruction
+ *
+ * This function is auto-generated and attempts to
+ * efficiently subset groups of instructions by bit
+ */
 enum instruction instruction_decode_bytes(uint16_t bytes){
     enum instruction instr = UNKNOWN;
     /* little endian inputs */
@@ -710,6 +717,10 @@ enum instruction instruction_decode_bytes(uint16_t bytes){
     return instr;
 }
 
+/*
+ * Returns 1 if an instruction is 32b. Used when the processor fetches
+ * instructions from program memory.
+ */
 int instruction_is_32b(enum instruction instr){
     int is_32b = 0;
     switch (instr){

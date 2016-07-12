@@ -321,7 +321,7 @@ void PxLDD_Z(struct processor* p){
     q = (( p->oper.bits & 0x700 ) >> 8 ) | (( p->oper.bits & 0xc ) << 1) | (( p->oper.bits & 0x20 ));
 
     z = datamem_read_reg_Z(&p->dmem);
-    dataZQ = datamem_read_addr(&p->dmem, 0, z + q);
+    dataZQ = datamem_read_addr(&p->dmem, ZERO_OFFSET, z + q);
 
     datamem_write_reg(&p->dmem, d, dataZQ);
 
@@ -433,7 +433,7 @@ void PxPUSH(struct processor* p){
 
     stack_addr = processor_sp_read(p);
 
-    datamem_write_addr(&p->dmem, 0, stack_addr, Rr);
+    datamem_write_addr(&p->dmem, ZERO_OFFSET, stack_addr, Rr);
 
     processor_pc_increment(p, 1);
     processor_sp_decrement(p, 1);
@@ -490,7 +490,7 @@ void PxSTD_Z(struct processor* p){
     Rr = datamem_read_reg(&p->dmem, r);
     z = datamem_read_reg_Z(&p->dmem);
 
-    datamem_write_addr(&p->dmem, 0, z + q, Rr);
+    datamem_write_addr(&p->dmem, ZERO_OFFSET, z + q, Rr);
 
     processor_pc_increment(p, 1);
 

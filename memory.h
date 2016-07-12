@@ -12,6 +12,7 @@
 #define PROGMEM_SIZE 2048
 
 /* Offsets for register access within data memory */
+#define ZERO_OFFSET 0
 #define RFILE_OFFSET 0
 #define IOFILE_OFFSET 32
 #define SRAM_OFFSET 96

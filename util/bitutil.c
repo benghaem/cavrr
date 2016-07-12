@@ -1,15 +1,21 @@
 #include "bitutil.h"
 #include <stdint.h>
 
-/*Test the bits of a target
- * For example to compare the third bits 0001, 0000, 0001
+/*
+ * Compares the bits of the target value to that of the test
+ * value as described by the mask
+ * For example to compare the big-e 0th bits
+ * the arguments will be: 0001, 0000, 0001
  */
 int bit_test(unsigned long target, unsigned long test, unsigned long mask){
     unsigned long masked = target & mask;
     return (masked == test);
 }
 
-/* Create a new integer from an array of bits */
+/*
+ * Creates a new integer from an array of bits
+ * and a length
+ */
 unsigned long bit_create(unsigned int* bits, unsigned int size){
     int i;
     unsigned long ret = 0;
@@ -24,7 +30,13 @@ unsigned long bit_create(unsigned int* bits, unsigned int size){
     return ret;
 }
 
-/* assumes a c style string of length 3 */
+/*
+ * Coverts a c style string with length 3
+ * containing the hex characters 0-F
+ * to its 8bit uint representation
+ *
+ * Ex "FF\0" -> 255, "00\0" -> 0
+ */
 uint8_t ascii_byte_to_int(char* str){
     uint8_t output = 0;
     int i;

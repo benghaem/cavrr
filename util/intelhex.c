@@ -2,7 +2,9 @@
 #include "bitutil.h"
 #include <string.h>
 
-/* Open an intel hex formatted file */
+/*
+ * Opens an intel hex formatted file
+ */
 int ihex_open(ihex *ih, char* filename){
     ih->data_sum = 0;
     ih->data_remaining = 0;
@@ -19,17 +21,22 @@ int ihex_open(ihex *ih, char* filename){
     return 1;
 }
 
-/* Close the file */
+/*
+ * Closes the file
+ */
 int ihex_close(ihex *ih){
     return fclose(ih->fp);
 }
 
-/* Getter to check if at the end of a file */
+/*
+ * Checks if at the end of the file
+ */
 int ihex_at_end(ihex* ih){
     return ih->at_end;
 }
 
-/* Function consumes the front of each line read in
+/*
+ * Consumes the front of each line read in
  * The programmer should not have to call this function directly
  */
 void ihex_consume_start(ihex* ih){
@@ -56,7 +63,8 @@ void ihex_consume_start(ihex* ih){
         if(recordtype == 0){
             /* data case */
             ih->in_data = 1;
-            /* if we are in this case we should just request the
+            /*
+             * if we are in this case we should just request the
              * next byte
              */
         }
@@ -69,8 +77,9 @@ void ihex_consume_start(ihex* ih){
     }
 }
 
-/* Function to validate checksum
- * currently does not validate checksum
+/*
+ * Validates checksums
+ * TODO: currently does not validate checksum
  * just consumes the values
  */
 int ihex_validate_checksum(ihex* ih){
@@ -88,7 +97,8 @@ int ihex_validate_checksum(ihex* ih){
 }
 
 
-/* Function to get the next byte of the file. This function will always return so
+/*
+ * Gets the next byte of the file. This function will always return so
  * one should check ihex_at_end before running. This function will automatically call
  * ihex_consume_start when needed
  */
@@ -101,7 +111,8 @@ uint8_t ihex_get_byte(ihex* ih){
         return 0;
     }
 
-    /* if we are in the data we can just go ahead and
+    /*
+     * if we are in the data we can just go ahead and
      * read the bytes
      */
     if(ih->in_data){
@@ -112,7 +123,8 @@ uint8_t ihex_get_byte(ihex* ih){
             ret = ascii_byte_to_int(bytestr);
             ih->data_remaining--;
 
-            /* make sure that was not the last piece of data
+            /*
+             * make sure that was not the last piece of data
              * if it was then we need to restart
              */
             if(ih->data_remaining == 0){
@@ -123,7 +135,8 @@ uint8_t ihex_get_byte(ihex* ih){
             }
         }
     }
-    /* otherwise we need to consume the start
+    /*
+     * otherwise we need to consume the start
      * and then get bytes
      */
     else{
@@ -133,4 +146,3 @@ uint8_t ihex_get_byte(ihex* ih){
     }
     return ret;
 }
-

@@ -1,4 +1,11 @@
 #include "instruction.h"
+
+/*
+ * Converts an instruction to its string representation
+ * useful for debugging and display
+ *
+ * Automatically generated from the instruction listing
+ */
 char* instruction_str(enum instruction instr){
     switch(instr){
         case ADD:

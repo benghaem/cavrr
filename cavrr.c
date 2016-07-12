@@ -15,6 +15,10 @@ const char version_string[] = "cavrr: An ATtiny45 Emulator\n"
                               "Benjamin Ghaemmaghami (2016)\n"
                               "View the source at: https://github.com/benghaem/cavrr\n";
 
+/*
+ * Loads an intelhex formatted file into the processor's program memory
+ * starting from address 0
+ */
 int load_program(char* fname, struct processor* p){
     ihex ih;
     int pm_addr = 0;
@@ -33,6 +37,17 @@ int load_program(char* fname, struct processor* p){
     return 0;
 }
 
+/*
+ * Prints out a region of program memory relative to the processor's
+ * program counter.
+ * rel_start is assumed to be smaller than rel_end as the function can
+ * be called with a negative value for rel_start and a positive value for
+ * rel_end so that we can display something like:
+ * pc - 2
+ * pc - 1
+ * pc
+ * pc + 1
+ */
 void print_pc_region(struct processor* p, int rel_start, int rel_end){
     uint16_t local_pc;
     uint16_t progmem_value;
@@ -54,6 +69,12 @@ void print_pc_region(struct processor* p, int rel_start, int rel_end){
     }
 }
 
+/*
+ * Transforms a string into an array of strings similar to
+ * that of the normal argv.
+ * TODO: make function act on pointers so we can also "return"
+ * an argc value
+ */
 char** get_cmds(char *str){
     /* We need enough space for a possible tokenization of all characters */
     char **cmds = malloc(sizeof(char*) * strlen(str));

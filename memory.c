@@ -8,6 +8,11 @@
 /*  AVR DATA MEMORY (REG, IO, SRAM)    */
 /*  ---------------------------------  */
 
+/*
+ * Initializes a datamem struct with the proper values
+ * This is important to ensure the data memory is zeroed out
+ * and that the memory is in the expected state at start
+ */
 void* datamem_init(struct datamem* d){
     void* ret = memset(&(d->mem[0]),0,sizeof(d->mem));
     /* Set OCR1C to all 1's initial. See page 92 of datasheet */
@@ -17,7 +22,11 @@ void* datamem_init(struct datamem* d){
     return ret;
 }
 
-/* read from address in data memory */
+/*
+ * Reads 8bit value from address in data memory
+ * The offset argument allows the address to
+ * be located within a specific subspace of memory.
+ */
 uint8_t datamem_read_addr(struct datamem* d, int offset, int addr){
     int target = offset + addr;
     if (target >= 0 && target < DATAMEM_SIZE){
@@ -26,6 +35,12 @@ uint8_t datamem_read_addr(struct datamem* d, int offset, int addr){
     return 0;
 }
 
+/*
+ * Reads 16bit value from two addresses in data memory
+ * where the resulting 16bit value is the result of
+ * logically combining bits from the high address and
+ * the low address
+ */
 uint16_t datamem_read_addr16(struct datamem* d, int offset, int addr_low, int addr_high){
     uint16_t L = datamem_read_addr(d, offset, addr_low);
     uint16_t H = datamem_read_addr(d, offset, addr_high);
@@ -33,13 +48,16 @@ uint16_t datamem_read_addr16(struct datamem* d, int offset, int addr_low, int ad
     return H | L;
 }
 
-/*  write to any address in data memory */
-/*  we can provide a offset to select */
-/*  a specific subset of memory */
-/*  */
-/*  returns: */
-/*   -1 on error */
-/*   the address minus the offset on success */
+/*
+ * Writes to any address in data memory
+ * we can provide a offset to select
+ * a specific subset of memory
+ *
+ * Returns:
+ * -1 on error
+ * or
+ * the absolute address minus the offset on success
+ */
 int datamem_write_addr(struct datamem* d, int offset, int addr, uint8_t data){
     int target = offset + addr;
     /*  safety check on ranges */
@@ -51,21 +69,56 @@ int datamem_write_addr(struct datamem* d, int offset, int addr, uint8_t data){
     }
 }
 
+/*
+ * Writes a 16 bit value across two addresses
+ * the high eight bits are placed at the high address
+ * and the low eight bits are placed at the low address
+ *
+ * Returns:
+ * -1 on error (occurs if either of the values are outside
+ *  the range or if the addresses are equal)
+ *  or
+ *  the absolute address of the low value minus the offset
+ *  on success
+ */
 int datamem_write_addr16(struct datamem* d, int offset, int addr_low, int addr_high, uint16_t data){
     /* mask to select upper 8 bits from data */
     uint8_t H = (data & 0xFF00) >> 8;
     /* mask to select */
     uint8_t L = data & 0xFF;
 
-    /* TODO: rework return codes here */
+    int high_check = 0;
+    int low_check = 0;
+    int eq_check = 0;
 
-    datamem_write_addr(d, offset, addr_high, H);
-    return datamem_write_addr(d, offset, addr_low, L);
+    if (addr_high >= 0 && addr_high < DATAMEM_SIZE){
+        high_check = 1;
+    }
+
+    if (addr_low >= 0 && addr_low < DATAMEM_SIZE){
+        low_check = 1;
+    }
+
+    if (addr_low != addr_high){
+        eq_check = 1;
+    }
+
+    if (high_check && low_check && eq_check){
+        datamem_write_addr(d, offset, addr_high, H);
+        datamem_write_addr(d, offset, addr_low, L);
+        return addr_low - offset;
+    }
+    return -1;
 }
 
 /*  ---------------------------------  */
 /*  AVR GENERAL REGISTERS              */
 /*  ---------------------------------  */
+
+/*
+ * These functions are simply wrappers for the functions
+ * above with offsets and extended checks
+ */
 
 uint8_t datamem_read_reg(struct datamem* d, int addr){
     if (addr >= 0 && addr < RFILE_SIZE){
@@ -143,6 +196,14 @@ int datamem_write_io(struct datamem* d, int addr, uint8_t data){
     return -1;
 }
 
+/*
+ * Writes a specific bit to a register within the io space
+ * This should be used when updating complex io registers
+ * such as SREG that contain multiple flags
+ *
+ * Follows the same return convention as above
+ * where -1 represents error
+ */
 int datamem_write_io_bit(struct datamem* d, int addr, int bit, int data){
     uint8_t current_reg = datamem_read_io(d, addr);
     uint8_t isolated_bit;
@@ -162,6 +223,7 @@ int datamem_write_io_bit(struct datamem* d, int addr, int bit, int data){
     return -1;
 }
 
+/* Stack pointer */
 int datamem_write_io_SP(struct datamem* d, uint16_t sp){
     return datamem_write_addr16(d, IOFILE_OFFSET, SPL, SPH, sp);
 }
@@ -188,6 +250,9 @@ int datamem_write_sram(struct datamem* d, int addr, uint8_t data){
 /*  datamem DEBUG EXTRAS               */
 /*  ---------------------------------  */
 
+/*
+ * Displays a region of datamem for use when debugging
+ */
 void datamem_print_region(struct datamem* d, int startAddr, int stopAddr){
     uint8_t value;
     for (; startAddr < stopAddr; startAddr++){
@@ -201,6 +266,10 @@ void datamem_print_region(struct datamem* d, int startAddr, int stopAddr){
 /*  AVR PROGRAM MEMORY                 */
 /*  ---------------------------------  */
 
+/*
+ * Initializes the program memory by setting all
+ * values to zero
+ */
 void* progmem_init(struct progmem* p){
     return memset(&(p->mem[0]),0,sizeof(p->mem));
 }
