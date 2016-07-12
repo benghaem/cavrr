@@ -10,6 +10,8 @@ struct config{
     char* fname;
 };
 
+struct config cfg = {0};
+
 const char version_string[] = "cavrr: An ATtiny45 Emulator\n"
                               "Version 0.0.0\n"
                               "Benjamin Ghaemmaghami (2016)\n"
@@ -61,7 +63,9 @@ void print_pc_region(struct processor* p, int rel_start, int rel_end){
     for(; local_pc <= (p->pc + rel_end); local_pc++){
         progmem_value = progmem_read_addr(&p->pmem, local_pc);
 
-        printf("%4i, %2i : %X (%s)", local_pc, rel_start, progmem_value, instruction_str(instruction_decode_bytes(progmem_value)));
+        (cfg.bkps[local_pc] == 1) ? printf("*") : printf(" ");
+
+        printf("%4i, %2i : %04X (%s)", local_pc, rel_start, progmem_value, instruction_str(instruction_decode_bytes(progmem_value)));
 
         (local_pc == p->pc) ? printf(" <--\n") : printf("\n");
 
@@ -91,11 +95,26 @@ char** get_cmds(char *str){
     return cmds;
 }
 
+void toggle_breakpoint(int bp){
+    if (bp >=0 && bp < PROGMEM_SIZE){
+        cfg.bkps[bp] = !cfg.bkps[bp];
+    }
+}
+
+void step_till_breakpoint(struct processor *p){
+    /* Always step forward or we will get stuck on breakpoints */
+    processor_step(p,1);
+    while(cfg.bkps[p->pc] != 1){
+        processor_step(p, 1);
+    }
+}
+
 int main(int argc, char **argv){
     struct processor p;
     int running = 1;
     char cmd[100];
     char **cmd_argv;
+
 
     if (argc < 1){
         printf("not enough arguments\n");
@@ -124,12 +143,16 @@ int main(int argc, char **argv){
         } else if (!strcmp(cmd_argv[0], "dbe")){
             printf("debug enabled\n");
             p.debug = 1;
+        } else if (!strcmp(cmd_argv[0], "run_debug")){
+            step_till_breakpoint(&p);
         } else if (!strcmp(cmd_argv[0], "exit")){
             running = 0;
         } else if (!strcmp(cmd, "ppc")){
             printf("processor pc: %i",p.pc);
         } else if (!strcmp(cmd, "local")){
             print_pc_region(&p, -2, 4);
+        } else if (!strcmp(cmd_argv[0], "bt")){
+            toggle_breakpoint(atoi(cmd_argv[1]));
         } else{
             printf("%s: unknown command\n", cmd);
         }
