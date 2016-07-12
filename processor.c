@@ -5,7 +5,9 @@
 #include <stdio.h>
 #include "memory.h"
 
-/* Initialize the processor */
+/*
+ * Initializes the processor
+ */
 void processor_init(struct processor* p, int debug){
     struct operation nop = {NOP,0x0,0x0};
     /* Initialize program counter */
@@ -22,7 +24,9 @@ void processor_init(struct processor* p, int debug){
     return;
 }
 
-/* Run the processor state machine loop */
+/*
+ * Runs the processor state machine loop
+ */
 void processor_loop(struct processor* p){
     while (p->state != HALT){
         switch (p->state){
@@ -38,7 +42,9 @@ void processor_loop(struct processor* p){
     }
 }
 
-/* Step the state machine forward */
+/*
+ * Steps the state machine forward n steps
+ */
 void processor_step(struct processor* p, int n){
     for (; n > 0; n--){
         processor_fetch(p);
@@ -46,8 +52,10 @@ void processor_step(struct processor* p, int n){
     }
 }
 
-/* Fetch the next instruction from the data memory */
-/* and transform into an operation */
+/*
+ * Fetches the next instruction from the data memory
+ * and transforms it into an operation
+ */
 void processor_fetch(struct processor* p){
     uint16_t bits;
     uint16_t ex_bits;
@@ -76,6 +84,9 @@ void processor_fetch(struct processor* p){
     return;
 }
 
+/*
+ * Executes the current instruction
+ */
 void processor_exec(struct processor* p){
 
     if (p->debug){
@@ -129,7 +140,9 @@ void processor_exec(struct processor* p){
     return;
 }
 
-/* Update the program counter to a new value */
+/*
+ * Updates the program counter to a new value
+ */
 void processor_pc_update(struct processor* p, uint16_t pc){
     /* mask out bits above 10 */
     /* 0000 0111 1111 1111 */
@@ -137,7 +150,9 @@ void processor_pc_update(struct processor* p, uint16_t pc){
     return;
 }
 
-/* Increment the program counter by value*/
+/*
+ * Increments the program counter by value
+ */
 void processor_pc_increment(struct processor* p, int v){
     p->pc += v;
     if (p->pc > 0x07FF){
@@ -146,10 +161,16 @@ void processor_pc_increment(struct processor* p, int v){
     return;
 }
 
+/*
+ * Reads the processor stack pointer
+ */
 uint16_t processor_sp_read(struct processor *p){
     return datamem_read_io_SP(&p->dmem);
 }
 
+/*
+ * Updates the stack pointer
+ */
 void processor_sp_update(struct processor *p, uint16_t sp){
     /* mask out bits above 8 for the 45 */
     /* 0000 0001 1111 1111 */
