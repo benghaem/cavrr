@@ -23,26 +23,27 @@ And build the project
 
 ## Usage
 
-Run the binary at `bin/cavrr`. Currently the program requires one argument: a file to load.
+Run the binary at `bin/cavrr`. 
 
-For example: `bin/cavrr test/hex/bin/simpleoutput.hex`
+`cavrr [filename]`
 
+Files may be loaded by either passing a filename as an argument or using the load command.
 Program execution may be controlled through the built-in debugger.
 
 The commands have not been formalized, but at the time of writing the following commands are usable:
 
 * run [filename] - run the program in program memory or load and run
-* load <filename> - load a program from file
+* load &lt;filename&gt; - load a program from file
 * step [n] - step forward 1 or n instructions
 * bt [addr] - set breakpoint at current pc address or another address in program memory
 * local - display instructions in program memory near the program counter
-* set <flag> <value> - set the value of a config flag
+* set &lt;flag&gt; &lt;value&gt; - set the value of a config flag
 * dbe  - enable processor debug output
 * ppc  - print program counter
 * clear - clear the output (Terminals with ANSI support only)
 * exit - exit the program
 
-### Available Config Flags:
+### Available Config Flags
 
 * run_ignores_break - instruct the run command to ignore breakpoints (minor speed boost) [ default = 0 ]
 * no_reset_on_load - when loading a program from file do not reset the processor state [ default = 0 ]
@@ -59,9 +60,9 @@ The automated test suite can be built by running:
 
 Here is a list of the currently implemented instructions.
 
-(p) -> Partial implementation
+(p) -&gt; Partial implementation
 
-(!) -> No automated tests
+(!) -&gt; No automated tests
 
 * ADD
 * BREAK (p)
@@ -78,5 +79,5 @@ Here is a list of the currently implemented instructions.
 
 ### Partial Implementation Details
 
-* BREAK -> Does not check lock bits or JTAGEN / OCDEN fuses before entering
+* BREAK -&gt; Does not check lock bits or JTAGEN / OCDEN fuses before entering
 stopped state
