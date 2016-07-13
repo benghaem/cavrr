@@ -24,7 +24,8 @@ void instr_mov_test_exec(void **state) {
     uint16_t instr;
     uint16_t result;
 
-    processor_init(&p, 1);
+    processor_init(&p);
+
 
     pmem = &p.pmem;
     dmem = &p.dmem;

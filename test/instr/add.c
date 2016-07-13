@@ -25,7 +25,7 @@ void instr_add_test_exec(void **state) {
     uint16_t instr;
     uint16_t result1, result2;
 
-    processor_init(&p, 1);
+    processor_init(&p);
 
     pmem = &p.pmem;
     dmem = &p.dmem;
