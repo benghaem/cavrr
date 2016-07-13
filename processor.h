@@ -23,7 +23,7 @@ struct processor{
     int debug;
 };
 
-void processor_init(struct processor* p, int debug);
+void processor_init(struct processor* p);
 
 void processor_loop(struct processor* p);
 

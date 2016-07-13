@@ -8,7 +8,7 @@
 /*
  * Initializes the processor
  */
-void processor_init(struct processor* p, int debug){
+void processor_init(struct processor* p){
     struct operation nop = {NOP,0x0,0x0};
     /* Initialize program counter */
     p->pc = 0;
@@ -20,7 +20,7 @@ void processor_init(struct processor* p, int debug){
     datamem_init(&(p->dmem));
     progmem_init(&(p->pmem));
 
-    p->debug = debug;
+    p->debug = 0;
     return;
 }
 

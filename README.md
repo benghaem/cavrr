@@ -31,11 +31,21 @@ Program execution may be controlled through the built-in debugger.
 
 The commands have not been formalized, but at the time of writing the following commands are usable:
 
-* exit - exit the program
-* dbe  - enable processor debug output
-* run  - run the program in program memory
-* step - step forward one instruction
+* run [filename] - run the program in program memory or load and run
+* load <filename> - load a program from file
+* step [n] - step forward 1 or n instructions
+* bt [addr] - set breakpoint at current pc address or another address in program memory
 * local - display instructions in program memory near the program counter
+* set <flag> <value> - set the value of a config flag
+* dbe  - enable processor debug output
+* ppc  - print program counter
+* clear - clear the output (Terminals with ANSI support only)
+* exit - exit the program
+
+### Available Config Flags:
+
+* run_ignores_break - instruct the run command to ignore breakpoints (minor speed boost) [ default = 0 ]
+* no_reset_on_load - when loading a program from file do not reset the processor state [ default = 0 ]
 
 ## Test Suite
 

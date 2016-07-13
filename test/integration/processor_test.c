@@ -19,7 +19,8 @@ int main(int argc, char** argv){
     }
 
     /* Init processor in debug mode */
-    processor_init(&p, 1);
+    processor_init(&p);
+    p.debug = 1;
 
     printf("cavrr processor_test v0\nBenjamin Ghaemmaghami (2016)\nhttps://github.com/benghaem/cavrr\nhttps://benghaem.com\n");
 
