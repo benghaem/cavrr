@@ -4,7 +4,7 @@
 
 void printlist(struct list* iter){
     printf("[");
-    while(iter != NULL){
+    while(iter->next != NULL){
         printf("%i, ",iter->v);
         iter = iter->next;
     }
@@ -21,10 +21,13 @@ int main(void){
     printlist(l);
 
     list_remove(l, 3);
-
+    list_remove(l, 2);
+    list_remove(l, 1);
     printlist(l);
 
-    assert(list_find(l,1) == 1);
+    list_remove(l,4);
+
+    printlist(l);
 
     list_destroy(l);
 }

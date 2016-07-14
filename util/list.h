@@ -12,7 +12,7 @@ int list_append(struct list* l, int v);
 
 int list_remove(struct list* l, int v);
 
-struct list* list_create(int v);
+struct list* list_create();
 
 void list_destroy(struct list *l);
 
