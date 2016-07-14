@@ -36,6 +36,9 @@ The commands have not been formalized, but at the time of writing the following 
 * load &lt;filename&gt; - load a program from file
 * step [n] - step forward 1 or n instructions
 * bt [addr] - set breakpoint at current pc address or another address in program memory
+* watch (reg | io | sram | raw) &lt;addr&gt; - watch a memory location for changes. reg, io, sram, and 
+raw each provide address offsets for easy access to those spaces. Note that this function currently only works
+when used with the run command. (Make sure to set a breakpoint if the target program contains any infinite loops)
 * local - display instructions in program memory near the program counter
 * set &lt;flag&gt; &lt;value&gt; - set the value of a config flag
 * dbe  - enable processor debug output

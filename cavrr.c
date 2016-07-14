@@ -1,22 +1,41 @@
-#include "processor.h"
+#include "cavrr.h"
 #include "memory.h"
 #include "util/intelhex.h"
+#include "util/list.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
 struct config{
-    char bkps[PROGMEM_SIZE];
     char run_ignores_break;
-    char no_reset_on_load;
+    char reset_on_load;
 };
 
-static struct config config = {0};
+struct state{
+    char bkps[PROGMEM_SIZE];
+    struct list* watch_addrs;
+    struct datamem local_dmem;
+};
+
+static struct config config = {
+    0, /* run_ignores_break */
+    1, /* reset_on_load */
+};
+
+static struct state state = {0};
 
 const char version_string[] = "cavrr: An ATtiny45 Emulator\n"
                               "Version 0.0.0\n"
                               "Benjamin Ghaemmaghami (2016)\n"
                               "View the source at: https://github.com/benghaem/cavrr\n";
+
+
+
+void init_state(){
+    datamem_init(&state.local_dmem);
+    state.watch_addrs = list_create();
+}
+
 
 /*
  * Loads an Intel Hex formatted file into the processor's program memory
@@ -27,7 +46,7 @@ int load_program(char* fname, struct processor* p){
     int pm_addr = 0;
     uint16_t op;
 
-    if (!config.no_reset_on_load){
+    if (!config.reset_on_load){
         processor_init(p);
     }
 
@@ -68,7 +87,7 @@ void print_pc_region(struct processor* p, int rel_start, int rel_end){
     for(; local_pc <= (p->pc + rel_end); local_pc++){
         progmem_value = progmem_read_addr(&p->pmem, local_pc);
 
-        (config.bkps[local_pc] == 1) ? printf("*") : printf(" ");
+        (state.bkps[local_pc] == 1) ? printf("*") : printf(" ");
 
         printf("%4i, %2i : %04X (%s)", local_pc, rel_start, progmem_value, instruction_str(instruction_decode_bytes(progmem_value)));
 
@@ -84,8 +103,8 @@ void print_pc_region(struct processor* p, int rel_start, int rel_end){
 void set_config_flag(char* str, char val){
     if(!strcmp(str, "run_ignores_break")){
         config.run_ignores_break = val;
-    } else if(!strcmp(str, "no_reset_on_load")){
-        config.no_reset_on_load = val;
+    } else if(!strcmp(str, "reset_on_load")){
+        config.reset_on_load = val;
     } else {
         printf("unknown config value: %s\n",str);
     }
@@ -119,7 +138,7 @@ void get_cmds(char *str, char** argv[], int* argc){
  */
 void toggle_breakpoint(int bp){
     if (bp >=0 && bp < PROGMEM_SIZE){
-        config.bkps[bp] = !config.bkps[bp];
+        state.bkps[bp] = !state.bkps[bp];
     }
 }
 
@@ -129,9 +148,110 @@ void toggle_breakpoint(int bp){
 void step_till_breakpoint(struct processor *p){
     /* Always step forward or we will get stuck on breakpoints */
     processor_step(p,1);
-    while(config.bkps[p->pc] != 1){
+    check_watched(p);
+    while(state.bkps[p->pc] != 1){
         processor_step(p, 1);
+        check_watched(p);
     }
+}
+
+
+/*
+ * Checks for changes to watched addresses
+ */
+void check_watched(struct processor *p){
+    struct list* iter = state.watch_addrs;
+    uint8_t current_val;
+    uint8_t prev_val;
+    int addr;
+
+    while (iter->next != NULL){
+        addr = iter->v;
+
+
+        current_val = datamem_read_addr(&p->dmem, ZERO_OFFSET, addr);
+        prev_val = datamem_read_addr(&state.local_dmem, ZERO_OFFSET, addr);
+
+        if (current_val != prev_val){
+            datamem_write_addr(&state.local_dmem, ZERO_OFFSET, addr, current_val);
+            printf("%03X changed: %04X -> %04X\n", addr, prev_val, current_val );
+        }
+
+        iter = iter->next;
+    }
+}
+
+
+/*
+ * Parses the instructions passed into the watch and unwatch commands
+ */
+int parse_watch(struct processor *p, char* mode, char* offset_str, char* addr_str){
+    int offset;
+    int addr;
+    int set = 0;
+
+    if(!strcmp(mode, "watch")){
+        set = 1;
+    }
+
+    addr = (int) strtol(addr_str, NULL, 16);
+
+    if (addr >= 0 && addr < DATAMEM_SIZE){
+
+        if (!strcmp(offset_str, "reg")){
+            offset = RFILE_OFFSET;
+        } else if (!strcmp(offset_str, "io")){
+            offset = IOFILE_OFFSET;
+        } else if (!strcmp(offset_str, "sram")){
+            offset = SRAM_OFFSET;
+        } else if (!strcmp(offset_str, "raw")){
+            offset = ZERO_OFFSET;
+        } else {
+            printf("offset mode given was invalid\n");
+            return 0;
+        }
+
+        return set_watch(p, offset, addr, set);
+
+    } else{
+        printf("address was out of range\n");
+        return 0;
+    }
+
+}
+
+
+/*
+ * Adds or removes watching state on an address
+ */
+int set_watch(struct processor *p, int offset, int addr, int set){
+    int already_set;
+    int full_addr;
+    uint8_t current_val;
+    full_addr = addr + offset;
+
+    if (full_addr >=0 && full_addr <= DATAMEM_SIZE){
+
+        current_val = datamem_read_addr(&p->dmem, offset, addr);
+
+        already_set = list_find(state.watch_addrs, full_addr);
+
+        /*
+         * These are the only two cases that matter
+         * in the other two cases we do not have to do anything
+         */
+        if (set && !already_set){
+            /* load current value into the local dmem so we can diff */
+            list_append(state.watch_addrs, full_addr);
+            datamem_write_addr(&state.local_dmem, offset, addr, current_val);
+            printf("Set watch on 0x%03X. Current value is 0x%04X\n", full_addr, current_val);
+        } else if (!set && already_set){
+            list_remove(state.watch_addrs, full_addr);
+        }
+
+        return 1;
+    }
+    return 0;
 }
 
 int main(int argc, char **argv){
@@ -143,10 +263,12 @@ int main(int argc, char **argv){
 
     printf("%s", version_string);
 
+
+    init_state();
     processor_init(&p);
 
     if (argc > 1){
-        /* NOTE: initializes the processor a second time if no_reset_on_load = 0 */
+        /* NOTE: initializes the processor a second time if reset_on_load = 1 */
         load_program(argv[1],&p);
     }
 
@@ -199,12 +321,21 @@ int main(int argc, char **argv){
             } else{
             toggle_breakpoint(p.pc);
             }
+
         } else if (!strcmp(cmd_argv[0], "set")){
             if (cmd_argc > 2){
                 set_config_flag(cmd_argv[1], atoi(cmd_argv[2]));
             } else {
                 printf("No flag given\n");
             }
+
+         } else if (!strcmp(cmd_argv[0], "watch") || !strcmp(cmd_argv[0], "unwatch")){
+            if (cmd_argc == 3){
+                parse_watch(&p, cmd_argv[0], cmd_argv[1], cmd_argv[2]);
+            } else {
+                printf("Incorrect number of arguments\n");
+            }
+
 
         } else if (!strcmp(cmd_argv[0], "clear")){
             /* Will only work on terminals that support ANSI */

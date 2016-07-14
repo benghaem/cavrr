@@ -4,7 +4,7 @@ CCTESTFLAGS=-g
 
 all: bin/memory.o bitutil instruction bin/processor.o bin/intelhex.o bin/processor_test bin/cavrr
 
-core: bin/memory.o bitutil instruction bin/processor.o bin/intelhex.o
+core: bin/memory.o bitutil instruction bin/processor.o bin/intelhex.o bin/list.o
 
 
 bin/cavrr: cavrr.c core
@@ -58,6 +58,15 @@ bin/processor.o: processor.c processor.h
 
 bin/intelhex.o: util/intelhex.c util/intelhex.h
 	$(CC) $(CCFLAGS) -c util/intelhex.c -o bin/intelhex.o
+
+
+#######################
+
+# Intel HEX
+
+bin/list.o: util/list.c util/list.h
+	$(CC) $(CCFLAGS) -c util/list.c -o bin/list.o
+
 
 
 ######################

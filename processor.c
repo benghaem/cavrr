@@ -484,7 +484,7 @@ void PxRJMP(struct processor* p){
         k_signed = k;
     }
 
-    printf("K: %i, Ksigned: %i\n",k,k_signed);
+    /* printf("K: %i, Ksigned: %i\n",k,k_signed); */
 
     processor_pc_increment(p, k_signed + 1);
 
