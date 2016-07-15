@@ -2,17 +2,6 @@
 #include <stdint.h>
 
 /*
- * Compares the bits of the target value to that of the test
- * value as described by the mask
- * For example to compare the big-e 0th bits
- * the arguments will be: 0001, 0000, 0001
- */
-int bit_test(unsigned long target, unsigned long test, unsigned long mask){
-    unsigned long masked = target & mask;
-    return (masked == test);
-}
-
-/*
  * Creates a new integer from an array of bits
  * and a length
  */

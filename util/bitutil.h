@@ -3,9 +3,16 @@
 #ifndef BITUTIL_H
 #define BITUTIL_H
 
+/* Isolates a single bit from a value */
 #define bit( I, b ) ( I >> b & 0x1 )
 
-int bit_test(unsigned long target, unsigned long test, unsigned long mask);
+/*
+ * Compares the bits of the target value to that of the test
+ * value as described by the mask
+ * For example to compare the big-e 0th bits
+ * the arguments will be: 0001, 0000, 0001
+ */
+#define bit_test(Target,Test,Mask) (((Target) & (Mask)) == (Test))
 
 unsigned long bit_create(unsigned int* bits, unsigned int size);
 
