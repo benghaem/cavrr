@@ -58,7 +58,7 @@ void processor_step(struct processor* p, int n){
  */
 void processor_fetch(struct processor* p){
     uint16_t bits;
-    uint16_t ex_bits;
+    uint16_t ex_bits = 0x0000;
     enum instruction next;
 
     if (p->debug){

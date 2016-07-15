@@ -1,5 +1,8 @@
 # Changelog
 
+## 7/15/16
+* Some minor changes to fix compiler warnings
+
 ## 7/14/16
 * Add address printing with `print (reg | io | sram | raw) <addr>`
 * Add helpful function to parse addresses (replaces logic for watch and print)

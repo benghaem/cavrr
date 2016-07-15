@@ -23,7 +23,7 @@ static struct config config = {
     1, /* reset_on_load */
 };
 
-static struct state state = {0};
+static struct state state = {{0},0,{{0}}};
 
 const char version_string[] = "cavrr: An ATtiny45 Emulator\n"
                               "Version 0.0.0\n"
@@ -78,7 +78,6 @@ int load_program(char* fname, struct processor* p){
 void print_pc_region(struct processor* p, int rel_start, int rel_end){
     uint16_t local_pc;
     uint16_t progmem_value;
-    enum instruction instr = UNKNOWN;
 
     if (p->pc + rel_start < 0){
         rel_start = rel_start - (p->pc + rel_start);
@@ -222,7 +221,6 @@ void check_watched(struct processor *p){
  * Parses the instructions passed into the watch and unwatch commands
  */
 int parse_watch(struct processor *p, char* mode, char* offset_str, char* addr_str){
-    int offset;
     int addr;
     int set = 0;
 
@@ -329,7 +327,9 @@ int main(int argc, char **argv){
     while (running){
         printf("cavrr> ");
 
-        fgets(cmd, 100, stdin);
+        if (fgets(cmd, 100, stdin) == NULL){
+            continue;
+        };
         get_cmds(cmd, &cmd_argv, &cmd_argc);
 
         if (!strcmp(cmd_argv[0], "run")){

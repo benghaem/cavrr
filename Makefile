@@ -1,5 +1,5 @@
 CC=clang
-CCFLAGS=-g -ansi -pedantic-errors -O2
+CCFLAGS=-g -ansi -pedantic-errors -O2 -Wall
 CCTESTFLAGS=-g
 
 all: bin/memory.o bitutil instruction bin/processor.o bin/intelhex.o bin/processor_test bin/cavrr

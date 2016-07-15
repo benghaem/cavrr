@@ -46,33 +46,38 @@ void ihex_consume_start(ihex* ih){
     int recordtype;
 
     /* readin line starting char */
-    fgets(single,2,ih->fp);
+    if (fgets(single,2,ih->fp) != NULL){
 
-    if (strcmp(single, ":") == 0){
+        if (strcmp(single, ":") == 0){
 
-        /* read in data length */
-        fgets(bytestr,3,ih->fp);
-        ih->data_remaining = ascii_byte_to_int(bytestr);
+            /* read in data length */
+            if (fgets(bytestr,3,ih->fp) != NULL){
+                ih->data_remaining = ascii_byte_to_int(bytestr);
 
-        /* read in address offset (ignoring for now) */
-        fgets(wordstr,5,ih->fp);
+                /* read in address offset (ignoring for now) */
+                if (fgets(wordstr,5,ih->fp) != NULL){
 
-        /* read in record type */
-        fgets(bytestr,3,ih->fp);
-        recordtype = ascii_byte_to_int(bytestr);
-        if(recordtype == 0){
-            /* data case */
-            ih->in_data = 1;
-            /*
-             * if we are in this case we should just request the
-             * next byte
-             */
-        }
-        if(recordtype == 1){
-            /* end of file case */
-            ih->in_data = 0;
-            ih->at_end = 1;
+                    /* read in record type */
+                    if(fgets(bytestr,3,ih->fp) != NULL){;
+                        recordtype = ascii_byte_to_int(bytestr);
+                        if(recordtype == 0){
+                            /* data case */
+                            ih->in_data = 1;
+                            /*
+                             * if we are in this case we should just request the
+                             * next byte
+                             */
+                        }
+                        if(recordtype == 1){
+                            /* end of file case */
+                            ih->in_data = 0;
+                            ih->at_end = 1;
 
+                        }
+                    }
+                }
+
+            }
         }
     }
 }
@@ -86,13 +91,14 @@ int ihex_validate_checksum(ihex* ih){
     char bytestr[3];
 
     /* eat checksum */
-    fgets(bytestr,3,ih->fp);
-    printf("Checksum: %s \n",bytestr);
+    if (fgets(bytestr,3,ih->fp) != NULL){;
+        printf("Checksum: %s \n",bytestr);
 
-    /* eat newline character */
-    fgets(bytestr,3,ih->fp);
-    ih->in_data = 0;
-
+        /* eat newline character */
+        if (fgets(bytestr,3,ih->fp) != NULL){
+            ih->in_data = 0;
+        }
+    }
     return 1;
 }
 
@@ -105,7 +111,6 @@ int ihex_validate_checksum(ihex* ih){
 uint8_t ihex_get_byte(ihex* ih){
     char bytestr[3];
     uint8_t ret = 0;
-    uint8_t recordtype;
 
     if(ih->at_end){
         return 0;
@@ -117,7 +122,14 @@ uint8_t ihex_get_byte(ihex* ih){
      */
     if(ih->in_data){
         if(ih->data_remaining > 0){
-            fgets(bytestr,3,ih->fp);
+            /*
+             * This is not an amazing way of handling this
+             * Maybe change in the future
+             */
+            if (fgets(bytestr,3,ih->fp) == NULL){
+                printf("Read error\n");
+                return 0;
+            };
             printf("%s, ",bytestr);
 
             ret = ascii_byte_to_int(bytestr);
