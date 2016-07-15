@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 
 struct config{
     char run_ignores_break;
@@ -209,7 +210,7 @@ void check_watched(struct processor *p){
 
         if (current_val != prev_val){
             datamem_write_addr(&state.local_dmem, ZERO_OFFSET, addr, current_val);
-            printf("%03X changed: %04X -> %04X\n", addr, prev_val, current_val );
+            printf("0x%03X changed: %02X -> %02X\n", addr, prev_val, current_val );
         }
 
         iter = iter->next;
@@ -259,7 +260,7 @@ int set_watch(struct processor *p, int addr, int set){
             /* load current value into the local dmem so we can diff */
             list_append(state.watch_addrs, addr);
             datamem_write_addr(&state.local_dmem, ZERO_OFFSET, addr, current_val);
-            printf("Set watch on 0x%03X. Current value is 0x%04X\n", addr, current_val);
+            printf("Set watch on 0x%03X. Current value is 0x%02X\n", addr, current_val);
         } else if (!set && already_set){
             list_remove(state.watch_addrs, addr);
         }
@@ -280,8 +281,31 @@ void print(struct processor *p, char* offset_str, char* addr_str ){
 
     if (addr != -1){
         val = datamem_read_addr(&p->dmem, ZERO_OFFSET, addr);
-        printf("0x%03X --> 0x%04X\n", addr, val);
+        printf("0x%03X --> 0x%02X\n", addr, val);
     }
+}
+
+/*
+ * Runs a very simple execution speed benchmark
+ * Because the processor does not currently simulate the cycle lengths
+ * of instructions the output frequency is based solely on _instructions_
+ * processed
+ */
+void ubench(struct processor *p, int instr_count){
+    clock_t time;
+    float time_sec;
+    float i_per_sec;
+    double mhz;
+    printf("Starting %i instruction benchmark\n", instr_count);
+    time = clock();
+    processor_step(p, instr_count);
+    time = clock() - time;
+    time_sec = (float) time / CLOCKS_PER_SEC;
+    i_per_sec = instr_count / time_sec;
+    mhz = i_per_sec / 1000000;
+    printf("Benchmark complete\n");
+    printf("Processed %i instructions in %f seconds\n",instr_count, time_sec);
+    printf("Instructions/sec: %.0f, MHz: %.4f\n", i_per_sec, mhz);
 }
 
 int main(int argc, char **argv){
@@ -377,6 +401,13 @@ int main(int argc, char **argv){
         } else if (!strcmp(cmd_argv[0], "clear")){
             /* Will only work on terminals that support ANSI */
             printf("\033[2J\033[H");
+
+        } else if (!strcmp(cmd_argv[0], "ubench")){
+            if (cmd_argc > 1){
+                ubench(&p, atoi(cmd_argv[1]));
+            } else {
+                 printf("Missing instruction count\n");
+            }
 
         } else{
             printf("%s unknown command\n", cmd);

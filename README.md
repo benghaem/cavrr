@@ -39,11 +39,13 @@ The commands have not been formalized, but at the time of writing the following 
 * watch (reg | io | sram | raw) &lt;addr&gt; - watch a memory location for changes. reg, io, sram, and 
 raw each provide address offsets for easy access to those spaces. Note that this function currently only works
 when used with the run command. (Make sure to set a breakpoint if the target program contains any infinite loops)
+* print (reg | io | sram | raw) &lt;addr&gt; - print out the value of a memory location
 * local - display instructions in program memory near the program counter
 * set &lt;flag&gt; &lt;value&gt; - set the value of a config flag
 * dbe  - enable processor debug output
 * ppc  - print program counter
 * clear - clear the output (Terminals with ANSI support only)
+* ubench &lt;instr_count&gt; - run a simple benchmark over instr_count instructions
 * exit - exit the program
 
 ### Available Config Flags
@@ -72,13 +74,14 @@ Here is a list of the currently implemented instructions.
 * COM (!)
 * IN (!)
 * LD Z / LDD Z + q (!)
-* LDI (!)
+* LDI
 * MOV
 * MOVW (!)
 * NOP
 * PUSH
 * RJMP
-* ST Z / STD Z + q (!)
+* ST Z
+* STD Z + q (!)
 
 ### Partial Implementation Details
 
