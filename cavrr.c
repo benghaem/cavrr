@@ -155,6 +155,41 @@ void step_till_breakpoint(struct processor *p){
     }
 }
 
+/*
+ * Converts a string based address into an integer value
+ * Returns address on success and -1 on error
+ */
+int parse_address(char* offset_str, char* addr_str){
+
+    int addr;
+    int offset;
+
+    addr = (int) strtol(addr_str, NULL, 16);
+
+    if (addr >= 0 && addr < DATAMEM_SIZE){
+
+        if (!strcmp(offset_str, "reg")){
+            offset = RFILE_OFFSET;
+        } else if (!strcmp(offset_str, "io")){
+            offset = IOFILE_OFFSET;
+        } else if (!strcmp(offset_str, "sram")){
+            offset = SRAM_OFFSET;
+        } else if (!strcmp(offset_str, "raw")){
+            offset = ZERO_OFFSET;
+        } else {
+            printf("Offset mode is invalid. Use reg, io, sram, or raw\n");
+            return -1;
+        }
+
+        return addr+offset;
+
+    } else{
+        printf("Address is out of range\n");
+        return -1;
+    }
+
+
+}
 
 /*
  * Checks for changes to watched addresses
@@ -194,47 +229,27 @@ int parse_watch(struct processor *p, char* mode, char* offset_str, char* addr_st
         set = 1;
     }
 
-    addr = (int) strtol(addr_str, NULL, 16);
+    addr = parse_address(offset_str, addr_str);
 
-    if (addr >= 0 && addr < DATAMEM_SIZE){
-
-        if (!strcmp(offset_str, "reg")){
-            offset = RFILE_OFFSET;
-        } else if (!strcmp(offset_str, "io")){
-            offset = IOFILE_OFFSET;
-        } else if (!strcmp(offset_str, "sram")){
-            offset = SRAM_OFFSET;
-        } else if (!strcmp(offset_str, "raw")){
-            offset = ZERO_OFFSET;
-        } else {
-            printf("offset mode given was invalid\n");
-            return 0;
-        }
-
-        return set_watch(p, offset, addr, set);
-
-    } else{
-        printf("address was out of range\n");
-        return 0;
+    if (addr != -1){
+        return set_watch(p, addr, set);
     }
-
+    return 0;
 }
 
 
 /*
  * Adds or removes watching state on an address
  */
-int set_watch(struct processor *p, int offset, int addr, int set){
+int set_watch(struct processor *p, int addr, int set){
     int already_set;
-    int full_addr;
     uint8_t current_val;
-    full_addr = addr + offset;
 
-    if (full_addr >=0 && full_addr <= DATAMEM_SIZE){
+    if (addr >=0 && addr <= DATAMEM_SIZE){
 
-        current_val = datamem_read_addr(&p->dmem, offset, addr);
+        current_val = datamem_read_addr(&p->dmem, ZERO_OFFSET, addr);
 
-        already_set = list_find(state.watch_addrs, full_addr);
+        already_set = list_find(state.watch_addrs, addr);
 
         /*
          * These are the only two cases that matter
@@ -242,16 +257,31 @@ int set_watch(struct processor *p, int offset, int addr, int set){
          */
         if (set && !already_set){
             /* load current value into the local dmem so we can diff */
-            list_append(state.watch_addrs, full_addr);
-            datamem_write_addr(&state.local_dmem, offset, addr, current_val);
-            printf("Set watch on 0x%03X. Current value is 0x%04X\n", full_addr, current_val);
+            list_append(state.watch_addrs, addr);
+            datamem_write_addr(&state.local_dmem, ZERO_OFFSET, addr, current_val);
+            printf("Set watch on 0x%03X. Current value is 0x%04X\n", addr, current_val);
         } else if (!set && already_set){
-            list_remove(state.watch_addrs, full_addr);
+            list_remove(state.watch_addrs, addr);
         }
 
         return 1;
     }
     return 0;
+}
+
+/*
+ * Prints out the value of an address in datamem
+ */
+void print(struct processor *p, char* offset_str, char* addr_str ){
+    int addr;
+    uint8_t val;
+
+    addr = parse_address(offset_str, addr_str);
+
+    if (addr != -1){
+        val = datamem_read_addr(&p->dmem, ZERO_OFFSET, addr);
+        printf("0x%03X --> 0x%04X\n", addr, val);
+    }
 }
 
 int main(int argc, char **argv){
@@ -329,9 +359,16 @@ int main(int argc, char **argv){
                 printf("No flag given\n");
             }
 
-         } else if (!strcmp(cmd_argv[0], "watch") || !strcmp(cmd_argv[0], "unwatch")){
+        } else if (!strcmp(cmd_argv[0], "watch") || !strcmp(cmd_argv[0], "unwatch")){
             if (cmd_argc == 3){
                 parse_watch(&p, cmd_argv[0], cmd_argv[1], cmd_argv[2]);
+            } else {
+                printf("Incorrect number of arguments\n");
+            }
+
+        } else if (!strcmp(cmd_argv[0], "print")){
+            if (cmd_argc == 3){
+                print(&p, cmd_argv[1], cmd_argv[2]);
             } else {
                 printf("Incorrect number of arguments\n");
             }

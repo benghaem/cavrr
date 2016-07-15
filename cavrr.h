@@ -17,7 +17,7 @@ void step_till_breakpoint(struct processor *p);
 
 void check_watched(struct processor *p);
 
-int set_watch(struct processor *p, int offset, int addr, int set);
+int set_watch(struct processor *p, int addr, int set);
 
 
 #endif /* cavrr.h */
