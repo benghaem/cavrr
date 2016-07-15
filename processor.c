@@ -361,11 +361,19 @@ void PxLDI(struct processor* p){
     uint8_t d;
     uint8_t k;
 
-    /* Isolate a and d */
+    /*
+     * This is very unclear in the documentation, but in this case
+     * we need to add an offset of 0x10 so that d = 0 -> 0x10
+     * d=0 -> r16 for some reason
+     */
+
+    /* Isolate a and d (note the above change for d)*/
     k = (( p->oper.bits & 0x0F00 ) >> 8 ) | (( p->oper.bits & 0xF ) << 4);
-    d = (( p->oper.bits & 0xF000 ) >> 12 );
+    d = (( p->oper.bits & 0xF000 ) >> 12) | (0x10);
 
     datamem_write_reg(&p->dmem, d, k);
+
+    /* printf("k, d: %X, %X\n", k, d); */
 
     processor_pc_increment(p, 1);
 
@@ -510,6 +518,8 @@ void PxSTD_Z(struct processor* p){
 
     Rr = datamem_read_reg(&p->dmem, r);
     z = datamem_read_reg_Z(&p->dmem);
+
+    /* printf("r, q, z: %X, %X, %X\n",r, q, z); */
 
     datamem_write_addr(&p->dmem, ZERO_OFFSET, z + q, Rr);
 
