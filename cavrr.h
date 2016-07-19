@@ -7,7 +7,7 @@ int load_program(char* fname, struct processor* p);
 
 void print_pc_region(struct processor *p, int rel_start, int rel_end);
 
-void set_config_flag(char* str, char val);
+void set_config_flag(char* str, unsigned int val);
 
 void get_cmds(char *str, char** argv[], int* argc);
 

@@ -6,24 +6,30 @@
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
+#include <signal.h>
 
 struct config{
-    char run_ignores_break;
-    char reset_on_load;
+    unsigned int run_ignores_break;
+    unsigned int reset_on_load;
+    unsigned int enable_step_delay;
+    unsigned int step_delay_ms;
 };
 
 struct state{
     char bkps[PROGMEM_SIZE];
     struct list* watch_addrs;
     struct datamem local_dmem;
+    volatile sig_atomic_t emu_running;
 };
 
 static struct config config = {
-    0, /* run_ignores_break */
-    1, /* reset_on_load */
+    0,   /* run_ignores_break */
+    1,   /* reset_on_load */
+    0,   /* enable_step_delay */
+    200  /* step_delay_ms */
 };
 
-static struct state state = {{0},0,{{0}}};
+static struct state state = {{0},0,{{0}},0};
 
 const char version_string[] = "cavrr: An ATtiny45 Emulator\n"
                               "Version 0.0.0\n"
@@ -31,12 +37,27 @@ const char version_string[] = "cavrr: An ATtiny45 Emulator\n"
                               "View the source at: https://github.com/benghaem/cavrr\n";
 
 
-
+/*
+ * Initializes complex state variables to reasonable values
+ */
 void init_state(){
     datamem_init(&state.local_dmem);
     state.watch_addrs = list_create();
 }
 
+/*
+ * Catches SIGINT so that it may be used to stop
+ * long running emulator programs
+ */
+void catch_sigint(int sig){
+    if (state.emu_running){
+        state.emu_running = 0;
+        printf("\nstopped by interrupt\n");
+        signal(sig, catch_sigint);
+    } else {
+        exit(1);
+    }
+}
 
 /*
  * Loads an Intel Hex formatted file into the processor's program memory
@@ -100,11 +121,15 @@ void print_pc_region(struct processor* p, int rel_start, int rel_end){
 /*
  * Sets the given configuration flag
  */
-void set_config_flag(char* str, char val){
+void set_config_flag(char* str, unsigned int val){
     if(!strcmp(str, "run_ignores_break")){
         config.run_ignores_break = val;
     } else if(!strcmp(str, "reset_on_load")){
         config.reset_on_load = val;
+    }else if(!strcmp(str, "enable_step_delay")){
+        config.enable_step_delay = val;
+    }else if(!strcmp(str, "step_delay_ms")){
+        config.step_delay_ms = val;
     } else {
         printf("unknown config value: %s\n",str);
     }
@@ -146,13 +171,33 @@ void toggle_breakpoint(int bp){
  * Steps the processor forward until a breakpoint is reached
  */
 void step_till_breakpoint(struct processor *p){
+    state.emu_running = 1;
     /* Always step forward or we will get stuck on breakpoints */
-    processor_step(p,1);
-    check_watched(p);
-    while(state.bkps[p->pc] != 1){
-        processor_step(p, 1);
+    do{
+        processor_step(p,1);
         check_watched(p);
-    }
+    }while(state.bkps[p->pc] != 1 && state.emu_running);
+}
+
+/*
+ * Wrapper for processor step that respects breakpoints and triggers watches
+ * also may be used to step at a specified delay
+ */
+void step(struct processor *p, int n){
+    struct timespec t1;
+    /* integer division no need to floor */
+    t1.tv_sec = config.step_delay_ms / 1000;
+    t1.tv_nsec = (config.step_delay_ms - (t1.tv_sec * 1000)) * 100000;
+
+    state.emu_running = 1;
+    do{
+        processor_step(p,1);
+        check_watched(p);
+        n--;
+        if (config.enable_step_delay){
+            nanosleep(&t1,NULL);
+        }
+    } while(state.bkps[p->pc] != 1 && n > 0 && state.emu_running);
 }
 
 /*
@@ -167,7 +212,6 @@ int parse_address(char* offset_str, char* addr_str){
     addr = (int) strtol(addr_str, NULL, 16);
 
     if (addr >= 0 && addr < DATAMEM_SIZE){
-
         if (!strcmp(offset_str, "reg")){
             offset = RFILE_OFFSET;
         } else if (!strcmp(offset_str, "io")){
@@ -313,8 +357,10 @@ int main(int argc, char **argv){
     char** cmd_argv;
     int cmd_argc;
 
-    printf("%s", version_string);
+    /* capture SIGINT to stop long running emulator programs */
+    signal (SIGINT, catch_sigint);
 
+    printf("%s", version_string);
 
     init_state();
     processor_init(&p);
@@ -344,9 +390,9 @@ int main(int argc, char **argv){
 
         } else if (!strcmp(cmd_argv[0], "step")){
             if (cmd_argc > 1){
-                processor_step(&p,atoi(cmd_argv[1]));
+                step(&p,atoi(cmd_argv[1]));
             } else {
-                processor_step(&p, 1);
+                step(&p, 1);
             }
 
         } else if (!strcmp(cmd_argv[0], "load")){
@@ -378,7 +424,7 @@ int main(int argc, char **argv){
 
         } else if (!strcmp(cmd_argv[0], "set")){
             if (cmd_argc > 2){
-                set_config_flag(cmd_argv[1], atoi(cmd_argv[2]));
+                set_config_flag(cmd_argv[1], (unsigned int)atoi(cmd_argv[2]));
             } else {
                 printf("No flag given\n");
             }
