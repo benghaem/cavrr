@@ -32,8 +32,6 @@ char* instruction_str(enum instruction instr){
             return "BSET";
         case BST:
             return "BST";
-        case CALL:
-            return "CALL";
         case CBI:
             return "CBI";
         case COM:
@@ -48,26 +46,8 @@ char* instruction_str(enum instruction instr){
             return "CPSE";
         case DEC:
             return "DEC";
-        case DES:
-            return "DES";
-        case EICALL:
-            return "EICALL";
-        case EIJMP:
-            return "EIJMP";
-        case ELPM1:
-            return "ELPM1";
-        case ELPM2:
-            return "ELPM2";
-        case ELPM3:
-            return "ELPM3";
         case EOR:
             return "EOR";
-        case FMUL:
-            return "FMUL";
-        case FMULS:
-            return "FMULS";
-        case FMULSU:
-            return "FMULSU";
         case ICALL:
             return "ICALL";
         case IJMP:
@@ -76,14 +56,6 @@ char* instruction_str(enum instruction instr){
             return "IN";
         case INC:
             return "INC";
-        case JMP:
-            return "JMP";
-        case LAC:
-            return "LAC";
-        case LAS:
-            return "LAS";
-        case LAT:
-            return "LAT";
         case LDD_Y:
             return "LDD_Y";
         case LDD_Z:
@@ -118,10 +90,6 @@ char* instruction_str(enum instruction instr){
             return "MOV";
         case MOVW:
             return "MOVW";
-        case MUL:
-            return "MUL";
-        case MULSU:
-            return "MULSU";
         case NEG:
             return "NEG";
         case NOP:
@@ -168,8 +136,6 @@ char* instruction_str(enum instruction instr){
             return "SLEEP";
         case SPM:
             return "SPM";
-        case SPM2_Z:
-            return "SPM2_Z";
         case STD_Y:
             return "STD_Y";
         case STD_Z:
@@ -198,8 +164,6 @@ char* instruction_str(enum instruction instr){
             return "SWAP";
         case WDR:
             return "WDR";
-        case XCH:
-            return "XCH";
         case UNKNOWN:
             return "UNKNOWN";
     }

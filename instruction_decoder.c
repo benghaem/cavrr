@@ -21,75 +21,47 @@ enum instruction instruction_decode_bytes(uint16_t bytes){
     low  part 2 -> 0xF0
     low  part 3 -> 0x0F
     */
-
-    /* Generated on Jul 04, 2016 @ 20:37 by genInstrSelect.py */
+    /* Generated on Jul 18, 2016 @ 15:25 by genInstrSelect.py */
     if(bit_test(high, 0x0, 0xd0)){
     /*000 on bits: (0, 1, 3) from op part: 0
-    --> ['ADD', 'AND', 'CLR', 'CPC', 'EOR', 'FMUL', 'FMULS', 'FMULSU', 'LSL', 'MOV', 'MOVW', 'MULSU', 'NOP', 'OR', 'SBC', 'TST']*/
+    --> ['ADD', 'AND', 'CLR', 'CPC', 'EOR', 'LSL', 'MOV', 'MOVW', 'NOP', 'OR', 'SBC', 'TST']*/
         if(bit_test(high, 0x0, 0xf0)){
         /*0000 on bits: (0, 1, 2, 3) from op part: 0
-        --> ['ADD', 'CPC', 'FMUL', 'FMULS', 'FMULSU', 'LSL', 'MOVW', 'MULSU', 'NOP', 'SBC']*/
+        --> ['ADD', 'CPC', 'LSL', 'MOVW', 'NOP', 'SBC']*/
             if(bit_test(high, 0x0, 0xc)){
             /*00 on bits: (0, 1) from op part: 1
-            --> ['FMUL', 'FMULS', 'FMULSU', 'MOVW', 'MULSU', 'NOP']*/
+            --> ['MOVW', 'NOP']*/
                 if(bit_test(high, 0x0, 0xf)){
                 /*0000 on bits: (0, 1, 2, 3) from op part: 1
                 --> ['NOP']*/
                 instr = NOP;
+                return instr;
                 }
                 if(bit_test(high, 0x1, 0xf)){
                 /*0001 on bits: (0, 1, 2, 3) from op part: 1
                 --> ['MOVW']*/
                 instr = MOVW;
-                }
-                if(bit_test(high, 0x3, 0xf)){
-                /*0011 on bits: (0, 1, 2, 3) from op part: 1
-                --> ['FMUL', 'FMULS', 'FMULSU', 'MULSU']*/
-                    if(bit_test(low, 0x0, 0x80)){
-                    /*0 on bits: (0,) from op part: 2
-                    --> ['FMUL', 'MULSU']*/
-                        if(bit_test(low, 0x0, 0x8)){
-                        /*0 on bits: (0,) from op part: 3
-                        --> ['MULSU']*/
-                        instr = MULSU;
-                        }
-                        if(bit_test(low, 0x8, 0x8)){
-                        /*1 on bits: (0,) from op part: 3
-                        --> ['FMUL']*/
-                        instr = FMUL;
-                        }
-                    }
-                    if(bit_test(low, 0x80, 0x80)){
-                    /*1 on bits: (0,) from op part: 2
-                    --> ['FMULS', 'FMULSU']*/
-                        if(bit_test(low, 0x0, 0x8)){
-                        /*0 on bits: (0,) from op part: 3
-                        --> ['FMULS']*/
-                        instr = FMULS;
-                        }
-                        if(bit_test(low, 0x8, 0x8)){
-                        /*1 on bits: (0,) from op part: 3
-                        --> ['FMULSU']*/
-                        instr = FMULSU;
-                        }
-                    }
+                return instr;
                 }
             }
             if(bit_test(high, 0x4, 0xc)){
             /*01 on bits: (0, 1) from op part: 1
             --> ['CPC']*/
             instr = CPC;
+            return instr;
             }
             if(bit_test(high, 0x8, 0xc)){
             /*10 on bits: (0, 1) from op part: 1
             --> ['SBC']*/
             instr = SBC;
+            return instr;
             }
             if(bit_test(high, 0xc, 0xc)){
             /*11 on bits: (0, 1) from op part: 1
             --> ['ADD', 'LSL']*/
             /* NOTE: Instruction codes equal */
             instr = ADD;
+            return instr;
             }
         }
         if(bit_test(high, 0x20, 0xf0)){
@@ -100,22 +72,26 @@ enum instruction instruction_decode_bytes(uint16_t bytes){
             --> ['AND', 'TST']*/
             /* NOTE: Instruction codes equal */
             instr = AND;
+            return instr;
             }
             if(bit_test(high, 0x4, 0xc)){
             /*01 on bits: (0, 1) from op part: 1
             --> ['CLR', 'EOR']*/
             /* NOTE: Instruction codes equal */
             instr = EOR;
+            return instr;
             }
             if(bit_test(high, 0x8, 0xc)){
             /*10 on bits: (0, 1) from op part: 1
             --> ['OR']*/
             instr = OR;
+            return instr;
             }
             if(bit_test(high, 0xc, 0xc)){
             /*11 on bits: (0, 1) from op part: 1
             --> ['MOV']*/
             instr = MOV;
+            return instr;
             }
         }
     }
@@ -129,28 +105,33 @@ enum instruction instruction_decode_bytes(uint16_t bytes){
             /*00 on bits: (0, 1) from op part: 1
             --> ['CPSE']*/
             instr = CPSE;
+            return instr;
             }
             if(bit_test(high, 0x4, 0xc)){
             /*01 on bits: (0, 1) from op part: 1
             --> ['CP']*/
             instr = CP;
+            return instr;
             }
             if(bit_test(high, 0x8, 0xc)){
             /*10 on bits: (0, 1) from op part: 1
             --> ['SUB']*/
             instr = SUB;
+            return instr;
             }
             if(bit_test(high, 0xc, 0xc)){
             /*11 on bits: (0, 1) from op part: 1
             --> ['ADC', 'ROL']*/
             /* NOTE: Instruction codes equal */
             instr = ROL;
+            return instr;
             }
         }
         if(bit_test(high, 0x30, 0xf0)){
         /*0011 on bits: (0, 1, 2, 3) from op part: 0
         --> ['CPI']*/
         instr = CPI;
+        return instr;
         }
     }
     if(bit_test(high, 0x40, 0xd0)){
@@ -160,12 +141,14 @@ enum instruction instruction_decode_bytes(uint16_t bytes){
         /*0100 on bits: (0, 1, 2, 3) from op part: 0
         --> ['SBCI']*/
         instr = SBCI;
+        return instr;
         }
         if(bit_test(high, 0x60, 0xf0)){
         /*0110 on bits: (0, 1, 2, 3) from op part: 0
         --> ['ORI', 'SBR']*/
         /* NOTE: Instruction codes equal */
         instr = ORI;
+        return instr;
         }
     }
     if(bit_test(high, 0x50, 0xd0)){
@@ -175,12 +158,14 @@ enum instruction instruction_decode_bytes(uint16_t bytes){
         /*0101 on bits: (0, 1, 2, 3) from op part: 0
         --> ['SUBI']*/
         instr = SUBI;
+        return instr;
         }
         if(bit_test(high, 0x70, 0xf0)){
         /*0111 on bits: (0, 1, 2, 3) from op part: 0
         --> ['ANDI', 'CBR']*/
         /* NOTE: Instruction codes equal */
         instr = ANDI;
+        return instr;
         }
     }
     if(bit_test(high, 0x80, 0xd0)){
@@ -193,11 +178,13 @@ enum instruction instruction_decode_bytes(uint16_t bytes){
             /*0 on bits: (0,) from op part: 3
             --> ['LD_Z', 'LDD_Z']*/
             instr = LDD_Z;
+            return instr;
             }
             if(bit_test(low, 0x8, 0x8)){
             /*1 on bits: (0,) from op part: 3
             --> ['LD_Y', 'LDD_Y']*/
             instr = LDD_Y;
+            return instr;
             }
         }
         if(bit_test(high, 0x2, 0x2)){
@@ -207,431 +194,331 @@ enum instruction instruction_decode_bytes(uint16_t bytes){
             /*0 on bits: (0,) from op part: 3
             --> ['ST_Z', 'STD_Z']*/
             instr = STD_Z;
+            return instr;
             }
             if(bit_test(low, 0x8, 0x8)){
             /*1 on bits: (0,) from op part: 3
             --> ['ST_Y', 'STD_Y']*/
             instr = STD_Y;
+            return instr;
             }
         }
     }
     if(bit_test(high, 0x90, 0xd0)){
     /*101 on bits: (0, 1, 3) from op part: 0
-    --> ['ADIW', 'ASR', 'BCLR', 'BREAK', 'BSET', 'CALL', 'CBI', 'CLC', 'CLH', 'CLI', 'CLN', 'CLS', 'CLT', 'CLV', 'CLZ', 'COM', 'DEC', 'DES', 'EICALL', 'EIJMP', 'ELPM1', 'ELPM2', 'ELPM3', 'ICALL', 'IJMP', 'IN', 'INC', 'JMP', 'LAC', 'LAS', 'LAT', 'LD_X', 'LD_Xp', 'LD_Xm', 'LD_Yp', 'LD_Ym', 'LD_Zp', 'LD_Zm', 'LDS', 'LPM', 'LPM_Z', 'LPM_Zp', 'LSR', 'MUL', 'NEG', 'OUT', 'POP', 'PUSH', 'RET', 'RETI', 'ROR', 'SBI', 'SBIC', 'SBIS', 'SBIW', 'SEC', 'SEH', 'SEI', 'SEN', 'SES', 'SET', 'SEV', 'SEZ', 'SLEEP', 'SPM', 'SPM2', 'SPM2_Z', 'ST_X', 'ST_Xp', 'ST_Xm', 'ST_Yp', 'ST_Ym', 'ST_Zp', 'ST_Zm', 'STS', 'SWAP', 'WDR', 'XCH']*/
+    --> ['ADIW', 'ASR', 'BCLR', 'BREAK', 'BSET', 'CBI', 'CLC', 'CLH', 'CLI', 'CLN', 'CLS', 'CLT', 'CLV', 'CLZ', 'COM', 'DEC', 'ICALL', 'IJMP', 'IN', 'INC', 'LD_X', 'LD_Xp', 'LD_Xm', 'LD_Yp', 'LD_Ym', 'LD_Zp', 'LD_Zm', 'LDS', 'LPM', 'LPM_Z', 'LPM_Zp', 'LSR', 'NEG', 'OUT', 'POP', 'PUSH', 'RET', 'RETI', 'ROR', 'SBI', 'SBIC', 'SBIS', 'SBIW', 'SEC', 'SEH', 'SEI', 'SEN', 'SES', 'SET', 'SEV', 'SEZ', 'SLEEP', 'SPM', 'ST_X', 'ST_Xp', 'ST_Xm', 'ST_Yp', 'ST_Ym', 'ST_Zp', 'ST_Zm', 'STS', 'SWAP', 'WDR']*/
         if(bit_test(high, 0x90, 0xf0)){
         /*1001 on bits: (0, 1, 2, 3) from op part: 0
-        --> ['ADIW', 'ASR', 'BCLR', 'BREAK', 'BSET', 'CALL', 'CBI', 'CLC', 'CLH', 'CLI', 'CLN', 'CLS', 'CLT', 'CLV', 'CLZ', 'COM', 'DEC', 'DES', 'EICALL', 'EIJMP', 'ELPM1', 'ELPM2', 'ELPM3', 'ICALL', 'IJMP', 'INC', 'JMP', 'LAC', 'LAS', 'LAT', 'LD_X', 'LD_Xp', 'LD_Xm', 'LD_Yp', 'LD_Ym', 'LD_Zp', 'LD_Zm', 'LDS', 'LPM', 'LPM_Z', 'LPM_Zp', 'LSR', 'MUL', 'NEG', 'POP', 'PUSH', 'RET', 'RETI', 'ROR', 'SBI', 'SBIC', 'SBIS', 'SBIW', 'SEC', 'SEH', 'SEI', 'SEN', 'SES', 'SET', 'SEV', 'SEZ', 'SLEEP', 'SPM', 'SPM2', 'SPM2_Z', 'ST_X', 'ST_Xp', 'ST_Xm', 'ST_Yp', 'ST_Ym', 'ST_Zp', 'ST_Zm', 'STS', 'SWAP', 'WDR', 'XCH']*/
-            if(bit_test(high, 0x0, 0xc)){
-            /*00 on bits: (0, 1) from op part: 1
-            --> ['ELPM2', 'ELPM3', 'LAC', 'LAS', 'LAT', 'LD_X', 'LD_Xp', 'LD_Xm', 'LD_Yp', 'LD_Ym', 'LD_Zp', 'LD_Zm', 'LDS', 'LPM_Z', 'LPM_Zp', 'POP', 'PUSH', 'ST_X', 'ST_Xp', 'ST_Xm', 'ST_Yp', 'ST_Ym', 'ST_Zp', 'ST_Zm', 'STS', 'XCH']*/
+        --> ['ADIW', 'ASR', 'BCLR', 'BREAK', 'BSET', 'CBI', 'CLC', 'CLH', 'CLI', 'CLN', 'CLS', 'CLT', 'CLV', 'CLZ', 'COM', 'DEC', 'ICALL', 'IJMP', 'INC', 'LD_X', 'LD_Xp', 'LD_Xm', 'LD_Yp', 'LD_Ym', 'LD_Zp', 'LD_Zm', 'LDS', 'LPM', 'LPM_Z', 'LPM_Zp', 'LSR', 'NEG', 'POP', 'PUSH', 'RET', 'RETI', 'ROR', 'SBI', 'SBIC', 'SBIS', 'SBIW', 'SEC', 'SEH', 'SEI', 'SEN', 'SES', 'SET', 'SEV', 'SEZ', 'SLEEP', 'SPM', 'ST_X', 'ST_Xp', 'ST_Xm', 'ST_Yp', 'ST_Ym', 'ST_Zp', 'ST_Zm', 'STS', 'SWAP', 'WDR']*/
+            if(bit_test(high, 0x0, 0xe)){
+            /*000 on bits: (0, 1, 2) from op part: 1
+            --> ['LD_X', 'LD_Xp', 'LD_Xm', 'LD_Yp', 'LD_Ym', 'LD_Zp', 'LD_Zm', 'LDS', 'LPM_Z', 'LPM_Zp', 'POP']*/
                 if(bit_test(low, 0x0, 0xf)){
                 /*0000 on bits: (0, 1, 2, 3) from op part: 3
-                --> ['LDS', 'STS']*/
-                    if(bit_test(high, 0x0, 0xe)){
-                    /*000 on bits: (0, 1, 2) from op part: 1
-                    --> ['LDS']*/
-                    instr = LDS;
-                    }
-                    if(bit_test(high, 0x2, 0xe)){
-                    /*001 on bits: (0, 1, 2) from op part: 1
-                    --> ['STS']*/
-                    instr = STS;
-                    }
+                --> ['LDS']*/
+                instr = LDS;
+                return instr;
                 }
                 if(bit_test(low, 0x1, 0xf)){
                 /*0001 on bits: (0, 1, 2, 3) from op part: 3
-                --> ['LD_Zp', 'ST_Zp']*/
-                    if(bit_test(high, 0x0, 0xe)){
-                    /*000 on bits: (0, 1, 2) from op part: 1
-                    --> ['LD_Zp']*/
-                    instr = LD_Zp;
-                    }
-                    if(bit_test(high, 0x2, 0xe)){
-                    /*001 on bits: (0, 1, 2) from op part: 1
-                    --> ['ST_Zp']*/
-                    instr = ST_Zp;
-                    }
+                --> ['LD_Zp']*/
+                instr = LD_Zp;
+                return instr;
                 }
                 if(bit_test(low, 0x2, 0xf)){
                 /*0010 on bits: (0, 1, 2, 3) from op part: 3
-                --> ['LD_Zm', 'ST_Zm']*/
-                    if(bit_test(high, 0x0, 0xe)){
-                    /*000 on bits: (0, 1, 2) from op part: 1
-                    --> ['LD_Zm']*/
-                    instr = LD_Zm;
-                    }
-                    if(bit_test(high, 0x2, 0xe)){
-                    /*001 on bits: (0, 1, 2) from op part: 1
-                    --> ['ST_Zm']*/
-                    instr = ST_Zm;
-                    }
+                --> ['LD_Zm']*/
+                instr = LD_Zm;
+                return instr;
                 }
                 if(bit_test(low, 0x4, 0xf)){
                 /*0100 on bits: (0, 1, 2, 3) from op part: 3
-                --> ['LPM_Z', 'XCH']*/
-                    if(bit_test(high, 0x0, 0xe)){
-                    /*000 on bits: (0, 1, 2) from op part: 1
-                    --> ['LPM_Z']*/
-                    instr = LPM_Z;
-                    }
-                    if(bit_test(high, 0x2, 0xe)){
-                    /*001 on bits: (0, 1, 2) from op part: 1
-                    --> ['XCH']*/
-                    instr = XCH;
-                    }
+                --> ['LPM_Z']*/
+                instr = LPM_Z;
+                return instr;
                 }
                 if(bit_test(low, 0x5, 0xf)){
                 /*0101 on bits: (0, 1, 2, 3) from op part: 3
-                --> ['LAS', 'LPM_Zp']*/
-                    if(bit_test(high, 0x0, 0xe)){
-                    /*000 on bits: (0, 1, 2) from op part: 1
-                    --> ['LPM_Zp']*/
-                    instr = LPM_Zp;
-                    }
-                    if(bit_test(high, 0x2, 0xe)){
-                    /*001 on bits: (0, 1, 2) from op part: 1
-                    --> ['LAS']*/
-                    instr = LAS;
-                    }
+                --> ['LPM_Zp']*/
+                instr = LPM_Zp;
+                return instr;
+                }
+                if(bit_test(low, 0x9, 0xf)){
+                /*1001 on bits: (0, 1, 2, 3) from op part: 3
+                --> ['LD_Yp']*/
+                instr = LD_Yp;
+                return instr;
+                }
+                if(bit_test(low, 0xa, 0xf)){
+                /*1010 on bits: (0, 1, 2, 3) from op part: 3
+                --> ['LD_Ym']*/
+                instr = LD_Ym;
+                return instr;
+                }
+                if(bit_test(low, 0xc, 0xf)){
+                /*1100 on bits: (0, 1, 2, 3) from op part: 3
+                --> ['LD_X']*/
+                instr = LD_X;
+                return instr;
+                }
+                if(bit_test(low, 0xd, 0xf)){
+                /*1101 on bits: (0, 1, 2, 3) from op part: 3
+                --> ['LD_Xp']*/
+                instr = LD_Xp;
+                return instr;
+                }
+                if(bit_test(low, 0xe, 0xf)){
+                /*1110 on bits: (0, 1, 2, 3) from op part: 3
+                --> ['LD_Xm']*/
+                instr = LD_Xm;
+                return instr;
+                }
+                if(bit_test(low, 0xf, 0xf)){
+                /*1111 on bits: (0, 1, 2, 3) from op part: 3
+                --> ['POP']*/
+                instr = POP;
+                return instr;
+                }
+            }
+            if(bit_test(high, 0x2, 0xe)){
+            /*001 on bits: (0, 1, 2) from op part: 1
+            --> ['PUSH', 'ST_X', 'ST_Xp', 'ST_Xm', 'ST_Yp', 'ST_Ym', 'ST_Zp', 'ST_Zm', 'STS']*/
+                if(bit_test(low, 0x0, 0xf)){
+                /*0000 on bits: (0, 1, 2, 3) from op part: 3
+                --> ['STS']*/
+                instr = STS;
+                return instr;
+                }
+                if(bit_test(low, 0x1, 0xf)){
+                /*0001 on bits: (0, 1, 2, 3) from op part: 3
+                --> ['ST_Zp']*/
+                instr = ST_Zp;
+                return instr;
+                }
+                if(bit_test(low, 0x2, 0xf)){
+                /*0010 on bits: (0, 1, 2, 3) from op part: 3
+                --> ['ST_Zm']*/
+                instr = ST_Zm;
+                return instr;
+                }
+                if(bit_test(low, 0x9, 0xf)){
+                /*1001 on bits: (0, 1, 2, 3) from op part: 3
+                --> ['ST_Yp']*/
+                instr = ST_Yp;
+                return instr;
+                }
+                if(bit_test(low, 0xa, 0xf)){
+                /*1010 on bits: (0, 1, 2, 3) from op part: 3
+                --> ['ST_Ym']*/
+                instr = ST_Ym;
+                return instr;
+                }
+                if(bit_test(low, 0xc, 0xf)){
+                /*1100 on bits: (0, 1, 2, 3) from op part: 3
+                --> ['ST_X']*/
+                instr = ST_X;
+                return instr;
+                }
+                if(bit_test(low, 0xd, 0xf)){
+                /*1101 on bits: (0, 1, 2, 3) from op part: 3
+                --> ['ST_Xp']*/
+                instr = ST_Xp;
+                return instr;
+                }
+                if(bit_test(low, 0xe, 0xf)){
+                /*1110 on bits: (0, 1, 2, 3) from op part: 3
+                --> ['ST_Xm']*/
+                instr = ST_Xm;
+                return instr;
+                }
+                if(bit_test(low, 0xf, 0xf)){
+                /*1111 on bits: (0, 1, 2, 3) from op part: 3
+                --> ['PUSH']*/
+                instr = PUSH;
+                return instr;
+                }
+            }
+            if(bit_test(high, 0x4, 0xe)){
+            /*010 on bits: (0, 1, 2) from op part: 1
+            --> ['ASR', 'BCLR', 'BREAK', 'BSET', 'CLC', 'CLH', 'CLI', 'CLN', 'CLS', 'CLT', 'CLV', 'CLZ', 'COM', 'DEC', 'ICALL', 'IJMP', 'INC', 'LPM', 'LSR', 'NEG', 'RET', 'RETI', 'ROR', 'SEC', 'SEH', 'SEI', 'SEN', 'SES', 'SET', 'SEV', 'SEZ', 'SLEEP', 'SPM', 'SWAP', 'WDR']*/
+                if(bit_test(low, 0x0, 0xf)){
+                /*0000 on bits: (0, 1, 2, 3) from op part: 3
+                --> ['COM']*/
+                instr = COM;
+                return instr;
+                }
+                if(bit_test(low, 0x1, 0xf)){
+                /*0001 on bits: (0, 1, 2, 3) from op part: 3
+                --> ['NEG']*/
+                instr = NEG;
+                return instr;
+                }
+                if(bit_test(low, 0x2, 0xf)){
+                /*0010 on bits: (0, 1, 2, 3) from op part: 3
+                --> ['SWAP']*/
+                instr = SWAP;
+                return instr;
+                }
+                if(bit_test(low, 0x3, 0xf)){
+                /*0011 on bits: (0, 1, 2, 3) from op part: 3
+                --> ['INC']*/
+                instr = INC;
+                return instr;
+                }
+                if(bit_test(low, 0x5, 0xf)){
+                /*0101 on bits: (0, 1, 2, 3) from op part: 3
+                --> ['ASR']*/
+                instr = ASR;
+                return instr;
                 }
                 if(bit_test(low, 0x6, 0xf)){
                 /*0110 on bits: (0, 1, 2, 3) from op part: 3
-                --> ['ELPM2', 'LAC']*/
-                    if(bit_test(high, 0x0, 0xe)){
-                    /*000 on bits: (0, 1, 2) from op part: 1
-                    --> ['ELPM2']*/
-                    instr = ELPM2;
-                    }
-                    if(bit_test(high, 0x2, 0xe)){
-                    /*001 on bits: (0, 1, 2) from op part: 1
-                    --> ['LAC']*/
-                    instr = LAC;
-                    }
+                --> ['LSR']*/
+                instr = LSR;
+                return instr;
                 }
                 if(bit_test(low, 0x7, 0xf)){
                 /*0111 on bits: (0, 1, 2, 3) from op part: 3
-                --> ['ELPM3', 'LAT']*/
-                    if(bit_test(high, 0x0, 0xe)){
-                    /*000 on bits: (0, 1, 2) from op part: 1
-                    --> ['ELPM3']*/
-                    instr = ELPM3;
+                --> ['ROR']*/
+                instr = ROR;
+                return instr;
+                }
+                if(bit_test(low, 0x8, 0xf)){
+                /*1000 on bits: (0, 1, 2, 3) from op part: 3
+                --> ['BCLR', 'BREAK', 'BSET', 'CLC', 'CLH', 'CLI', 'CLN', 'CLS', 'CLT', 'CLV', 'CLZ', 'LPM', 'RET', 'RETI', 'SEC', 'SEH', 'SEI', 'SEN', 'SES', 'SET', 'SEV', 'SEZ', 'SLEEP', 'SPM', 'WDR']*/
+                    if(bit_test(high, 0x4, 0xf)){
+                    /*0100 on bits: (0, 1, 2, 3) from op part: 1
+                    --> ['BCLR', 'BSET', 'CLC', 'CLH', 'CLI', 'CLN', 'CLS', 'CLT', 'CLV', 'CLZ', 'SEC', 'SEH', 'SEI', 'SEN', 'SES', 'SET', 'SEV', 'SEZ']*/
+                        if(bit_test(low, 0x0, 0x80)){
+                        /*0 on bits: (0,) from op part: 2
+                        --> ['BSET', 'SEC', 'SEH', 'SEI', 'SEN', 'SES', 'SET', 'SEV', 'SEZ']*/
+                        instr = BSET;
+                        return instr;
+                        }
+                        if(bit_test(low, 0x80, 0x80)){
+                        /*1 on bits: (0,) from op part: 2
+                        --> ['BCLR', 'CLC', 'CLH', 'CLI', 'CLN', 'CLS', 'CLT', 'CLV', 'CLZ']*/
+                        instr = BCLR;
+                        return instr;
+                        }
                     }
-                    if(bit_test(high, 0x2, 0xe)){
-                    /*001 on bits: (0, 1, 2) from op part: 1
-                    --> ['LAT']*/
-                    instr = LAT;
+                    if(bit_test(high, 0x5, 0xf)){
+                    /*0101 on bits: (0, 1, 2, 3) from op part: 1
+                    --> ['BREAK', 'LPM', 'RET', 'RETI', 'SLEEP', 'SPM', 'WDR']*/
+                        if(bit_test(low, 0x0, 0xf0)){
+                        /*0000 on bits: (0, 1, 2, 3) from op part: 2
+                        --> ['RET']*/
+                        instr = RET;
+                        return instr;
+                        }
+                        if(bit_test(low, 0x10, 0xf0)){
+                        /*0001 on bits: (0, 1, 2, 3) from op part: 2
+                        --> ['RETI']*/
+                        instr = RETI;
+                        return instr;
+                        }
+                        if(bit_test(low, 0x80, 0xf0)){
+                        /*1000 on bits: (0, 1, 2, 3) from op part: 2
+                        --> ['SLEEP']*/
+                        instr = SLEEP;
+                        return instr;
+                        }
+                        if(bit_test(low, 0x90, 0xf0)){
+                        /*1001 on bits: (0, 1, 2, 3) from op part: 2
+                        --> ['BREAK']*/
+                        instr = BREAK;
+                        return instr;
+                        }
+                        if(bit_test(low, 0xa0, 0xf0)){
+                        /*1010 on bits: (0, 1, 2, 3) from op part: 2
+                        --> ['WDR']*/
+                        instr = WDR;
+                        return instr;
+                        }
+                        if(bit_test(low, 0xc0, 0xf0)){
+                        /*1100 on bits: (0, 1, 2, 3) from op part: 2
+                        --> ['LPM']*/
+                        instr = LPM;
+                        return instr;
+                        }
+                        if(bit_test(low, 0xe0, 0xf0)){
+                        /*1110 on bits: (0, 1, 2, 3) from op part: 2
+                        --> ['SPM']*/
+                        instr = SPM;
+                        return instr;
+                        }
                     }
                 }
                 if(bit_test(low, 0x9, 0xf)){
                 /*1001 on bits: (0, 1, 2, 3) from op part: 3
-                --> ['LD_Yp', 'ST_Yp']*/
-                    if(bit_test(high, 0x0, 0xe)){
-                    /*000 on bits: (0, 1, 2) from op part: 1
-                    --> ['LD_Yp']*/
-                    instr = LD_Yp;
+                --> ['ICALL', 'IJMP']*/
+                    if(bit_test(high, 0x4, 0xf)){
+                    /*0100 on bits: (0, 1, 2, 3) from op part: 1
+                    --> ['IJMP']*/
+                    instr = IJMP;
+                    return instr;
                     }
-                    if(bit_test(high, 0x2, 0xe)){
-                    /*001 on bits: (0, 1, 2) from op part: 1
-                    --> ['ST_Yp']*/
-                    instr = ST_Yp;
+                    if(bit_test(high, 0x5, 0xf)){
+                    /*0101 on bits: (0, 1, 2, 3) from op part: 1
+                    --> ['ICALL']*/
+                    instr = ICALL;
+                    return instr;
                     }
                 }
                 if(bit_test(low, 0xa, 0xf)){
                 /*1010 on bits: (0, 1, 2, 3) from op part: 3
-                --> ['LD_Ym', 'ST_Ym']*/
-                    if(bit_test(high, 0x0, 0xe)){
-                    /*000 on bits: (0, 1, 2) from op part: 1
-                    --> ['LD_Ym']*/
-                    instr = LD_Ym;
-                    }
-                    if(bit_test(high, 0x2, 0xe)){
-                    /*001 on bits: (0, 1, 2) from op part: 1
-                    --> ['ST_Ym']*/
-                    instr = ST_Ym;
-                    }
-                }
-                if(bit_test(low, 0xc, 0xf)){
-                /*1100 on bits: (0, 1, 2, 3) from op part: 3
-                --> ['LD_X', 'ST_X']*/
-                    if(bit_test(high, 0x0, 0xe)){
-                    /*000 on bits: (0, 1, 2) from op part: 1
-                    --> ['LD_X']*/
-                    instr = LD_X;
-                    }
-                    if(bit_test(high, 0x2, 0xe)){
-                    /*001 on bits: (0, 1, 2) from op part: 1
-                    --> ['ST_X']*/
-                    instr = ST_X;
-                    }
-                }
-                if(bit_test(low, 0xd, 0xf)){
-                /*1101 on bits: (0, 1, 2, 3) from op part: 3
-                --> ['LD_Xp', 'ST_Xp']*/
-                    if(bit_test(high, 0x0, 0xe)){
-                    /*000 on bits: (0, 1, 2) from op part: 1
-                    --> ['LD_Xp']*/
-                    instr = LD_Xp;
-                    }
-                    if(bit_test(high, 0x2, 0xe)){
-                    /*001 on bits: (0, 1, 2) from op part: 1
-                    --> ['ST_Xp']*/
-                    instr = ST_Xp;
-                    }
-                }
-                if(bit_test(low, 0xe, 0xf)){
-                /*1110 on bits: (0, 1, 2, 3) from op part: 3
-                --> ['LD_Xm', 'ST_Xm']*/
-                    if(bit_test(high, 0x0, 0xe)){
-                    /*000 on bits: (0, 1, 2) from op part: 1
-                    --> ['LD_Xm']*/
-                    instr = LD_Xm;
-                    }
-                    if(bit_test(high, 0x2, 0xe)){
-                    /*001 on bits: (0, 1, 2) from op part: 1
-                    --> ['ST_Xm']*/
-                    instr = ST_Xm;
-                    }
-                }
-                if(bit_test(low, 0xf, 0xf)){
-                /*1111 on bits: (0, 1, 2, 3) from op part: 3
-                --> ['POP', 'PUSH']*/
-                    if(bit_test(high, 0x0, 0xe)){
-                    /*000 on bits: (0, 1, 2) from op part: 1
-                    --> ['POP']*/
-                    instr = POP;
-                    }
-                    if(bit_test(high, 0x2, 0xe)){
-                    /*001 on bits: (0, 1, 2) from op part: 1
-                    --> ['PUSH']*/
-                    instr = PUSH;
-                    }
+                --> ['DEC']*/
+                instr = DEC;
+                return instr;
                 }
             }
-            if(bit_test(high, 0x4, 0xc)){
-            /*01 on bits: (0, 1) from op part: 1
-            --> ['ADIW', 'ASR', 'BCLR', 'BREAK', 'BSET', 'CALL', 'CLC', 'CLH', 'CLI', 'CLN', 'CLS', 'CLT', 'CLV', 'CLZ', 'COM', 'DEC', 'DES', 'EICALL', 'EIJMP', 'ELPM1', 'ICALL', 'IJMP', 'INC', 'JMP', 'LPM', 'LSR', 'NEG', 'RET', 'RETI', 'ROR', 'SBIW', 'SEC', 'SEH', 'SEI', 'SEN', 'SES', 'SET', 'SEV', 'SEZ', 'SLEEP', 'SPM', 'SPM2', 'SPM2_Z', 'SWAP', 'WDR']*/
-                if(bit_test(high, 0x4, 0xe)){
-                /*010 on bits: (0, 1, 2) from op part: 1
-                --> ['ASR', 'BCLR', 'BREAK', 'BSET', 'CALL', 'CLC', 'CLH', 'CLI', 'CLN', 'CLS', 'CLT', 'CLV', 'CLZ', 'COM', 'DEC', 'DES', 'EICALL', 'EIJMP', 'ELPM1', 'ICALL', 'IJMP', 'INC', 'JMP', 'LPM', 'LSR', 'NEG', 'RET', 'RETI', 'ROR', 'SEC', 'SEH', 'SEI', 'SEN', 'SES', 'SET', 'SEV', 'SEZ', 'SLEEP', 'SPM', 'SPM2', 'SPM2_Z', 'SWAP', 'WDR']*/
-                    if(bit_test(low, 0x0, 0xe)){
-                    /*000 on bits: (0, 1, 2) from op part: 3
-                    --> ['COM', 'NEG']*/
-                        if(bit_test(low, 0x0, 0xf)){
-                        /*0000 on bits: (0, 1, 2, 3) from op part: 3
-                        --> ['COM']*/
-                        instr = COM;
-                        }
-                        if(bit_test(low, 0x1, 0xf)){
-                        /*0001 on bits: (0, 1, 2, 3) from op part: 3
-                        --> ['NEG']*/
-                        instr = NEG;
-                        }
-                    }
-                    if(bit_test(low, 0x2, 0xe)){
-                    /*001 on bits: (0, 1, 2) from op part: 3
-                    --> ['INC', 'SWAP']*/
-                        if(bit_test(low, 0x2, 0xf)){
-                        /*0010 on bits: (0, 1, 2, 3) from op part: 3
-                        --> ['SWAP']*/
-                        instr = SWAP;
-                        }
-                        if(bit_test(low, 0x3, 0xf)){
-                        /*0011 on bits: (0, 1, 2, 3) from op part: 3
-                        --> ['INC']*/
-                        instr = INC;
-                        }
-                    }
-                    if(bit_test(low, 0x4, 0xe)){
-                    /*010 on bits: (0, 1, 2) from op part: 3
-                    --> ['ASR']*/
-                    instr = ASR;
-                    }
-                    if(bit_test(low, 0x6, 0xe)){
-                    /*011 on bits: (0, 1, 2) from op part: 3
-                    --> ['LSR', 'ROR']*/
-                        if(bit_test(low, 0x6, 0xf)){
-                        /*0110 on bits: (0, 1, 2, 3) from op part: 3
-                        --> ['LSR']*/
-                        instr = LSR;
-                        }
-                        if(bit_test(low, 0x7, 0xf)){
-                        /*0111 on bits: (0, 1, 2, 3) from op part: 3
-                        --> ['ROR']*/
-                        instr = ROR;
-                        }
-                    }
-                    if(bit_test(low, 0x8, 0xe)){
-                    /*100 on bits: (0, 1, 2) from op part: 3
-                    --> ['BCLR', 'BREAK', 'BSET', 'CLC', 'CLH', 'CLI', 'CLN', 'CLS', 'CLT', 'CLV', 'CLZ', 'EICALL', 'EIJMP', 'ELPM1', 'ICALL', 'IJMP', 'LPM', 'RET', 'RETI', 'SEC', 'SEH', 'SEI', 'SEN', 'SES', 'SET', 'SEV', 'SEZ', 'SLEEP', 'SPM', 'SPM2', 'SPM2_Z', 'WDR']*/
-                        if(bit_test(high, 0x4, 0xf)){
-                        /*0100 on bits: (0, 1, 2, 3) from op part: 1
-                        --> ['BCLR', 'BSET', 'CLC', 'CLH', 'CLI', 'CLN', 'CLS', 'CLT', 'CLV', 'CLZ', 'EIJMP', 'IJMP', 'SEC', 'SEH', 'SEI', 'SEN', 'SES', 'SET', 'SEV', 'SEZ']*/
-                            if(bit_test(low, 0x8, 0xf)){
-                            /*1000 on bits: (0, 1, 2, 3) from op part: 3
-                            --> ['BCLR', 'BSET', 'CLC', 'CLH', 'CLI', 'CLN', 'CLS', 'CLT', 'CLV', 'CLZ', 'SEC', 'SEH', 'SEI', 'SEN', 'SES', 'SET', 'SEV', 'SEZ']*/
-                                if(bit_test(low, 0x0, 0x80)){
-                                /*0 on bits: (0,) from op part: 2
-                                --> ['BSET', 'SEC', 'SEH', 'SEI', 'SEN', 'SES', 'SET', 'SEV', 'SEZ']*/
-                                instr = BSET;
-                                }
-                                if(bit_test(low, 0x80, 0x80)){
-                                /*1 on bits: (0,) from op part: 2
-                                --> ['BCLR', 'CLC', 'CLH', 'CLI', 'CLN', 'CLS', 'CLT', 'CLV', 'CLZ']*/
-                                instr = BCLR;
-                                }
-                            }
-                            if(bit_test(low, 0x9, 0xf)){
-                            /*1001 on bits: (0, 1, 2, 3) from op part: 3
-                            --> ['EIJMP', 'IJMP']*/
-                                if(bit_test(low, 0x0, 0xf0)){
-                                /*0000 on bits: (0, 1, 2, 3) from op part: 2
-                                --> ['IJMP']*/
-                                instr = IJMP;
-                                }
-                                if(bit_test(low, 0x10, 0xf0)){
-                                /*0001 on bits: (0, 1, 2, 3) from op part: 2
-                                --> ['EIJMP']*/
-                                instr = EIJMP;
-                                }
-                            }
-                        }
-                        if(bit_test(high, 0x5, 0xf)){
-                        /*0101 on bits: (0, 1, 2, 3) from op part: 1
-                        --> ['BREAK', 'EICALL', 'ELPM1', 'ICALL', 'LPM', 'RET', 'RETI', 'SLEEP', 'SPM', 'SPM2', 'SPM2_Z', 'WDR']*/
-                            if(bit_test(low, 0x0, 0xf0)){
-                            /*0000 on bits: (0, 1, 2, 3) from op part: 2
-                            --> ['ICALL', 'RET']*/
-                                if(bit_test(low, 0x8, 0xf)){
-                                /*1000 on bits: (0, 1, 2, 3) from op part: 3
-                                --> ['RET']*/
-                                instr = RET;
-                                }
-                                if(bit_test(low, 0x9, 0xf)){
-                                /*1001 on bits: (0, 1, 2, 3) from op part: 3
-                                --> ['ICALL']*/
-                                instr = ICALL;
-                                }
-                            }
-                            if(bit_test(low, 0x10, 0xf0)){
-                            /*0001 on bits: (0, 1, 2, 3) from op part: 2
-                            --> ['EICALL', 'RETI']*/
-                                if(bit_test(low, 0x8, 0xf)){
-                                /*1000 on bits: (0, 1, 2, 3) from op part: 3
-                                --> ['RETI']*/
-                                instr = RETI;
-                                }
-                                if(bit_test(low, 0x9, 0xf)){
-                                /*1001 on bits: (0, 1, 2, 3) from op part: 3
-                                --> ['EICALL']*/
-                                instr = EICALL;
-                                }
-                            }
-                            if(bit_test(low, 0x80, 0xf0)){
-                            /*1000 on bits: (0, 1, 2, 3) from op part: 2
-                            --> ['SLEEP']*/
-                            instr = SLEEP;
-                            }
-                            if(bit_test(low, 0x90, 0xf0)){
-                            /*1001 on bits: (0, 1, 2, 3) from op part: 2
-                            --> ['BREAK']*/
-                            instr = BREAK;
-                            }
-                            if(bit_test(low, 0xa0, 0xf0)){
-                            /*1010 on bits: (0, 1, 2, 3) from op part: 2
-                            --> ['WDR']*/
-                            instr = WDR;
-                            }
-                            if(bit_test(low, 0xc0, 0xf0)){
-                            /*1100 on bits: (0, 1, 2, 3) from op part: 2
-                            --> ['LPM']*/
-                            instr = LPM;
-                            }
-                            if(bit_test(low, 0xd0, 0xf0)){
-                            /*1101 on bits: (0, 1, 2, 3) from op part: 2
-                            --> ['ELPM1']*/
-                            instr = ELPM1;
-                            }
-                            if(bit_test(low, 0xe0, 0xf0)){
-                            /*1110 on bits: (0, 1, 2, 3) from op part: 2
-                            --> ['SPM', 'SPM2']*/
-                            /* NOTE: Instruction codes equal */
-                            instr = SPM;
-                            }
-                            if(bit_test(low, 0xf0, 0xf0)){
-                            /*1111 on bits: (0, 1, 2, 3) from op part: 2
-                            --> ['SPM2_Z']*/
-                            instr = SPM2_Z;
-                            }
-                        }
-                    }
-                    if(bit_test(low, 0xa, 0xe)){
-                    /*101 on bits: (0, 1, 2) from op part: 3
-                    --> ['DEC', 'DES']*/
-                        if(bit_test(low, 0xa, 0xf)){
-                        /*1010 on bits: (0, 1, 2, 3) from op part: 3
-                        --> ['DEC']*/
-                        instr = DEC;
-                        }
-                        if(bit_test(low, 0xb, 0xf)){
-                        /*1011 on bits: (0, 1, 2, 3) from op part: 3
-                        --> ['DES']*/
-                        instr = DES;
-                        }
-                    }
-                    if(bit_test(low, 0xc, 0xe)){
-                    /*110 on bits: (0, 1, 2) from op part: 3
-                    --> ['JMP']*/
-                    instr = JMP;
-                    }
-                    if(bit_test(low, 0xe, 0xe)){
-                    /*111 on bits: (0, 1, 2) from op part: 3
-                    --> ['CALL']*/
-                    instr = CALL;
-                    }
+            if(bit_test(high, 0x6, 0xe)){
+            /*011 on bits: (0, 1, 2) from op part: 1
+            --> ['ADIW', 'SBIW']*/
+                if(bit_test(high, 0x6, 0xf)){
+                /*0110 on bits: (0, 1, 2, 3) from op part: 1
+                --> ['ADIW']*/
+                instr = ADIW;
+                return instr;
                 }
-                if(bit_test(high, 0x6, 0xe)){
-                /*011 on bits: (0, 1, 2) from op part: 1
-                --> ['ADIW', 'SBIW']*/
-                    if(bit_test(high, 0x6, 0xf)){
-                    /*0110 on bits: (0, 1, 2, 3) from op part: 1
-                    --> ['ADIW']*/
-                    instr = ADIW;
-                    }
-                    if(bit_test(high, 0x7, 0xf)){
-                    /*0111 on bits: (0, 1, 2, 3) from op part: 1
-                    --> ['SBIW']*/
-                    instr = SBIW;
-                    }
+                if(bit_test(high, 0x7, 0xf)){
+                /*0111 on bits: (0, 1, 2, 3) from op part: 1
+                --> ['SBIW']*/
+                instr = SBIW;
+                return instr;
                 }
             }
-            if(bit_test(high, 0x8, 0xc)){
-            /*10 on bits: (0, 1) from op part: 1
-            --> ['CBI', 'SBI', 'SBIC', 'SBIS']*/
+            if(bit_test(high, 0x8, 0xe)){
+            /*100 on bits: (0, 1, 2) from op part: 1
+            --> ['CBI', 'SBIC']*/
                 if(bit_test(high, 0x8, 0xf)){
                 /*1000 on bits: (0, 1, 2, 3) from op part: 1
                 --> ['CBI']*/
                 instr = CBI;
+                return instr;
                 }
                 if(bit_test(high, 0x9, 0xf)){
                 /*1001 on bits: (0, 1, 2, 3) from op part: 1
                 --> ['SBIC']*/
                 instr = SBIC;
+                return instr;
                 }
+            }
+            if(bit_test(high, 0xa, 0xe)){
+            /*101 on bits: (0, 1, 2) from op part: 1
+            --> ['SBI', 'SBIS']*/
                 if(bit_test(high, 0xa, 0xf)){
                 /*1010 on bits: (0, 1, 2, 3) from op part: 1
                 --> ['SBI']*/
                 instr = SBI;
+                return instr;
                 }
                 if(bit_test(high, 0xb, 0xf)){
                 /*1011 on bits: (0, 1, 2, 3) from op part: 1
                 --> ['SBIS']*/
                 instr = SBIS;
+                return instr;
                 }
-            }
-            if(bit_test(high, 0xc, 0xc)){
-            /*11 on bits: (0, 1) from op part: 1
-            --> ['MUL']*/
-            instr = MUL;
             }
         }
         if(bit_test(high, 0xb0, 0xf0)){
@@ -641,11 +528,13 @@ enum instruction instruction_decode_bytes(uint16_t bytes){
             /*0 on bits: (0,) from op part: 1
             --> ['IN']*/
             instr = IN;
+            return instr;
             }
             if(bit_test(high, 0x8, 0x8)){
             /*1 on bits: (0,) from op part: 1
             --> ['OUT']*/
             instr = OUT;
+            return instr;
             }
         }
     }
@@ -656,11 +545,13 @@ enum instruction instruction_decode_bytes(uint16_t bytes){
         /*1100 on bits: (0, 1, 2, 3) from op part: 0
         --> ['RJMP']*/
         instr = RJMP;
+        return instr;
         }
         if(bit_test(high, 0xe0, 0xf0)){
         /*1110 on bits: (0, 1, 2, 3) from op part: 0
         --> ['LDI', 'SER']*/
         instr = LDI;
+        return instr;
         }
     }
     if(bit_test(high, 0xd0, 0xd0)){
@@ -670,6 +561,7 @@ enum instruction instruction_decode_bytes(uint16_t bytes){
         /*1101 on bits: (0, 1, 2, 3) from op part: 0
         --> ['RCALL']*/
         instr = RCALL;
+        return instr;
         }
         if(bit_test(high, 0xf0, 0xf0)){
         /*1111 on bits: (0, 1, 2, 3) from op part: 0
@@ -678,11 +570,13 @@ enum instruction instruction_decode_bytes(uint16_t bytes){
             /*00 on bits: (0, 1) from op part: 1
             --> ['BRBS', 'BRCS', 'BREQ', 'BRHS', 'BRIE', 'BRLO', 'BRLT', 'BRMI', 'BRTS', 'BRVS']*/
             instr = BRBS;
+            return instr;
             }
             if(bit_test(high, 0x4, 0xc)){
             /*01 on bits: (0, 1) from op part: 1
             --> ['BRBC', 'BRCC', 'BRGE', 'BRHC', 'BRID', 'BRNE', 'BRPL', 'BRSH', 'BRTC', 'BRVC']*/
             instr = BRBC;
+            return instr;
             }
             if(bit_test(high, 0x8, 0xc)){
             /*10 on bits: (0, 1) from op part: 1
@@ -691,11 +585,13 @@ enum instruction instruction_decode_bytes(uint16_t bytes){
                 /*100 on bits: (0, 1, 2) from op part: 1
                 --> ['BLD']*/
                 instr = BLD;
+                return instr;
                 }
                 if(bit_test(high, 0xa, 0xe)){
                 /*101 on bits: (0, 1, 2) from op part: 1
                 --> ['BST']*/
                 instr = BST;
+                return instr;
                 }
             }
             if(bit_test(high, 0xc, 0xc)){
@@ -705,11 +601,13 @@ enum instruction instruction_decode_bytes(uint16_t bytes){
                 /*110 on bits: (0, 1, 2) from op part: 1
                 --> ['SBRC']*/
                 instr = SBRC;
+                return instr;
                 }
                 if(bit_test(high, 0xe, 0xe)){
                 /*111 on bits: (0, 1, 2) from op part: 1
                 --> ['SBRS']*/
                 instr = SBRS;
+                return instr;
                 }
             }
         }
@@ -724,8 +622,6 @@ enum instruction instruction_decode_bytes(uint16_t bytes){
 int instruction_is_32b(enum instruction instr){
     int is_32b = 0;
     switch (instr){
-        case CALL:
-        case JMP:
         case STS:
         case LDS:
             is_32b = 1;

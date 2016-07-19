@@ -1,7 +1,7 @@
 all: instrEnum.c.gen instrStr.c.gen
 
-instructions-list.txt.gen instrSelect.c.gen: instruction-primary-opcodes-no-strange-16b-no-MULS.csv genInstrSelect.py
-	python genInstrSelect.py instruction-primary-opcodes-no-strange-16b-no-MULS.csv
+instructions-list.txt.gen instrSelect.c.gen: instr-subset-opcodes.csv genInstrSelect.py
+	python genInstrSelect.py instr-subset-opcodes.csv
 
 instrEnum.c.gen: instructions-list.txt.gen genInstrEnum.py
 	python genInstrEnum.py > instrEnum.c.gen

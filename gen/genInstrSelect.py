@@ -241,7 +241,7 @@ def determineSelectionOrder(instrList, opMap, level, ob):
                                         instrForPrint = subset[0]
                                     else:
                                         if allSameOp(subset,opMap):
-                                            ob.printToBuff(1, printOffset + "// NOTE: Instruction codes equal")
+                                            ob.printToBuff(1, printOffset + "/* NOTE: Instruction codes equal */")
                                             print("Multiple op-code equal options detected")
                                             for i2, v2 in enumerate(subset):
                                                 print(i2, v2)
@@ -252,6 +252,7 @@ def determineSelectionOrder(instrList, opMap, level, ob):
                                         else:
                                             determineSelectionOrder(subset,opMap, level+1, ob)
                             ob.printToBuff(1, printOffset + "instr = " + instrForPrint + ";")
+                            ob.printToBuff(1, printOffset + "return instr;")
                             ob.printToBuff(2, instrForPrint)
                         ob.printToBuff(1, printOffset+"}")
                 # done printing
@@ -284,7 +285,7 @@ ob = outputBuffer()
 t = datetime.datetime.now()
 datestr = time.strftime("%b %d, %Y @ %H:%M", t.timetuple())
 
-ob.printToBuff(1, "// Generated on " + datestr + " by genInstrSelect.py")
+ob.printToBuff(1, "/* Generated on " + datestr + " by genInstrSelect.py */")
 determineSelectionOrder(instrList, opMap, 0,ob)
 
 ob.writeToFile(1, "genoutput.c.gen")
