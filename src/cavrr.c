@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <signal.h>
+#include "cavrr_config.h"
 
 struct config{
     unsigned int run_ignores_break;
@@ -32,7 +33,7 @@ static struct config config = {
 static struct state state = {{0},0,{{0}},0};
 
 const char version_string[] = "cavrr: An ATtiny45 Emulator\n"
-                              "Version 0.0.0\n"
+                              "Version %d.%d.%d\n"
                               "Benjamin Ghaemmaghami (2016)\n"
                               "View the source at: https://github.com/benghaem/cavrr\n";
 
@@ -360,7 +361,7 @@ int main(int argc, char **argv){
     /* capture SIGINT to stop long running emulator programs */
     signal (SIGINT, catch_sigint);
 
-    printf("%s", version_string);
+    printf(version_string, cavrr_VERSION_MAJOR, cavrr_VERSION_MINOR, cavrr_VERSION_PATCH);
 
     init_state();
     processor_init(&p);

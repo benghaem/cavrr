@@ -30,4 +30,6 @@ int main(void){
     printlist(l);
 
     list_destroy(l);
+
+    return 0;
 }

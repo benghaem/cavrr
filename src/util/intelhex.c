@@ -14,7 +14,7 @@ int ihex_open(ihex *ih, char* filename){
     ih->fp = fopen(filename,"r");
 
     if (ih->fp == NULL){
-        printf("Could not open file");
+        printf("Could not open file\n");
         ih->valid = 0;
         return 0;
     }
