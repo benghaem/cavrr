@@ -13,17 +13,27 @@ Currently the following high level concepts have been implemented:
 
 ## Building
 
-First create a bin directory:
+Building the project depends on [cmake](https://github.com/Kitware/CMake)
 
-`mkdir bin`
+First create a build directory:
+
+`mkdir build && cd build`
 
 And build the project
 
-`make`
+`cmake .. && make`
+
+You can also run the tests with
+
+`ctest -V`
+
+or 
+
+`make test`
 
 ## Usage
 
-Run the binary at `bin/cavrr`. 
+Run the binary at `build/bin/cavrr`. 
 
 `cavrr [filename]`
 

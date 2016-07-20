@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 #include "rjmp.h"
-#include "../../processor.h"
+#include "processor.h"
 
 void instr_rjmp_test_decode(void **state) {
     uint16_t instr;

@@ -4,7 +4,7 @@
 #include <cmocka.h>
 
 #include "ldi.h"
-#include "../../processor.h"
+#include "processor.h"
 
 void instr_ldi_test_decode(void **state) {
     uint16_t instr;

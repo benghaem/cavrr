@@ -4,7 +4,7 @@
 #include <cmocka.h>
 
 #include "test_memory.h"
-#include "../../memory.h"
+#include "memory.h"
 
 void test_memory_dmem_rw_addr16(void **state){
     struct datamem d;

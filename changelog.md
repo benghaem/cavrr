@@ -1,5 +1,8 @@
 # Changelog
 
+## 7/19/16
+* Change build system to CMake
+
 ## 7/15/16
 * Some minor changes to fix compiler warnings
 

@@ -1,4 +1,4 @@
-#include "../util/bitutil.h"
+#include "util/bitutil.h"
 #include <stdio.h>
 
 int main(){

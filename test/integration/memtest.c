@@ -1,6 +1,6 @@
-#include "../../memory.h"
+#include "memory.h"
 #include <stdio.h>
-#include "../../IOREG.h"
+#include "IOREG.h"
 
 int main(){
     struct datamem d;

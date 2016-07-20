@@ -165,6 +165,7 @@ char* instruction_str(enum instruction instr){
         case WDR:
             return "WDR";
         case UNKNOWN:
+        default:
             return "UNKNOWN";
     }
 }

@@ -4,7 +4,7 @@
 #include <cmocka.h>
 
 #include "mov.h"
-#include "../../processor.h"
+#include "processor.h"
 
 void instr_mov_test_decode(void **state) {
     uint16_t instr;

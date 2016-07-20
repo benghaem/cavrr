@@ -424,7 +424,7 @@ void PxMOVW(struct processor* p){
 
     Rr16 = datamem_read_reg16(&p->dmem, r, r+1);
 
-    datamem_write_reg16(&p->dmem, r, r+1, Rr16);
+    datamem_write_reg16(&p->dmem, d, d+1, Rr16);
 
     processor_pc_increment(p, 1);
 

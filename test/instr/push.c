@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 #include "push.h"
-#include "../../processor.h"
+#include "processor.h"
 
 void instr_push_test_decode(void **state) {
     uint16_t instr;

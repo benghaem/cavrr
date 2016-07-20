@@ -1,0 +1,3 @@
+#define cavrr_VERSION_MAJOR @cavrr_VERSION_MAJOR@
+#define cavrr_VERSION_MINOR @cavrr_VERSION_MINOR@
+#define cavrr_VERSION_PATCH @cavrr_VERSION_PATCH@

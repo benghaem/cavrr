@@ -1,7 +1,7 @@
-#include "../../processor.h"
-#include "../../instruction.h"
+#include "processor.h"
+#include "instruction.h"
 #include <stdio.h>
-#include "../../util/intelhex.h"
+#include "util/intelhex.h"
 #include <unistd.h>
 
 int main(int argc, char** argv){

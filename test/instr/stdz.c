@@ -4,8 +4,8 @@
 #include <cmocka.h>
 
 #include "stdz.h"
-#include "../../processor.h"
-#include "../../IOREG.h"
+#include "processor.h"
+#include "IOREG.h"
 
 void instr_stdz_test_decode(void **state) {
     uint16_t instr;
