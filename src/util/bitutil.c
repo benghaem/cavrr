@@ -6,7 +6,7 @@
  * and a length
  */
 unsigned long bit_create(unsigned int* bits, unsigned int size){
-    int i;
+    unsigned int i;
     unsigned long ret = 0;
     if (size < 32){
         for(i = 0; i < size; i++){

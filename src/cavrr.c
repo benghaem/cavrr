@@ -462,4 +462,5 @@ int main(int argc, char **argv){
         free(cmd_argv);
     }
 
+    return 0;
 }
