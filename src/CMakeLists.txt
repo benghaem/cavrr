@@ -15,3 +15,5 @@ add_library(instruction instruction_decoder.c instruction_str.c)
 add_library(processor processor.c)
 add_dependencies(processor instruction memory)
 target_link_libraries( cavrr list intelhex bitutil processor memory instruction)
+
+install(TARGETS cavrr DESTINATION bin)

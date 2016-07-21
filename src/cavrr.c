@@ -186,7 +186,7 @@ void step_till_breakpoint(struct processor *p){
  */
 void step(struct processor *p, int n){
     struct timespec t1;
-    /* integer division no need to floor */
+    /* integer division -- no need to floor */
     t1.tv_sec = config.step_delay_ms / 1000;
     t1.tv_nsec = (config.step_delay_ms - (t1.tv_sec * 1000)) * 100000;
 
@@ -443,7 +443,6 @@ int main(int argc, char **argv){
             } else {
                 printf("Incorrect number of arguments\n");
             }
-
 
         } else if (!strcmp(cmd_argv[0], "clear")){
             /* Will only work on terminals that support ANSI */
