@@ -3,7 +3,7 @@ project (cavrr)
 
 enable_testing()
 set (CMAKE_EXPORT_COMPILE_COMMANDS 1)
-set (CMAKE_C_FLAGS "-O2 -Wall -Werror -Wextra -Wno-unused-parameter -pedantic")
+set (CMAKE_C_FLAGS "-O2 -Wall -Wextra -Wno-unused-parameter -pedantic")
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 set (cavrr_VERSION_MAJOR 0)
