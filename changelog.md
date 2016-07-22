@@ -1,5 +1,12 @@
 # Changelog
 
+## 7/22/16
+* Refactor opcode variable extraction to isolated functions
+* Add disassembler
+* Modify `local` command to also output disassembly if available
+* Add EOR, CP, OUT, RCALL
+* Change `print` command to `show`
+
 ## 7/19/16
 * Change build system to CMake
 

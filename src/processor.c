@@ -97,8 +97,17 @@ void processor_exec(struct processor* p){
         case ADD:
             PxADD(p);
             break;
+        case BREAK:
+            PxBREAK(p);
+            return;
         case COM:
             PxCOM(p);
+            break;
+        case CP:
+            PxCP(p);
+            break;
+        case EOR:
+            PxEOR(p);
             break;
         case IN:
             PxIN(p);
@@ -118,8 +127,14 @@ void processor_exec(struct processor* p){
         case NOP:
             PxNOP(p);
             break;
+        case OUT:
+            PxOUT(p);
+            break;
         case PUSH:
             PxPUSH(p);
+            break;
+        case RCALL:
+            PxRCALL(p);
             break;
         case RJMP:
             PxRJMP(p);
@@ -127,9 +142,6 @@ void processor_exec(struct processor* p){
         case STD_Z:
             PxSTD_Z(p);
             break;
-        case BREAK:
-            PxBREAK(p);
-            return;
         default:
             printf("EXEC: Not implemented\n");
             PxBREAK(p);
@@ -214,8 +226,7 @@ void PxADD(struct processor* p){
     int H, S, V, N, Z, C;
 
     /* Isolate r and d */
-    r = (( p->oper.bits & 0x0F00 ) >> 8 ) | ((( p->oper.bits >> 1 ) & 0x1 ) << 4);
-    d = (( p->oper.bits & 0xF000 ) >> 12 ) | (( p->oper.bits & 0x1 ) << 4);
+    op_get_reg_direct_2(&p->oper, &r, &d);
 
     /* Get values of r and d */
     Rr = datamem_read_reg(&p->dmem, r);
@@ -275,7 +286,7 @@ void PxCOM(struct processor* p){
     uint8_t R;
     int S, V, N, Z, C;
 
-    d = (( p->oper.bits & 0xF000 ) >> 12 ) | (( p->oper.bits & 0x1 ) << 4);
+    op_get_reg_direct(&p->oper, &d);
 
     Rd = datamem_read_reg(&p->dmem, d);
 
@@ -302,6 +313,97 @@ void PxCOM(struct processor* p){
 
 
 /*---------------------------------*/
+/*  CP 0001 | 01rd | dddd | rrrr   */
+/* --> dddd | rrrr | 0000 | 11rd   */
+/* d - destination                 */
+/* r - source                      */
+/*---------------------------------*/
+void PxCP(struct processor* p){
+    uint8_t r = 0;
+    uint8_t d = 0;
+    uint8_t R;
+    uint8_t Rr;
+    uint8_t Rd;
+    int H, S, V, N, Z, C;
+
+    /* Isolate r and d */
+    op_get_reg_direct_2(&p->oper, &r, &d);
+
+    /* Get values of r and d */
+    Rr = datamem_read_reg(&p->dmem, r);
+    Rd = datamem_read_reg(&p->dmem, d);
+
+    /* CP */
+    R = Rd - Rr;
+
+    /* Set SREG flags */
+
+    H = (~bit(Rd,3) & bit(Rr,3)) | (bit(Rr,3) & bit(R,3)) | (bit(R,3) & ~bit(Rd,3));
+    V = (bit(Rd,7) & ~bit(Rr,7) & ~bit(R,7)) | (~bit(Rd,7) & bit(Rr,7) & bit(R,7));
+    N = bit(R,7);
+    S = N ^ V;
+    Z = (R = 0) ? 1 : 0;
+    C = (~bit(Rd,7) & bit(Rr,7)) | (bit(Rr,7) & bit(R,7)) | (bit(R,7) & ~bit(Rd,7));
+
+    datamem_write_io_bit(&p->dmem, SREG, SREG_H, H);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_V, V);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_N, N);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_S, S);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_Z, Z);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_C, C);
+
+    processor_pc_increment(p, 1);
+
+    return;
+}
+
+
+/*---------------------------------*/
+/* EOR 0010 | 01rd | dddd | rrrr   */
+/* --> dddd | rrrr | 0010 | 01rd   */
+/* d - destination                 */
+/* r - source                      */
+/*---------------------------------*/
+void PxEOR(struct processor* p){
+    uint8_t r = 0;
+    uint8_t d = 0;
+    uint8_t R;
+    uint8_t Rr;
+    uint8_t Rd;
+    int S, V, N, Z;
+
+    /* Isolate r and d */
+    op_get_reg_direct_2(&p->oper, &r, &d);
+
+    /* Get values of r and d */
+    Rr = datamem_read_reg(&p->dmem, r);
+    Rd = datamem_read_reg(&p->dmem, d);
+
+    /* EOR */
+    R = Rd ^ Rr;
+
+    /* Set new value of Rd */
+    datamem_write_reg(&p->dmem, d, R);
+
+    /* Set SREG flags */
+
+    V = 0;
+    N = bit(R,7);
+    S = N ^ V;
+    Z = (R = 0) ? 1 : 0;
+
+    datamem_write_io_bit(&p->dmem, SREG, SREG_V, V);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_N, N);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_S, S);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_Z, Z);
+
+    processor_pc_increment(p, 1);
+
+    return;
+}
+
+
+/*---------------------------------*/
 /*  IN 1011 | 0aad | dddd | aaaa   */
 /* --> dddd | aaaa | 1011 | 0aad   */
 /* d - destination                 */
@@ -313,8 +415,7 @@ void PxIN(struct processor* p){
     uint8_t IOa;
 
     /* Isolate a and d */
-    a = (( p->oper.bits & 0x0F00 ) >> 8 ) | ((( p->oper.bits >> 1 ) & 0x3 ) << 4);
-    d = (( p->oper.bits & 0xF000 ) >> 12 ) | (( p->oper.bits & 0x1 ) << 4);
+    op_get_io_direct(&p->oper, &a, &d);
 
     IOa = datamem_read_io(&p->dmem, a);
 
@@ -324,6 +425,8 @@ void PxIN(struct processor* p){
 
     return;
 }
+
+
 /*-----------------------------------*/
 /* LDD_Z 10q0 | qq1d | dddd | 0qqq   */
 /*   --> dddd | 0qqq | 10q0 | qq1d   */
@@ -361,15 +464,7 @@ void PxLDI(struct processor* p){
     uint8_t d;
     uint8_t k;
 
-    /*
-     * This is very unclear in the documentation, but in this case
-     * we need to add an offset of 0x10 so that d = 0 -> 0x10
-     * d=0 -> r16 for some reason
-     */
-
-    /* Isolate a and d (note the above change for d)*/
-    k = (( p->oper.bits & 0x0F00 ) >> 8 ) | (( p->oper.bits & 0xF ) << 4);
-    d = (( p->oper.bits & 0xF000 ) >> 12) | (0x10);
+    op_get_reg_imm(&p->oper, &d, &k);
 
     datamem_write_reg(&p->dmem, d, k);
 
@@ -393,8 +488,7 @@ void PxMOV(struct processor* p){
     uint8_t Rr;
 
     /* Isolate r and d */
-    r = (( p->oper.bits & 0x0F00 ) >> 8 ) | ((( p->oper.bits >> 1 ) & 0x1 ) << 4);
-    d = (( p->oper.bits & 0xF000 ) >> 12 ) | (( p->oper.bits & 0x1 ) << 4);
+    op_get_reg_direct_2(&p->oper, &r, &d);
 
     Rr = datamem_read_reg(&p->dmem, r);
 
@@ -445,6 +539,31 @@ void PxNOP(struct processor* p){
 }
 
 
+/*---------------------------------*/
+/* OUT 1011 | 1aar | rrrr | aaaa   */
+/* --> rrrr | aaaa | 1011 | 1aar   */
+/* r - source                      */
+/* a - dest in io space            */
+/*---------------------------------*/
+void PxOUT(struct processor* p){
+    uint8_t r;
+    uint8_t a;
+    uint8_t Rr;
+
+    /* Isolate a and r */
+    /* maps to A and d of in */
+    op_get_io_direct(&p->oper, &a, &r);
+
+    Rr = datamem_read_reg(&p->dmem, r);
+
+    datamem_write_io(&p->dmem, a, Rr);
+
+    processor_pc_increment(p, 1);
+
+    return;
+}
+
+
 /*----------------------------------*/
 /* PUSH 1001 | 001r | rrrr | 1111   */
 /*  --> rrrr | 1111 | 1001 | 001r   */
@@ -456,7 +575,7 @@ void PxPUSH(struct processor* p){
     uint16_t stack_addr;
 
     /* Isolate r */
-    r = (( p->oper.bits & 0xF000 ) >> 12 ) | (( p->oper.bits & 0x1 ) << 4);
+    op_get_reg_direct(&p->oper, &r);
 
     Rr = datamem_read_reg(&p->dmem, r);
 
@@ -470,29 +589,45 @@ void PxPUSH(struct processor* p){
     return;
 }
 
+
+/*-----------------------------------*/
+/* RCALL 1100 | kkkk | kkkk | kkkk   */
+/*   --> kkkk | kkkk | 1100 | kkkk   */
+/* k - rel address                   */
+/*-----------------------------------*/
+void PxRCALL(struct processor* p){
+    int16_t k_signed;
+    uint16_t stack_addr;
+
+    op_get_rel_addr(&p->oper, &k_signed);
+
+    /* STACK <- PC + 1 */
+
+    stack_addr = processor_sp_read(p);
+
+    datamem_write_addr(&p->dmem, ZERO_OFFSET, stack_addr, p->pc + 1);
+
+    /* SP <- SP - 2 */
+
+    processor_sp_decrement(p, 2);
+
+    /* PC <- PC + K + 1 */
+
+    processor_pc_increment(p, k_signed + 1);
+
+    return;
+}
+
+
 /*----------------------------------*/
 /* RJMP 1100 | kkkk | kkkk | kkkk   */
 /*  --> kkkk | kkkk | 1100 | kkkk   */
 /* k - rel address                  */
 /*----------------------------------*/
 void PxRJMP(struct processor* p){
-    uint16_t k;
     int16_t k_signed;
-    /* Isolate r */
-    k = (( p->oper.bits & 0xFF00 ) >> 8 ) | (( p->oper.bits & 0x000F ) << 8);
 
-    /*
-     * K is a 12bit 2's complement number so we will convert it into a signed
-     * integer
-     */
-
-    if (k >> 11 & 0x1){
-        k_signed = -1 * (((~k) & 0x7ff) + 1);
-    } else {
-        k_signed = k;
-    }
-
-    /* printf("K: %i, Ksigned: %i\n",k,k_signed); */
+    op_get_rel_addr(&p->oper, &k_signed);
 
     processor_pc_increment(p, k_signed + 1);
 

@@ -45,6 +45,7 @@ void processor_sp_decrement(struct processor* p, int v);
 
 void processor_sp_increment(struct processor* p, int v);
 
+
 /* ---------------------------------  */
 /* Px Functions (op execution)        */
 /* ---------------------------------  */
@@ -54,6 +55,10 @@ void PxADD(struct processor* p);
 void PxBREAK(struct processor* p);
 
 void PxCOM(struct processor* p);
+
+void PxCP(struct processor* p);
+
+void PxEOR(struct processor* p);
 
 void PxIN(struct processor* p);
 
@@ -67,7 +72,11 @@ void PxMOVW(struct processor* p);
 
 void PxNOP(struct processor* p);
 
+void PxOUT(struct processor* p);
+
 void PxPUSH(struct processor* p);
+
+void PxRCALL(struct processor* p);
 
 void PxRJMP(struct processor* p);
 

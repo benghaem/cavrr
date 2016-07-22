@@ -47,9 +47,8 @@ The commands have not been formalized, but at the time of writing the following 
 * step [n] - step forward 1 or n instructions
 * bt [addr] - set breakpoint at current pc address or another address in program memory
 * watch (reg | io | sram | raw) &lt;addr&gt; - watch a memory location for changes. reg, io, sram, and 
-raw each provide address offsets for easy access to those spaces. Note that this function currently only works
-when used with the run command. (Make sure to set a breakpoint if the target program contains any infinite loops)
-* print (reg | io | sram | raw) &lt;addr&gt; - print out the value of a memory location
+raw each provide address offsets for easy access to those spaces. Works with run the and step commands (Make sure to set a breakpoint if the target program contains any infinite loops)
+* show (reg | io | sram | raw) &lt;addr&gt; - print out the value of a memory location
 * local - display instructions in program memory near the program counter
 * set &lt;flag&gt; &lt;value&gt; - set the value of a config flag
 * dbe  - enable processor debug output
@@ -61,7 +60,10 @@ when used with the run command. (Make sure to set a breakpoint if the target pro
 ### Available Config Flags
 
 * run_ignores_break - instruct the run command to ignore breakpoints (minor speed boost) [ default = 0 ]
-* no_reset_on_load - when loading a program from file do not reset the processor state [ default = 0 ]
+* reset_on_load - when loading a program from file reset the processor state [ default = 1 ]
+* enable_step_delay - delay each processor step by some amount of time [ default = 0 ]
+* step_delay_ms - step delay in ms [ default = 200 ]
+
 
 ## Test Suite
 
@@ -82,13 +84,17 @@ Here is a list of the currently implemented instructions.
 * ADD
 * BREAK (p)
 * COM (!)
+* CP (!)
+* EOR (!)
 * IN (!)
 * LD Z / LDD Z + q (!)
 * LDI
 * MOV
 * MOVW (!)
 * NOP
+* OUT (!)
 * PUSH
+* RCALL (!)
 * RJMP
 * ST Z
 * STD Z + q (!)
