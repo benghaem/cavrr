@@ -99,7 +99,9 @@ int load_program(char* fname, struct processor* p){
  */
 void print_pc_region(struct processor* p, int rel_start, int rel_end){
     uint16_t local_pc;
-    uint16_t progmem_value;
+    struct operation op;
+    char dasm_str[100];
+    /* don't forget to update size of str below as well */
 
     if (p->pc + rel_start < 0){
         rel_start = rel_start - (p->pc + rel_start);
@@ -107,11 +109,19 @@ void print_pc_region(struct processor* p, int rel_start, int rel_end){
     local_pc = p->pc + rel_start;
 
     for(; local_pc <= (p->pc + rel_end); local_pc++){
-        progmem_value = progmem_read_addr(&p->pmem, local_pc);
+        op.bits = progmem_read_addr(&p->pmem, local_pc);
+
+        op.inst = instruction_decode_bytes(op.bits);
+
+        if (instruction_is_32b(op.inst)){
+            op.ex_bits = progmem_read_addr(&p->pmem, local_pc + 1);
+        }
+
+        disassemble_to_str(&op, local_pc, dasm_str, 100);
 
         (state.bkps[local_pc] == 1) ? printf("*") : printf(" ");
 
-        printf("%4i, %2i : %04X (%s)", local_pc, rel_start, progmem_value, instruction_str(instruction_decode_bytes(progmem_value)));
+        printf("%04X, %2i : %04X (%s)\t%s", local_pc*2, rel_start, op.bits, instruction_str(op.inst), dasm_str);
 
         (local_pc == p->pc) ? printf(" <--\n") : printf("\n");
 
@@ -437,7 +447,7 @@ int main(int argc, char **argv){
                 printf("Incorrect number of arguments\n");
             }
 
-        } else if (!strcmp(cmd_argv[0], "print")){
+        } else if (!strcmp(cmd_argv[0], "show")){
             if (cmd_argc == 3){
                 print(&p, cmd_argv[1], cmd_argv[2]);
             } else {
