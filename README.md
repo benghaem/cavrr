@@ -79,8 +79,8 @@ Here is a list of the currently implemented instructions.
 (!) -&gt; No automated tests
 
 * ADD
-* BRBS [BREQ, BRCS, BRLO, BRMI, BRLT, BRHS, BRTS, BRVS, BRIE] (!)
-* BRBC [BRNE, BRCC, BRSH, BRPL, BRGE, BRHC, BRTC, BRVC, BRID] (!)
+* BRBS \[BREQ, BRCS, BRLO, BRMI, BRLT, BRHS, BRTS, BRVS, BRIE\] (!)
+* BRBC \[BRNE, BRCC, BRSH, BRPL, BRGE, BRHC, BRTC, BRVC, BRID\] (!)
 * BREAK (p)
 * COM (!)
 * CP (!)
