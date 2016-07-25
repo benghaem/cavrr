@@ -52,11 +52,17 @@ void processor_sp_increment(struct processor* p, int v);
 
 void PxADD(struct processor* p);
 
+void PxBRBC(struct processor* p);
+
+void PxBRBS(struct processor* p);
+
 void PxBREAK(struct processor* p);
 
 void PxCOM(struct processor* p);
 
 void PxCP(struct processor* p);
+
+void PxCPC(struct processor* p);
 
 void PxEOR(struct processor* p);
 
