@@ -1,6 +1,7 @@
 ## cavrr: An ATtiny45 Emulator Written in C [![Build Status](https://travis-ci.org/benghaem/cavrr.svg?branch=master)](https://travis-ci.org/benghaem/cavrr)
 
-This is an emulator of the ATtiny45 in C. My goal is to learn more about the AVR architecture and practice C in general.
+This is an emulator of the ATtiny45 in C. My goal is to learn more
+about the AVR architecture and practice C in general.
 
 Currently the following high level concepts have been implemented:
 
@@ -25,15 +26,11 @@ And build the project
 
 You can also run the tests with
 
-`ctest -V`
-
-or 
-
-`make test`
+`ctest -V` or `make test`
 
 ## Usage
 
-Run the binary at `build/bin/cavrr`. 
+Run the binary at `build/bin/cavrr`.
 
 `cavrr [filename]`
 
@@ -82,9 +79,12 @@ Here is a list of the currently implemented instructions.
 (!) -&gt; No automated tests
 
 * ADD
+* BRBS [BREQ, BRCS, BRLO, BRMI, BRLT, BRHS, BRTS, BRVS, BRIE] (!)
+* BRBC [BRNE, BRCC, BRSH, BRPL, BRGE, BRHC, BRTC, BRVC, BRID] (!)
 * BREAK (p)
 * COM (!)
 * CP (!)
+* CPC (!)
 * EOR (!)
 * IN (!)
 * LD Z / LDD Z + q (!)

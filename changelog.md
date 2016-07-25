@@ -1,5 +1,11 @@
 # Changelog
 
+## 7/24/16
+* Add CPC, BRBC, and BRBS (BRBC and BRBS encompass all the branch
+instructions so this is actually a very significant change)
+* Add branch instruction specific decoding to the disassembler
+* Add test cases for the operation variable extraction code
+
 ## 7/22/16
 * Refactor opcode variable extraction to isolated functions
 * Add disassembler

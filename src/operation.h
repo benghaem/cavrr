@@ -26,8 +26,11 @@ void op_get_io_direct(struct operation* op, uint8_t* A, uint8_t* d);
 
 void op_get_rel_addr(struct operation* op, int16_t* K);
 
+void op_get_rel_addr_sreg(struct operation* op, int8_t* k, int* s);
 
 /* disassembler */
+
+char* nice_branch_instr_str(struct operation* op, int use_high_low);
 
 void disassemble_to_str(struct operation* op, uint16_t pc, char* str, size_t max_len);
 
