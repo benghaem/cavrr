@@ -30,9 +30,9 @@ void instr_rjmp_test_exec(void **state) {
 
     pmem = &p.pmem;
 
-    // rjmp  +6 with k = 5
+    /*  rjmp  +6 with k = 5 */
     instr1 = 0x05c0;
-    // rjmp k = -2
+    /*  rjmp k = -2 */
     instr2 = 0xfecf;
 
     progmem_write_addr(pmem, 0, instr1);
@@ -43,7 +43,7 @@ void instr_rjmp_test_exec(void **state) {
 
     result1 = p.pc;
 
-    //first instruction should land here but in case it does not
+    /* first instruction should land here but in case it does not */
     processor_pc_update(&p,0x6);
 
     processor_fetch(&p);
@@ -51,7 +51,7 @@ void instr_rjmp_test_exec(void **state) {
 
     result2 = p.pc;
 
-    //check result
+    /* check result */
     assert_int_equal(result1, 6);
     assert_int_equal(result2, 5);
 }

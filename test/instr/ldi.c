@@ -48,11 +48,11 @@ void instr_ldi_test_exec(void **state) {
     result[2] = datamem_read_reg(dmem, 17);
     result[3] = datamem_read_reg(dmem, 30);
 
-    //check result
+    /* check result */
     assert_int_equal(result[0], 0);
     assert_int_equal(result[1], 1);
     assert_int_equal(result[2], 255);
     assert_int_equal(result[3], 255);
-    //check program counter increment
+    /* check program counter increment */
     assert_int_equal(p.pc, 4);
 }

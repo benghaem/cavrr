@@ -9,7 +9,7 @@
 void instr_add_test_decode(void **state) {
     uint16_t instr;
     enum instruction decoded;
-    // 0000 1111 0000 1100
+    /*  0000 1111 0000 1100 */
 
     instr = 0x0f0c;
 
@@ -34,11 +34,11 @@ void instr_add_test_exec(void **state) {
     datamem_write_reg(dmem, 1, 2);
     datamem_write_reg(dmem, 31, 7);
 
-    // ADD r0, r1
+    /*  ADD r0, r1 */
     instr = 0x010c;
 
-    //ADD r1, r31
-    // 0x1f0e
+    /* ADD r1, r31 */
+    /*  0x1f0e */
 
     progmem_write_addr(pmem, 0, instr);
     progmem_write_addr(pmem, 1, 0x1f0e);
@@ -53,9 +53,9 @@ void instr_add_test_exec(void **state) {
     result2 = datamem_read_reg(dmem, 1);
 
 
-    //check result
+    /* check result */
     assert_int_equal(result1, 4);
     assert_int_equal(result2, 9);
-    //check program counter increment
+    /* check program counter increment */
     assert_int_equal(p.pc, 2);
 }

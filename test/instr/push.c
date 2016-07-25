@@ -34,9 +34,9 @@ void instr_push_test_exec(void **state) {
 
     datamem_write_reg(dmem, 1, 2);
     datamem_write_reg(dmem, 31, 4);
-    // push r1
+    /*  push r1 */
     instr1 = 0x1f92;
-    // push r31
+    /*  push r31 */
     instr2 = 0xff93;
 
     progmem_write_addr(pmem, 0, instr1);
@@ -52,11 +52,11 @@ void instr_push_test_exec(void **state) {
 
     result2 = datamem_read_addr(dmem, 0, processor_sp_read(&p) + 1);
 
-    //check result
+    /* check result */
     assert_int_equal(result1, 2);
     assert_int_equal(result2, 4);
-    //check program counter increment
+    /* check program counter increment */
     assert_int_equal(p.pc, 2);
-    //check sp decrement
+    /* check sp decrement */
     assert_int_equal(DATAMEM_SIZE-3, processor_sp_read(&p));
 }

@@ -30,11 +30,11 @@ void instr_mov_test_exec(void **state) {
     pmem = &p.pmem;
     dmem = &p.dmem;
 
-    //write to r2, r3
+    /* write to r2, r3 */
     datamem_write_reg(dmem, 2, 5);
     datamem_write_reg(dmem, 3, 2);
 
-    // MOV r3, r2
+    /*  MOV r3, r2 */
     instr = 0x322c;
 
     progmem_write_addr(pmem, 0, instr);
@@ -45,8 +45,8 @@ void instr_mov_test_exec(void **state) {
     result = datamem_read_reg(dmem, 3);
 
 
-    //check result
+    /* check result */
     assert_int_equal(result, 5);
-    //check program counter increment
+    /* check program counter increment */
     assert_int_equal(p.pc, 1);
 }

@@ -10,7 +10,7 @@
 void instr_stdz_test_decode(void **state) {
     uint16_t instr;
     enum instruction decoded;
-    // 0000 1111 0000 1100
+    /*  0000 1111 0000 1100 */
 
     instr = 0xa082;
 
@@ -34,7 +34,7 @@ void instr_stdz_test_exec_no_q(void **state) {
 
     datamem_write_reg(dmem, 10, 2);
 
-    // st Z, r10
+    /*  st Z, r10 */
     instr = 0xa082;
     Z = PORTB + IOFILE_OFFSET;
 
