@@ -3,6 +3,7 @@ include_directories("${PROJECT_SOURCE_DIR}/src")
 add_subdirectory(instr)
 add_subdirectory(integration)
 add_subdirectory(general)
+add_subdirectory(hex)
 
 set(all_test_libs ${all_test_libs} instr_test)
 set(all_test_libs ${all_test_libs} integr_test)

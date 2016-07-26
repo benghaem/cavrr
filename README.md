@@ -15,6 +15,10 @@ Currently the following high level concepts have been implemented:
 ## Building
 
 Building the project depends on [cmake](https://github.com/Kitware/CMake)
+and the AVR toolchain if you would like build test programs.
+
+You can enable or disable test program compilation by setting the option when
+you run CMake. By default the option is off.
 
 First create a build directory:
 
@@ -22,7 +26,7 @@ First create a build directory:
 
 And build the project
 
-`cmake .. && make`
+`cmake .. && make` or `cmake -DCOMPILE_IHEX=ON .. && make`
 
 You can also run the tests with
 
@@ -62,11 +66,15 @@ raw each provide address offsets for easy access to those spaces. Works with run
 * step_delay_ms - step delay in ms [ default = 200 ]
 
 
-## Test Suite
+## Testing
 
 The automated test suite can be built by running:
 
-`make test`
+`make test` from within the build directory.
+
+If you enabled the test programs the output files in Intel HEX format are available
+at `build/test/hex/` you can also place new files to build
+in `test/hex/src/`
 
 (Requires [cmocka](https://github.com/clibs/cmocka))
 
