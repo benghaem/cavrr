@@ -86,6 +86,8 @@ void PxRCALL(struct processor* p);
 
 void PxRJMP(struct processor* p);
 
+void PxSBIW(struct processor* p);
+
 void PxSTD_Z(struct processor* p);
 
 #endif /* processor.h */

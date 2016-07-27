@@ -40,6 +40,19 @@ void op_get_reg_imm(struct operation* op, uint8_t* d, uint8_t* K){
 
 
 /*---------------------------------*/
+/* op_get_reg16_imm                */
+/*     ---- | ---- | KKdd | KKKK   */
+/* --> KKdd | KKKK | ---- | ----   */
+/*---------------------------------*/
+void op_get_reg16_imm(struct operation* op, uint8_t* d, uint8_t* K){
+    uint16_t bits = op->bits;
+    *K = (( bits & 0x0F00 ) >> 8 ) | (( bits  & 0xC000 ) >> 10 );
+    /* 11000 -> 24 and 11110 -> 30 */
+    *d = (( bits & 0x3000 ) >> 11 ) | (0x18);
+}
+
+
+/*---------------------------------*/
 /* op_get_io_direct                */
 /*     ---- | -AAd | dddd | AAAA   */
 /* --> dddd | AAAA | ---- | --Ad   */
@@ -222,6 +235,10 @@ void disassemble_to_str(struct operation* op, uint16_t pc, char* str, size_t max
         case BRBC:
             op_get_rel_addr_sreg(op, &k, &s);
             snprintf(str, max_len, "%s .%+d ... %X", nice_branch_instr_str(op, br_use_hl), k * 2, ((int)pc + k + 1)*2 );
+            break;
+        case SBIW:
+            op_get_reg16_imm(op, &d, &imm);
+            snprintf(str,max_len, "%s r%d, 0x%X", instruction_str(op->inst), d, imm);
             break;
         case NOP:
             snprintf(str, max_len, "%s", instruction_str(op->inst));

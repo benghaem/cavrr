@@ -148,6 +148,9 @@ void processor_exec(struct processor* p){
         case RJMP:
             PxRJMP(p);
             break;
+        case SBIW:
+            PxSBIW(p);
+            break;
         case STD_Z:
             PxSTD_Z(p);
             break;
@@ -737,6 +740,45 @@ void PxRJMP(struct processor* p){
     op_get_rel_addr(&p->oper, &k_signed);
 
     processor_pc_increment(p, k_signed + 1);
+
+    return;
+}
+
+/*----------------------------------*/
+/* SBIW 1001 | 0111 | KKdd | KKKK   */
+/*  --> KKdd | KKKK | 1001 | 0111   */
+/* d - target register              */
+/* K - immediate                    */
+/* d = 24,26,28,30                  */
+/*----------------------------------*/
+void PxSBIW(struct processor* p){
+    uint8_t d;
+    uint16_t Rd;
+    uint16_t R;
+    uint8_t K;
+    int S, V, N, Z, C;
+
+    op_get_reg16_imm(&p->oper, &d, &K);
+
+    Rd = datamem_read_reg16(&p->dmem, d, d+1);
+
+    R = Rd - K;
+
+    datamem_write_reg16(&p->dmem, d, d+1, R);
+
+    V = bit(Rd, 15) & ~bit(R, 15);
+    N = bit(R,15);
+    S = N ^ V;
+    Z = (R == 0) ? 1 : 0;
+    C = bit(R,15) & ~bit(Rd,15);
+
+    datamem_write_io_bit(&p->dmem, SREG, SREG_V, V);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_N, N);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_S, S);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_Z, Z);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_C, C);
+
+    processor_pc_increment(p, 1);
 
     return;
 }
