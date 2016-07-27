@@ -2,4 +2,8 @@
 *.o
 *.out
 *.gen
+*.elf
+*.map
+*.lst
+*.hex
 callgrind.*
