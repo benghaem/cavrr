@@ -241,6 +241,7 @@ void disassemble_to_str(struct operation* op, uint16_t pc, char* str, size_t max
             snprintf(str,max_len, "%s r%d, 0x%X", instruction_str(op->inst), d, imm);
             break;
         case NOP:
+        case RET:
             snprintf(str, max_len, "%s", instruction_str(op->inst));
             break;
         default:

@@ -84,6 +84,8 @@ void PxPUSH(struct processor* p);
 
 void PxRCALL(struct processor* p);
 
+void PxRET(struct processor* p);
+
 void PxRJMP(struct processor* p);
 
 void PxSBIW(struct processor* p);

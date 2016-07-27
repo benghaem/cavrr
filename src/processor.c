@@ -145,6 +145,9 @@ void processor_exec(struct processor* p){
         case RCALL:
             PxRCALL(p);
             break;
+        case RET:
+            PxRET(p);
+            break;
         case RJMP:
             PxRJMP(p);
             break;
@@ -289,8 +292,9 @@ void PxBRBC(struct processor* p){
 
     if (sreg_bit == 0){
         processor_pc_increment(p, k + 1);
+    } else {
+        processor_pc_increment(p,1);
     }
-    processor_pc_increment(p,1);
 
     return;
 }
@@ -313,9 +317,9 @@ void PxBRBS(struct processor* p){
 
     if (sreg_bit == 1){
         processor_pc_increment(p, k + 1);
+    } else {
+        processor_pc_increment(p,1);
     }
-    processor_pc_increment(p,1);
-
     return;
 }
 
@@ -724,6 +728,27 @@ void PxRCALL(struct processor* p){
     /* PC <- PC + K + 1 */
 
     processor_pc_increment(p, k_signed + 1);
+
+    return;
+}
+
+
+/*---------------------------------*/
+/* RET 1001 | 0101 | 0000 | 1000   */
+/* --> 0000 | 1000 | 1001 | 0101   */
+/*---------------------------------*/
+void PxRET(struct processor* p){
+    /* RET */
+    uint16_t sp;
+    uint8_t stack;
+
+    processor_sp_increment(p, 2);
+
+    sp = processor_sp_read(p);
+
+    stack = datamem_read_addr(&p->dmem, ZERO_OFFSET, sp);
+
+    processor_pc_update(p, stack);
 
     return;
 }
