@@ -1,5 +1,8 @@
 # Changelog
 
+## 7/25/16
+* Convert building of test programs to CMake
+
 ## 7/24/16
 * Add CPC, BRBC, and BRBS (BRBC and BRBS encompass all the branch
 instructions so this is actually a very significant change)
