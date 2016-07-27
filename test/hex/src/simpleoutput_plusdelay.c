@@ -17,6 +17,6 @@ int main(void){
 
     while(1){
         PORTB = ~PORTB;
-        delay(200);
+        delay(10);
     }
 }

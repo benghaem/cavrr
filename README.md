@@ -14,7 +14,7 @@ Currently the following high level concepts have been implemented:
 
 ## Building
 
-Building the project depends on [cmake](https://github.com/Kitware/CMake)
+Building the project depends on [cmake](https://github.com/Kitware/CMake), [cmocka](https://github.com/clibs/cmocka),
 and the AVR toolchain if you would like build test programs.
 
 You can enable or disable test program compilation by setting the option when
@@ -47,7 +47,7 @@ The commands have not been formalized, but at the time of writing the following 
 * load &lt;filename&gt; - load a program from file
 * step [n] - step forward 1 or n instructions
 * bt [addr] - set breakpoint at current pc address or another address in program memory
-* watch (reg | io | sram | raw) &lt;addr&gt; - watch a memory location for changes. reg, io, sram, and 
+* watch (reg | io | sram | raw) &lt;addr&gt; - watch a memory location for changes. reg, io, sram, and
 raw each provide address offsets for easy access to those spaces. Works with run the and step commands (Make sure to set a breakpoint if the target program contains any infinite loops)
 * show (reg | io | sram | raw) &lt;addr&gt; - print out the value of a memory location
 * local - display instructions in program memory near the program counter
@@ -103,7 +103,9 @@ Here is a list of the currently implemented instructions.
 * OUT (!)
 * PUSH
 * RCALL (!)
+* RET (!)
 * RJMP
+* SBIW (!)
 * ST Z
 * STD Z + q (!)
 

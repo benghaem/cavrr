@@ -1,5 +1,10 @@
 # Changelog
 
+## 7/26/16
+* Add SBIW, RET
+* Add opcode fn for limited reg and immediate style ops
+* Bugfix on branch instructions
+
 ## 7/25/16
 * Convert building of test programs to CMake
 
