@@ -47,6 +47,8 @@ void test_operation_op_get_reg_direct_2(void **state){
 
     return;
 }
+
+
 void test_operation_op_get_reg_imm(void **state){
     struct operation op_max, op_min;
     uint8_t d, K;
@@ -68,6 +70,32 @@ void test_operation_op_get_reg_imm(void **state){
     assert_int_equal(d,16);
 
 }
+
+
+void test_operation_op_get_reg16_imm(void **state){
+    struct operation op_max, op_min;
+    uint8_t d, K;
+
+    /*
+     * ---- | ---- | KKdd | KKKK
+     * KKdd | KKKK | ---- | ----
+     * d = 24,26,28,30
+     */
+    op_max.bits = 0xFF00;
+    op_min.bits = 0x00FF;
+
+    op_get_reg16_imm(&op_max, &d, &K);
+    assert_int_equal(K,0x3F);
+    assert_int_equal(d,30);
+
+    op_get_reg16_imm(&op_min, &d, &K);
+    assert_int_equal(K,0x00);
+    assert_int_equal(d,24);
+
+    return;
+}
+
+
 void test_operation_op_get_io_direct(void **state){
     struct operation op_max, op_min;
     uint8_t A, d;
