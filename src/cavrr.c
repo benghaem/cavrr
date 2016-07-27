@@ -188,6 +188,7 @@ void step_till_breakpoint(struct processor *p){
         processor_step(p,1);
         check_watched(p);
     }while(state.bkps[p->pc] != 1 && state.emu_running);
+    state.emu_running = 0;
 }
 
 /*
@@ -209,6 +210,7 @@ void step(struct processor *p, int n){
             nanosleep(&t1,NULL);
         }
     } while(state.bkps[p->pc] != 1 && n > 0 && state.emu_running);
+    state.emu_running = 0;
 }
 
 /*
