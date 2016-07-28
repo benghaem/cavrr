@@ -87,24 +87,33 @@ Here is a list of the currently implemented instructions.
 (!) -&gt; No automated tests
 
 * ADD
+* ADIW (!)
+* AND (!)
+* ANDI (!)
 * BRBS \[BREQ, BRCS, BRLO, BRMI, BRLT, BRHS, BRTS, BRVS, BRIE\] (!)
 * BRBC \[BRNE, BRCC, BRSH, BRPL, BRGE, BRHC, BRTC, BRVC, BRID\] (!)
 * BREAK (p)
 * COM (!)
 * CP (!)
 * CPC (!)
+* DEC (!)
 * EOR (!)
 * IN (!)
+* INC (!)
 * LD Z / LDD Z + q (!)
 * LDI
 * MOV
 * MOVW (!)
 * NOP
 * OUT (!)
+* OR (!)
+* ORI (!)
 * PUSH
 * RCALL (!)
 * RET (!)
 * RJMP
+* SBC (!)
+* SBCI (!)
 * SBIW (!)
 * ST Z
 * STD Z + q (!)

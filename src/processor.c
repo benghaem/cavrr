@@ -97,6 +97,15 @@ void processor_exec(struct processor* p){
         case ADD:
             PxADD(p);
             break;
+        case ADIW:
+            PxADIW(p);
+            break;
+        case AND:
+            PxAND(p);
+            break;
+        case ANDI:
+            PxANDI(p);
+            break;
         case BRBC:
             PxBRBC(p);
             break;
@@ -115,11 +124,17 @@ void processor_exec(struct processor* p){
         case CPC:
             PxCPC(p);
             break;
+        case DEC:
+            PxDEC(p);
+            break;
         case EOR:
             PxEOR(p);
             break;
         case IN:
             PxIN(p);
+            break;
+        case INC:
+            PxINC(p);
             break;
         case LDD_Z:
             PxLDD_Z(p);
@@ -136,6 +151,12 @@ void processor_exec(struct processor* p){
         case NOP:
             PxNOP(p);
             break;
+        case OR:
+            PxOR(p);
+            break;
+        case ORI:
+            PxORI(p);
+            break;
         case OUT:
             PxOUT(p);
             break;
@@ -150,6 +171,12 @@ void processor_exec(struct processor* p){
             break;
         case RJMP:
             PxRJMP(p);
+            break;
+        case SBC:
+            PxSBC(p);
+            break;
+        case SBCI:
+            PxSBCI(p);
             break;
         case SBIW:
             PxSBIW(p);
@@ -274,6 +301,127 @@ void PxADD(struct processor* p){
     return;
 }
 
+
+/*----------------------------------*/
+/* ADIW 1001 | 0110 | KKdd | KKKK   */
+/*  --> KKdd | KKKK | 1001 | 0110   */
+/* d - target register              */
+/* K - immediate                    */
+/* d = 24,26,28,30                  */
+/*----------------------------------*/
+void PxADIW(struct processor* p){
+    uint8_t d;
+    uint16_t Rd;
+    uint16_t R;
+    uint8_t K;
+    int S, V, N, Z, C;
+
+    op_get_reg16_imm(&p->oper, &d, &K);
+
+    Rd = datamem_read_reg16(&p->dmem, d, d+1);
+
+    R = Rd + K;
+
+    datamem_write_reg16(&p->dmem, d, d+1, R);
+
+    V = ~bit(Rd, 15) & bit(R, 15);
+    N = bit(R,15);
+    S = N ^ V;
+    Z = (R == 0) ? 1 : 0;
+    C = ~bit(R,15) & bit(Rd,15);
+
+    datamem_write_io_bit(&p->dmem, SREG, SREG_V, V);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_N, N);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_S, S);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_Z, Z);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_C, C);
+
+    processor_pc_increment(p, 1);
+
+    return;
+}
+
+
+/*---------------------------------*/
+/* AND 0000 | 00rd | dddd | rrrr   */
+/* --> dddd | rrrr | 0000 | 00rd   */
+/* d - destination                 */
+/* r - source                      */
+/*---------------------------------*/
+void PxAND(struct processor* p){
+    uint8_t r;
+    uint8_t d;
+    uint8_t R;
+    uint8_t Rr;
+    uint8_t Rd;
+    int S, V, N, Z;
+
+    /* Isolate r and d */
+    op_get_reg_direct_2(&p->oper, &r, &d);
+
+    /* Get values of r and d */
+    Rr = datamem_read_reg(&p->dmem, r);
+    Rd = datamem_read_reg(&p->dmem, d);
+
+    R = Rd & Rr;
+
+    /* Set new value of Rd */
+    datamem_write_reg(&p->dmem, d, R);
+
+    /* Set SREG flags */
+
+    V = 0;
+    N = bit(R,7);
+    S = N ^ V;
+    Z = (R == 0) ? 1 : 0;
+
+    datamem_write_io_bit(&p->dmem, SREG, SREG_V, V);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_N, N);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_S, S);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_Z, Z);
+
+    processor_pc_increment(p, 1);
+
+    return;
+}
+
+
+/*----------------------------------*/
+/* ANDI 0100 | KKKK | dddd | KKKK   */
+/*  --> dddd | KKKK | 0100 | KKKK   */
+/* d - target register              */
+/* K - immediate                    */
+/* 16 <= d <= 31                    */
+/*----------------------------------*/
+void PxANDI(struct processor* p){
+    uint8_t d;
+    uint8_t Rd;
+    uint8_t R;
+    uint8_t K;
+    int S, V, N, Z;
+
+    op_get_reg_imm(&p->oper, &d, &K);
+
+    Rd = datamem_read_reg(&p->dmem, d);
+
+    R = Rd & K;
+
+    datamem_write_reg(&p->dmem, d, R);
+
+    V = 0;
+    N = bit(R,7);
+    S = N ^ V;
+    Z = (R == 0) ? 1 : 0;
+
+    datamem_write_io_bit(&p->dmem, SREG, SREG_V, V);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_N, N);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_S, S);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_Z, Z);
+
+    processor_pc_increment(p, 1);
+
+    return;
+}
 
 /*---------------------------------*/
 /* BRBC 1111 | 01kk | kkkk | ksss  */
@@ -473,6 +621,41 @@ void PxCPC(struct processor* p){
 
 
 /*---------------------------------*/
+/* DEC 1001 | 010d | dddd | 1011   */
+/* --> dddd | 1011 | 1001 | 010d   */
+/* d - target register             */
+/*---------------------------------*/
+void PxDEC(struct processor* p){
+    uint8_t d;
+    uint8_t Rd;
+    uint8_t R;
+    int S, V, N, Z;
+
+    op_get_reg_direct(&p->oper, &d);
+
+    Rd = datamem_read_reg(&p->dmem, d);
+
+    R = Rd - 1;
+
+    datamem_write_reg(&p->dmem, d, R);
+
+    V = (R == 0x7F) ? 1 : 0;
+    N = bit(R,7);
+    S = N ^ V;
+    Z = (R == 0) ? 1 : 0;
+
+    datamem_write_io_bit(&p->dmem, SREG, SREG_V, V);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_N, N);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_S, S);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_Z, Z);
+
+    processor_pc_increment(p, 1);
+
+    return;
+}
+
+
+/*---------------------------------*/
 /* EOR 0010 | 01rd | dddd | rrrr   */
 /* --> dddd | rrrr | 0010 | 01rd   */
 /* d - destination                 */
@@ -534,6 +717,41 @@ void PxIN(struct processor* p){
     IOa = datamem_read_io(&p->dmem, a);
 
     datamem_write_reg(&p->dmem, d, IOa);
+
+    processor_pc_increment(p, 1);
+
+    return;
+}
+
+
+/*---------------------------------*/
+/* INC 1001 | 010d | dddd | 0011   */
+/* --> dddd | 0011 | 1001 | 010d   */
+/* d - target register             */
+/*---------------------------------*/
+void PxINC(struct processor* p){
+    uint8_t d;
+    uint8_t Rd;
+    uint8_t R;
+    int S, V, N, Z;
+
+    op_get_reg_direct(&p->oper, &d);
+
+    Rd = datamem_read_reg(&p->dmem, d);
+
+    R = Rd + 1;
+
+    datamem_write_reg(&p->dmem, d, R);
+
+    V = (R == 0x80) ? 1 : 0;
+    N = bit(R,7);
+    S = N ^ V;
+    Z = (R == 0) ? 1 : 0;
+
+    datamem_write_io_bit(&p->dmem, SREG, SREG_V, V);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_N, N);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_S, S);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_Z, Z);
 
     processor_pc_increment(p, 1);
 
@@ -654,6 +872,87 @@ void PxNOP(struct processor* p){
 
 
 /*---------------------------------*/
+/*  OR 0010 | 10rd | dddd | rrrr   */
+/* --> dddd | rrrr | 0010 | 10rd   */
+/* d - destination                 */
+/* r - source                      */
+/*---------------------------------*/
+void PxOR(struct processor* p){
+    uint8_t r;
+    uint8_t d;
+    uint8_t R;
+    uint8_t Rr;
+    uint8_t Rd;
+    int S, V, N, Z;
+
+    /* Isolate r and d */
+    op_get_reg_direct_2(&p->oper, &r, &d);
+
+    /* Get values of r and d */
+    Rr = datamem_read_reg(&p->dmem, r);
+    Rd = datamem_read_reg(&p->dmem, d);
+
+    R = Rd | Rr;
+
+    /* Set new value of Rd */
+    datamem_write_reg(&p->dmem, d, R);
+
+    /* Set SREG flags */
+
+    V = 0;
+    N = bit(R,7);
+    S = N ^ V;
+    Z = (R == 0) ? 1 : 0;
+
+    datamem_write_io_bit(&p->dmem, SREG, SREG_V, V);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_N, N);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_S, S);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_Z, Z);
+
+    processor_pc_increment(p, 1);
+
+    return;
+}
+
+
+/*----------------------------------*/
+/*  ORI 0110 | KKKK | dddd | KKKK   */
+/*  --> dddd | KKKK | 0110 | KKKK   */
+/* d - target register              */
+/* K - immediate                    */
+/* 16 <= d <= 31                    */
+/*----------------------------------*/
+void PxORI(struct processor* p){
+    uint8_t d;
+    uint8_t Rd;
+    uint8_t R;
+    uint8_t K;
+    int S, V, N, Z;
+
+    op_get_reg_imm(&p->oper, &d, &K);
+
+    Rd = datamem_read_reg(&p->dmem, d);
+
+    R = Rd | K;
+
+    datamem_write_reg(&p->dmem, d, R);
+
+    V = 0;
+    N = bit(R,7);
+    S = N ^ V;
+    Z = (R == 0) ? 1 : 0;
+
+    datamem_write_io_bit(&p->dmem, SREG, SREG_V, V);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_N, N);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_S, S);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_Z, Z);
+
+    processor_pc_increment(p, 1);
+
+    return;
+}
+
+/*---------------------------------*/
 /* OUT 1011 | 1aar | rrrr | aaaa   */
 /* --> rrrr | aaaa | 1011 | 1aar   */
 /* r - source                      */
@@ -768,6 +1067,106 @@ void PxRJMP(struct processor* p){
 
     return;
 }
+
+
+/*---------------------------------*/
+/* SBC 0000 | 10rd | dddd | rrrr   */
+/* --> dddd | rrrr | 0000 | 10rd   */
+/* d - destination                 */
+/* r - source                      */
+/*---------------------------------*/
+void PxSBC(struct processor* p){
+    uint8_t r = 0;
+    uint8_t d = 0;
+    uint8_t R;
+    uint8_t Rr;
+    uint8_t Rd;
+    int C_flag, Z_flag;
+    int H, S, V, N, Z, C;
+
+    /* Isolate r and d */
+    op_get_reg_direct_2(&p->oper, &r, &d);
+
+    /* Get values of r and d */
+    Rr = datamem_read_reg(&p->dmem, r);
+    Rd = datamem_read_reg(&p->dmem, d);
+
+    /* Get C and Z Flags */
+    C_flag = datamem_read_io_bit(&p->dmem, SREG, SREG_C);
+    Z_flag = datamem_read_io_bit(&p->dmem, SREG, SREG_Z);
+
+    R = Rd - Rr - C_flag;
+
+    /* Set new value of Rd */
+    datamem_write_reg(&p->dmem, d, R);
+
+    /* Set SREG flags */
+
+    H = (~bit(Rd,3) & bit(Rr,3)) | (bit(Rr,3) & bit(R,3)) | (bit(R,3) & ~bit(Rd,3));
+    V = (bit(Rd,7) & ~bit(Rr,7) & bit(R,7)) | (~bit(Rd,7) & bit(Rr,7) & bit(R,7));
+    N = bit(R,7);
+    S = N ^ V;
+    Z = ((R == 0) | Z_flag) ? 1 : 0;
+    C = (~bit(Rd,7) & bit(Rr,7)) | (bit(Rr,7) & bit(R,7)) | (bit(R,7) & ~bit(Rd,7));
+
+    datamem_write_io_bit(&p->dmem, SREG, SREG_H, H);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_V, V);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_N, N);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_S, S);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_Z, Z);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_C, C);
+
+    processor_pc_increment(p, 1);
+
+    return;
+}
+
+
+/*----------------------------------*/
+/* SBCI 0100 | KKKK | dddd | KKKK   */
+/*  --> dddd | KKKK | 0100 | KKKK   */
+/* d - target register              */
+/* K - immediate                    */
+/* 16 <= d <= 31                    */
+/*----------------------------------*/
+void PxSBCI(struct processor* p){
+    uint8_t d;
+    uint8_t Rd;
+    uint8_t R;
+    uint8_t K;
+    int C_flag, Z_flag;
+    int H, S, V, N, Z, C;
+
+    op_get_reg_imm(&p->oper, &d, &K);
+
+    Rd = datamem_read_reg(&p->dmem, d);
+
+    C_flag = datamem_read_io_bit(&p->dmem, SREG, SREG_C);
+    Z_flag = datamem_read_io_bit(&p->dmem, SREG, SREG_Z);
+
+    R = Rd - K - C_flag;
+
+    datamem_write_reg(&p->dmem, d, R);
+
+    H = (~bit(Rd,3) & bit(K,3)) | (bit(K,3) & bit(R,3)) | (bit(R,3) & ~bit(Rd,3));
+    V = (bit(Rd,7) & ~bit(K,7) & ~bit(R,7)) | (~bit(Rd,7) & bit(K,7) & bit(R,7));
+    N = bit(R,7);
+    S = N ^ V;
+    Z = ((R == 0) | Z_flag) ? 1 : 0;
+    C = (~bit(Rd,7) & bit(K,7)) | (bit(K,7) & bit(R,7)) | (bit(R,7) & ~bit(Rd,7));
+
+    datamem_write_io_bit(&p->dmem, SREG, SREG_H, H);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_V, V);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_N, N);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_S, S);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_Z, Z);
+    datamem_write_io_bit(&p->dmem, SREG, SREG_C, C);
+
+    processor_pc_increment(p, 1);
+
+    return;
+}
+
 
 /*----------------------------------*/
 /* SBIW 1001 | 0111 | KKdd | KKKK   */

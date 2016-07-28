@@ -1,0 +1,78 @@
+[x] ADD
+[x] ADIW
+[x] AND
+[x] ANDI
+[ ] ASR
+[ ] BCLR
+[ ] BLD
+[x] BRBC
+[x] BRBS
+[p] BREAK
+[ ] BSET
+[ ] BST
+[ ] CBI
+[x] COM
+[x] CP
+[x] CPC
+[ ] CPI
+[ ] CPSE
+[x] DEC
+[x] EOR
+[ ] ICALL
+[ ] IJMP
+[x] IN
+[x] INC
+[ ] LDD_Y
+[x] LDD_Z
+[x] LDI
+[ ] LDS
+[ ] LD_X
+[ ] LD_Xm
+[ ] LD_Xp
+[ ] LD_Ym
+[ ] LD_Yp
+[ ] LD_Zm
+[ ] LD_Zp
+[ ] LPM
+[ ] LPM_Z
+[ ] LPM_Zp
+[ ] LSR
+[x] MOV
+[x] MOVW
+[ ] NEG
+[x] NOP
+[x] OR
+[x] ORI
+[x] OUT
+[ ] POP
+[x] PUSH
+[x] RCALL
+[x] RET
+[ ] RETI
+[x] RJMP
+[ ] ROL
+[ ] ROR
+[x] SBC
+[x] SBCI
+[ ] SBI
+[ ] SBIC
+[ ] SBIS
+[x] SBIW
+[ ] SBRC
+[ ] SBRS
+[ ] SLEEP
+[ ] SPM
+[ ] STD_Y
+[x] STD_Z
+[ ] STS
+[ ] ST_X
+[ ] ST_Xm
+[ ] ST_Xp
+[ ] ST_Ym
+[ ] ST_Yp
+[ ] ST_Zm
+[ ] ST_Zp
+[ ] SUB
+[ ] SUBI
+[ ] SWAP
+[ ] WDR

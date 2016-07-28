@@ -52,6 +52,12 @@ void processor_sp_increment(struct processor* p, int v);
 
 void PxADD(struct processor* p);
 
+void PxADIW(struct processor* p);
+
+void PxAND(struct processor* p);
+
+void PxANDI(struct processor* p);
+
 void PxBRBC(struct processor* p);
 
 void PxBRBS(struct processor* p);
@@ -64,9 +70,13 @@ void PxCP(struct processor* p);
 
 void PxCPC(struct processor* p);
 
+void PxDEC(struct processor* p);
+
 void PxEOR(struct processor* p);
 
 void PxIN(struct processor* p);
+
+void PxINC(struct processor* p);
 
 void PxLDD_Z(struct processor* p);
 
@@ -78,6 +88,10 @@ void PxMOVW(struct processor* p);
 
 void PxNOP(struct processor* p);
 
+void PxOR(struct processor* p);
+
+void PxORI(struct processor* p);
+
 void PxOUT(struct processor* p);
 
 void PxPUSH(struct processor* p);
@@ -87,6 +101,10 @@ void PxRCALL(struct processor* p);
 void PxRET(struct processor* p);
 
 void PxRJMP(struct processor* p);
+
+void PxSBC(struct processor* p);
+
+void PxSBCI(struct processor* p);
 
 void PxSBIW(struct processor* p);
 

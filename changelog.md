@@ -1,5 +1,8 @@
 # Changelog
 
+## 7/27/16
+* Add ADIW, AND, ANDI, DEC, INC, OR, ORI, SBC, SBCI
+
 ## 7/26/16
 * Add SBIW, RET
 * Add opcode fn for limited reg and immediate style ops

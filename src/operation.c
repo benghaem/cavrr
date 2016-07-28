@@ -200,6 +200,7 @@ void disassemble_to_str(struct operation* op, uint16_t pc, char* str, size_t max
         case INC:
         case NEG:
         case PUSH:
+        case SBC:
             op_get_reg_direct(op, &r);
             snprintf(str, max_len, "%s r%d", instruction_str(op->inst), r);
             break;
@@ -208,6 +209,7 @@ void disassemble_to_str(struct operation* op, uint16_t pc, char* str, size_t max
         case CP:
         case CPC:
         case EOR:
+        case OR:
         case SUB:
             op_get_reg_direct_2(op, &r, &d);
             snprintf(str, max_len, "%s r%d, r%d", instruction_str(op->inst), d, r);
@@ -223,6 +225,8 @@ void disassemble_to_str(struct operation* op, uint16_t pc, char* str, size_t max
         case ANDI:
         case CPI:
         case LDI:
+        case ORI:
+        case SBCI:
             op_get_reg_imm(op, &d, &imm);
             snprintf(str, max_len, "%s r%d, 0x%X", instruction_str(op->inst), d, imm);
             break;
@@ -236,6 +240,7 @@ void disassemble_to_str(struct operation* op, uint16_t pc, char* str, size_t max
             op_get_rel_addr_sreg(op, &k, &s);
             snprintf(str, max_len, "%s .%+d ... %X", nice_branch_instr_str(op, br_use_hl), k * 2, ((int)pc + k + 1)*2 );
             break;
+        case ADIW:
         case SBIW:
             op_get_reg16_imm(op, &d, &imm);
             snprintf(str,max_len, "%s r%d, 0x%X", instruction_str(op->inst), d, imm);
