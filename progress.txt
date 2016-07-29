@@ -3,12 +3,12 @@
 [x] AND
 [x] ANDI
 [ ] ASR
-[ ] BCLR
+[x] BCLR
 [ ] BLD
 [x] BRBC
 [x] BRBS
 [p] BREAK
-[ ] BSET
+[x] BSET
 [ ] BST
 [ ] CBI
 [x] COM
