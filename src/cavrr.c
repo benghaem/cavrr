@@ -21,6 +21,7 @@ struct state{
     struct list* watch_addrs;
     struct datamem local_dmem;
     volatile sig_atomic_t emu_running;
+    volatile sig_atomic_t notify_stop;
 };
 
 static struct config config = {
@@ -30,7 +31,7 @@ static struct config config = {
     200  /* step_delay_ms */
 };
 
-static struct state state = {{0},0,{{0}},0};
+static struct state state = {{0},0,{{0}},0,0};
 
 const char version_string[] = "cavrr: An ATtiny45 Emulator\n"
                               "Version %d.%d.%d\n"
@@ -53,7 +54,7 @@ void init_state(){
 void catch_sigint(int sig){
     if (state.emu_running){
         state.emu_running = 0;
-        printf("\nstopped by interrupt\n");
+        state.notify_stop = 1;
         signal(sig, catch_sigint);
     } else {
         exit(1);
@@ -69,7 +70,7 @@ int load_program(char* fname, struct processor* p){
     int pm_addr = 0;
     uint16_t op;
 
-    if (!config.reset_on_load){
+    if (config.reset_on_load){
         processor_init(p);
     }
 
@@ -157,6 +158,9 @@ void get_cmds(char *str, char** argv[], int* argc){
     int n = 0;
 
     *argv = malloc(sizeof(char*) * strlen(str));
+
+    /* In case the input is only a newline */
+    (*argv)[0] = "NULL";
 
     pch = strtok(str, " \n");
     while(pch != NULL){
@@ -384,9 +388,13 @@ int main(int argc, char **argv){
     }
 
     while (running){
+        if (state.notify_stop){
+            printf("stopped\n");
+            state.notify_stop = 0;
+        }
         printf("cavrr> ");
 
-        if (fgets(cmd, 100, stdin) == NULL){
+        if (fgets(cmd, 100, stdin) == NULL || !strcmp(cmd, "\n")){
             continue;
         };
         get_cmds(cmd, &cmd_argv, &cmd_argc);
