@@ -288,3 +288,167 @@ int progmem_write_addr(struct progmem* p, int addr, uint16_t data){
     }
     return -1;
 }
+
+
+int str_to_io_addr(char* str){
+
+    if(!strcmp("SREG",str)){
+        return 0x3F;
+    }
+    else if(!strcmp("SPH",str)){
+        return 0x3E;
+    }
+    else if(!strcmp("SPL",str)){
+        return 0x3D;
+    }
+    else if(!strcmp("GIMSK",str)){
+        return 0x3B;
+    }
+    else if(!strcmp("GIFR",str)){
+        return 0x3A;
+    }
+    else if(!strcmp("TIMSK",str)){
+        return 0x39;
+    }
+    else if(!strcmp("TIFR",str)){
+        return 0x38;
+    }
+    else if(!strcmp("SPMCSR",str)){
+        return 0x37;
+    }
+    else if(!strcmp("MCUCR",str)){
+        return 0x35;
+    }
+    else if(!strcmp("MCUSR",str)){
+        return 0x34;
+    }
+    else if(!strcmp("TCCR0B",str)){
+        return 0x33;
+    }
+    else if(!strcmp("TCNT0",str)){
+        return 0x32;
+    }
+    else if(!strcmp("OSCCAL",str)){
+        return 0x31;
+    }
+    else if(!strcmp("TCCR1",str)){
+        return 0x30;
+    }
+    else if(!strcmp("TCNT1",str)){
+        return 0x2F;
+    }
+    else if(!strcmp("OCR1A",str)){
+        return 0x2E;
+    }
+    else if(!strcmp("OCR1C",str)){
+        return 0x2D;
+    }
+    else if(!strcmp("GTCCR",str)){
+        return 0x2C;
+    }
+    else if(!strcmp("OCR1B",str)){
+        return 0x2B;
+    }
+    else if(!strcmp("TCCR0A",str)){
+        return 0x2A;
+    }
+    else if(!strcmp("OCR0A",str)){
+        return 0x29;
+    }
+    else if(!strcmp("OCR0B",str)){
+        return 0x28;
+    }
+    else if(!strcmp("PLLCSR",str)){
+        return 0x27;
+    }
+    else if(!strcmp("CLKPR",str)){
+        return 0x26;
+    }
+    else if(!strcmp("DT1A",str)){
+        return 0x25;
+    }
+    else if(!strcmp("DT1B",str)){
+        return 0x24;
+    }
+    else if(!strcmp("DTPS1",str)){
+        return 0x23;
+    }
+    else if(!strcmp("DWDR",str)){
+        return 0x22;
+    }
+    else if(!strcmp("WDTCR",str)){
+        return 0x21;
+    }
+    else if(!strcmp("PRR",str)){
+        return 0x20;
+    }
+    else if(!strcmp("EEARH",str)){
+        return 0x1F;
+    }
+    else if(!strcmp("EEARL",str)){
+        return 0x1E;
+    }
+    else if(!strcmp("EEDR",str)){
+        return 0x1D;
+    }
+    else if(!strcmp("EECR",str)){
+        return 0x1C;
+    }
+    else if(!strcmp("PORTB",str)){
+        return 0x18;
+    }
+    else if(!strcmp("DDRB",str)){
+        return 0x17;
+    }
+    else if(!strcmp("PINB",str)){
+        return 0x16;
+    }
+    else if(!strcmp("PCMSK",str)){
+        return 0x15;
+    }
+    else if(!strcmp("DIDR0",str)){
+        return 0x14;
+    }
+    else if(!strcmp("GPIOR2",str)){
+        return 0x13;
+    }
+    else if(!strcmp("GPIOR1",str)){
+        return 0x12;
+    }
+    else if(!strcmp("GPIOR0",str)){
+        return 0x11;
+    }
+    else if(!strcmp("USIBR",str)){
+        return 0x10;
+    }
+    else if(!strcmp("USIDR",str)){
+        return 0x0F;
+    }
+    else if(!strcmp("USISR",str)){
+        return 0x0E;
+    }
+    else if(!strcmp("USICR",str)){
+        return 0x0D;
+    }
+    else if(!strcmp("ACSR",str)){
+        return 0x08;
+    }
+    else if(!strcmp("ADMUX",str)){
+        return 0x07;
+    }
+    else if(!strcmp("ADCSRA",str)){
+        return 0x06;
+    }
+    else if(!strcmp("ADCH",str)){
+        return 0x05;
+    }
+    else if(!strcmp("ADCL",str)){
+        return 0x04;
+    }
+    else if(!strcmp("ADCSRB",str)){
+        return 0x03;
+    }
+    else{
+        return -1;
+    }
+}

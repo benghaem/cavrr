@@ -54,6 +54,8 @@ void init_state(){
 void catch_sigint(int sig){
     if (state.emu_running){
         state.emu_running = 0;
+        /* notify that we stopped a program so that we can print at the next
+         * prompt */
         state.notify_stop = 1;
         signal(sig, catch_sigint);
     } else {
@@ -172,7 +174,7 @@ void get_cmds(char *str, char** argv[], int* argc){
 }
 
 /*
- * Toggles a breakpoint in the config struct
+ * Toggles a breakpoint in the state struct
  * breakpoints are simply 0/1 values for every progmem address
  * that are checked by the step_till_breakpoint function
  */
@@ -226,29 +228,29 @@ int parse_address(char* offset_str, char* addr_str){
     int addr;
     int offset;
 
-    addr = (int) strtol(addr_str, NULL, 16);
 
-    if (addr >= 0 && addr < DATAMEM_SIZE){
-        if (!strcmp(offset_str, "reg")){
-            offset = RFILE_OFFSET;
-        } else if (!strcmp(offset_str, "io")){
-            offset = IOFILE_OFFSET;
-        } else if (!strcmp(offset_str, "sram")){
-            offset = SRAM_OFFSET;
-        } else if (!strcmp(offset_str, "raw")){
-            offset = ZERO_OFFSET;
-        } else {
-            printf("Offset mode is invalid. Use reg, io, sram, or raw\n");
+    if (!strcmp(offset_str, "reg")){
+        offset = RFILE_OFFSET;
+        addr = (int) strtol(addr_str, NULL, 10);
+    } else if (!strcmp(offset_str, "io")){
+        offset = IOFILE_OFFSET;
+        addr = str_to_io_addr(addr_str);
+        if (addr == -1){
+            printf("invalid io name\n");
             return -1;
         }
-
-        return addr+offset;
-
-    } else{
-        printf("Address is out of range\n");
+    } else if (!strcmp(offset_str, "sram")){
+        addr = (int) strtol(addr_str, NULL, 16);
+        offset = SRAM_OFFSET;
+    } else if (!strcmp(offset_str, "raw")){
+        offset = ZERO_OFFSET;
+        addr = (int) strtol(addr_str, NULL, 16);
+    } else {
+        printf("Offset mode is invalid. Use reg, io, sram, or raw\n");
         return -1;
     }
 
+    return addr+offset;
 
 }
 

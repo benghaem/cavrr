@@ -99,4 +99,6 @@ uint16_t progmem_read_addr(struct progmem* p, int addr);
 
 int progmem_write_addr(struct progmem* p, int addr, uint16_t data);
 
+int str_to_io_addr(char* str);
+
 #endif /* memory.h */
