@@ -1,5 +1,12 @@
 # Changelog
 
+## 7/28/16
+* Add BCLR, BSET
+* modify address decoding for show/watch/unwatch. You can now input addresses in nicer formats for reg and io.
+Ex: `show reg 23` (where 23 is interpreted as base10) and `show io PORTB`.
+* Tweak interrupt behavior to print nicely
+* bugfix: fix bug that caused crash if no input was provided
+
 ## 7/27/16
 * Add ADIW, AND, ANDI, DEC, INC, OR, ORI, SBC, SBCI
 

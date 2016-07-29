@@ -106,6 +106,9 @@ void processor_exec(struct processor* p){
         case ANDI:
             PxANDI(p);
             break;
+        case BCLR:
+            PxBCLR(p);
+            break;
         case BRBC:
             PxBRBC(p);
             break;
@@ -114,6 +117,9 @@ void processor_exec(struct processor* p){
             break;
         case BREAK:
             PxBREAK(p);
+            return;
+        case BSET:
+            PxBSET(p);
             return;
         case COM:
             PxCOM(p);
@@ -423,6 +429,25 @@ void PxANDI(struct processor* p){
     return;
 }
 
+
+/*----------------------------------*/
+/* BCLR 1001 | 0100 | 1sss | 1000   */
+/*  --> 1sss | 1000 | 1001 | 0100   */
+/* s - sreg                         */
+/*----------------------------------*/
+void PxBCLR(struct processor* p){
+    int s;
+
+    op_get_sreg(&p->oper, &s);
+
+    datamem_write_io_bit(&p->dmem, SREG, s, 0);
+
+    processor_pc_increment(p, 1);
+
+    return;
+}
+
+
 /*---------------------------------*/
 /* BRBC 1111 | 01kk | kkkk | ksss  */
 /*  --> kkkk | ksss | 1111 | 01kk  */
@@ -479,6 +504,24 @@ void PxBREAK(struct processor* p){
     /* BREAK */
 
     p->state = HALT;
+
+    processor_pc_increment(p, 1);
+
+    return;
+}
+
+
+/*----------------------------------*/
+/* BSET 1001 | 0100 | 0sss | 1000   */
+/*  --> 0sss | 1000 | 1001 | 0100   */
+/* s - sreg                         */
+/*----------------------------------*/
+void PxBSET(struct processor* p){
+    int s;
+
+    op_get_sreg(&p->oper, &s);
+
+    datamem_write_io_bit(&p->dmem, SREG, s, 1);
 
     processor_pc_increment(p, 1);
 

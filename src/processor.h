@@ -58,11 +58,15 @@ void PxAND(struct processor* p);
 
 void PxANDI(struct processor* p);
 
+void PxBCLR(struct processor* p);
+
 void PxBRBC(struct processor* p);
 
 void PxBRBS(struct processor* p);
 
 void PxBREAK(struct processor* p);
+
+void PxBSET(struct processor* p);
 
 void PxCOM(struct processor* p);
 

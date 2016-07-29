@@ -5,6 +5,7 @@ set(AVR_MMCU "attiny45")
 
 list(APPEND programs "simpleoutput")
 list(APPEND programs "simpleoutput_plusdelay")
+list(APPEND programs "simplestatemachine")
 
 if(COMPILE_IHEX)
     foreach(program ${programs})

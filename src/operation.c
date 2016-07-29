@@ -107,6 +107,19 @@ void op_get_rel_addr_sreg(struct operation* op, int8_t* k, int* s){
     }
 }
 
+
+/*---------------------------------*/
+/* op_get_sreg                     */
+/*     ---- | ---- | -sss | ----   */
+/* --> -sss | ---- | ---- | ----   */
+/*---------------------------------*/
+void op_get_sreg(struct operation* op, int* s){
+    uint16_t bits = op->bits;
+
+    *s = ((bits & 0x7000) >> 12);
+}
+
+
 /*
  * Returns a branch instruction string as listed by the assembly spec
  * The normal instruction_str in instruction.h does not do this

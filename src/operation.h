@@ -30,6 +30,8 @@ void op_get_rel_addr(struct operation* op, int16_t* K);
 
 void op_get_rel_addr_sreg(struct operation* op, int8_t* k, int* s);
 
+void op_get_sreg(struct operation* op, int* s);
+
 /* disassembler */
 
 char* nice_branch_instr_str(struct operation* op, int use_high_low);
