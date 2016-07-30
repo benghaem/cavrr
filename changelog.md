@@ -1,5 +1,9 @@
 # Changelog
 
+## 7/29/16
+* Add LD_X, LD_Xp, LD_Xm, LDD_Y, LD_Yp, LD_Ym, LD_Zp, LD_Zm
+* Add opcode fn for reg and displacement
+
 ## 7/28/16
 * Add BCLR, BSET
 * modify address decoding for show/watch/unwatch. You can now input addresses in nicer formats for reg and io.

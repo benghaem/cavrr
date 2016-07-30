@@ -22,17 +22,17 @@
 [ ] IJMP
 [x] IN
 [x] INC
-[ ] LDD_Y
+[x] LDD_Y
 [x] LDD_Z
 [x] LDI
 [ ] LDS
-[ ] LD_X
-[ ] LD_Xm
-[ ] LD_Xp
-[ ] LD_Ym
-[ ] LD_Yp
-[ ] LD_Zm
-[ ] LD_Zp
+[x] LD_X
+[x] LD_Xm
+[x] LD_Xp
+[x] LD_Ym
+[x] LD_Yp
+[x] LD_Zm
+[x] LD_Zp
 [ ] LPM
 [ ] LPM_Z
 [ ] LPM_Zp

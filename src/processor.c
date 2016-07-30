@@ -142,6 +142,30 @@ void processor_exec(struct processor* p){
         case INC:
             PxINC(p);
             break;
+        case LD_X:
+            PxLD_X(p);
+            break;
+        case LD_Xm:
+            PxLD_Xm(p);
+            break;
+        case LD_Xp:
+            PxLD_Xp(p);
+            break;
+        case LD_Ym:
+            PxLD_Ym(p);
+            break;
+        case LD_Yp:
+            PxLD_Yp(p);
+            break;
+        case LDD_Y:
+            PxLDD_Y(p);
+            break;
+        case LD_Zm:
+            PxLD_Zm(p);
+            break;
+        case LD_Zp:
+            PxLD_Zp(p);
+            break;
         case LDD_Z:
             PxLDD_Z(p);
             break;
@@ -802,6 +826,212 @@ void PxINC(struct processor* p){
 }
 
 
+/*----------------------------------*/
+/* LD_X 1001 | 000d | dddd | 1100   */
+/*  --> dddd | 1100 | 1001 | 000d   */
+/* d - Destination register         */
+/*----------------------------------*/
+void PxLD_X(struct processor* p){
+    uint8_t d;
+    uint16_t x;
+    uint8_t dataX;
+
+    op_get_reg_direct(&p->oper, &d);
+
+    x = datamem_read_reg_X(&p->dmem);
+
+    dataX = datamem_read_addr(&p->dmem, ZERO_OFFSET, x);
+
+    datamem_write_reg(&p->dmem, d, dataX);
+
+    return;
+}
+
+
+/*-----------------------------------*/
+/* LD_Xm 1001 | 000d | dddd | 1110   */
+/*   --> dddd | 1110 | 1001 | 000d   */
+/* d - Destination register          */
+/*-----------------------------------*/
+void PxLD_Xm(struct processor* p){
+    uint8_t d;
+    uint16_t x;
+    uint8_t dataXm;
+
+    op_get_reg_direct(&p->oper, &d);
+
+    x = datamem_read_reg_X(&p->dmem);
+
+    x = x - 1;
+
+    datamem_write_reg_X(&p->dmem, x );
+
+    dataXm = datamem_read_addr(&p->dmem, ZERO_OFFSET, x);
+
+    datamem_write_reg(&p->dmem, d, dataXm);
+
+    return;
+}
+
+
+/*-----------------------------------*/
+/* LD_Xp 1001 | 000d | dddd | 1101   */
+/*   --> dddd | 1101 | 1001 | 000d   */
+/* d - Destination register          */
+/*-----------------------------------*/
+void PxLD_Xp(struct processor* p){
+    uint8_t d;
+    uint16_t x;
+    uint8_t dataXp;
+
+    op_get_reg_direct(&p->oper, &d);
+
+    x = datamem_read_reg_X(&p->dmem);
+
+    dataXp = datamem_read_addr(&p->dmem, ZERO_OFFSET, x);
+
+    datamem_write_reg(&p->dmem, d, dataXp);
+
+    x = x + 1;
+
+    datamem_write_reg_X(&p->dmem, x );
+
+
+    return;
+}
+
+
+/*-----------------------------------*/
+/* LD_Ym 1001 | 000d | dddd | 1010   */
+/*   --> dddd | 1010 | 1001 | 000d   */
+/* d - Destination register          */
+/*-----------------------------------*/
+void PxLD_Ym(struct processor* p){
+    uint8_t d;
+    uint16_t y;
+    uint8_t dataYm;
+
+    op_get_reg_direct(&p->oper, &d);
+
+    y = datamem_read_reg_Y(&p->dmem);
+
+    y = y - 1;
+
+    datamem_write_reg_Y(&p->dmem, y );
+
+    dataYm = datamem_read_addr(&p->dmem, ZERO_OFFSET, y);
+
+    datamem_write_reg(&p->dmem, d, dataYm);
+
+    return;
+}
+
+
+/*-----------------------------------*/
+/* LD_Yp 1001 | 000d | dddd | 1001   */
+/*   --> dddd | 1001 | 1001 | 000d   */
+/* d - Destination register          */
+/*-----------------------------------*/
+void PxLD_Yp(struct processor* p){
+    uint8_t d;
+    uint16_t y;
+    uint8_t dataYp;
+
+    op_get_reg_direct(&p->oper, &d);
+
+    y = datamem_read_reg_Y(&p->dmem);
+
+    dataYp = datamem_read_addr(&p->dmem, ZERO_OFFSET, y);
+
+    datamem_write_reg(&p->dmem, d, dataYp);
+
+    y = y + 1;
+
+    datamem_write_reg_Y(&p->dmem, y );
+
+    return;
+}
+
+
+/*-----------------------------------*/
+/* LDD_Y 10q0 | qq1d | dddd | 1qqq   */
+/*   --> dddd | 1qqq | 10q0 | qq1d   */
+/* d - Destination register          */
+/* q - displacement                  */
+/* Also captures LD_Y q=0            */
+/*-----------------------------------*/
+void PxLDD_Y(struct processor* p){
+    uint8_t d;
+    uint8_t q;
+    uint16_t y;
+    uint8_t dataYQ;
+
+    /* Isolate d and q*/
+    op_get_reg_displacement(&p->oper, &d, &q);
+
+    y = datamem_read_reg_Y(&p->dmem);
+    dataYQ = datamem_read_addr(&p->dmem, ZERO_OFFSET, y + q);
+
+    datamem_write_reg(&p->dmem, d, dataYQ);
+
+    processor_pc_increment(p, 1);
+
+    return;
+}
+
+
+/*-----------------------------------*/
+/* LD_Zm 1001 | 000d | dddd | 0010   */
+/*   --> dddd | 0010 | 1001 | 000d   */
+/* d - Destination register          */
+/*-----------------------------------*/
+void PxLD_Zm(struct processor* p){
+    uint8_t d;
+    uint16_t z;
+    uint8_t dataZm;
+
+    op_get_reg_direct(&p->oper, &d);
+
+    z = datamem_read_reg_Z(&p->dmem);
+
+    z = z - 1;
+
+    datamem_write_reg_Z(&p->dmem, z );
+
+    dataZm = datamem_read_addr(&p->dmem, ZERO_OFFSET, z);
+
+    datamem_write_reg(&p->dmem, d, dataZm);
+
+    return;
+}
+
+
+/*-----------------------------------*/
+/* LD_Zp 1001 | 000d | dddd | 0001   */
+/*   --> dddd | 0001 | 1001 | 000d   */
+/* d - Destination register          */
+/*-----------------------------------*/
+void PxLD_Zp(struct processor* p){
+    uint8_t d;
+    uint16_t z;
+    uint8_t dataZp;
+
+    op_get_reg_direct(&p->oper, &d);
+
+    z = datamem_read_reg_Z(&p->dmem);
+
+    dataZp = datamem_read_addr(&p->dmem, ZERO_OFFSET, z);
+
+    datamem_write_reg(&p->dmem, d, dataZp);
+
+    z = z + 1;
+
+    datamem_write_reg_Z(&p->dmem, z );
+
+    return;
+}
+
+
 /*-----------------------------------*/
 /* LDD_Z 10q0 | qq1d | dddd | 0qqq   */
 /*   --> dddd | 0qqq | 10q0 | qq1d   */
@@ -816,8 +1046,7 @@ void PxLDD_Z(struct processor* p){
     uint8_t dataZQ;
 
     /* Isolate d and q*/
-    d = (( p->oper.bits & 0xF000 ) >> 12 ) | (( p->oper.bits & 0x1 ) << 4 );
-    q = (( p->oper.bits & 0x700 ) >> 8 ) | (( p->oper.bits & 0xc ) << 1) | (( p->oper.bits & 0x20 ));
+    op_get_reg_displacement(&p->oper, &d, &q);
 
     z = datamem_read_reg_Z(&p->dmem);
     dataZQ = datamem_read_addr(&p->dmem, ZERO_OFFSET, z + q);
@@ -842,8 +1071,6 @@ void PxLDI(struct processor* p){
     op_get_reg_imm(&p->oper, &d, &k);
 
     datamem_write_reg(&p->dmem, d, k);
-
-    /* printf("k, d: %X, %X\n", k, d); */
 
     processor_pc_increment(p, 1);
 

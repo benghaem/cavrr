@@ -100,7 +100,15 @@ Here is a list of the currently implemented instructions.
 * EOR (!)
 * IN (!)
 * INC (!)
+* LD X (!)
+* LD -X (!)
+* LD X+ (!)
+* LD Y / LDD Y + q (!)
+* LD -Y (!)
+* LD Y+ (!)
 * LD Z / LDD Z + q (!)
+* LD -Z (!)
+* LD Z+ (!)
 * LDI
 * MOV
 * MOVW (!)

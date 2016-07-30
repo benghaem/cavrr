@@ -82,6 +82,22 @@ void PxIN(struct processor* p);
 
 void PxINC(struct processor* p);
 
+void PxLD_X(struct processor* p);
+
+void PxLD_Xm(struct processor* p);
+
+void PxLD_Xp(struct processor* p);
+
+void PxLD_Ym(struct processor* p);
+
+void PxLD_Yp(struct processor* p);
+
+void PxLDD_Y(struct processor* p);
+
+void PxLD_Zm(struct processor* p);
+
+void PxLD_Zp(struct processor* p);
+
 void PxLDD_Z(struct processor* p);
 
 void PxLDI(struct processor* p);

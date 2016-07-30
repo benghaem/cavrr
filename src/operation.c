@@ -53,6 +53,18 @@ void op_get_reg16_imm(struct operation* op, uint8_t* d, uint8_t* K){
 
 
 /*---------------------------------*/
+/* op_get_reg_displacement         */
+/*     --q- | qq-d | dddd | -qqq   */
+/* --> dddd | -qqq | --q- | qq-d   */
+/*---------------------------------*/
+void op_get_reg_displacement(struct operation* op, uint8_t* d, uint8_t* q){
+    uint8_t bits = op->bits;
+    *d = (( bits & 0xF000 ) >> 12 ) | (( bits & 0x1 ) << 4 );
+    *q = (( bits & 0x700 ) >> 8 ) | (( bits & 0xc ) << 1) | (( bits & 0x20 ));
+}
+
+
+/*---------------------------------*/
 /* op_get_io_direct                */
 /*     ---- | -AAd | dddd | AAAA   */
 /* --> dddd | AAAA | ---- | --Ad   */
@@ -203,6 +215,7 @@ void disassemble_to_str(struct operation* op, uint16_t pc, char* str, size_t max
     int8_t k;
     uint8_t imm;
     uint8_t d;
+    uint8_t q;
     uint8_t r;
     uint8_t A;
     int s;
@@ -261,6 +274,50 @@ void disassemble_to_str(struct operation* op, uint16_t pc, char* str, size_t max
         case NOP:
         case RET:
             snprintf(str, max_len, "%s", instruction_str(op->inst));
+            break;
+        case LD_X:
+            op_get_reg_direct(op, &d);
+            snprintf(str, max_len, "LD  r%d, X", d);
+            break;
+        case LD_Xm:
+            op_get_reg_direct(op, &d);
+            snprintf(str, max_len, "LD  r%d, -X", d);
+            break;
+        case LD_Xp:
+            op_get_reg_direct(op, &d);
+            snprintf(str, max_len, "LD  r%d, X+", d);
+            break;
+        case LD_Ym:
+            op_get_reg_direct(op, &d);
+            snprintf(str, max_len, "LD  r%d, -Y", d);
+            break;
+        case LD_Yp:
+            op_get_reg_direct(op, &d);
+            snprintf(str, max_len, "LD  r%d, Y+", d);
+            break;
+        case LDD_Y:
+            op_get_reg_displacement(op, &d, &q);
+            if (q == 0){
+                snprintf(str, max_len, "LD  r%d, Y", d);
+            } else {
+                snprintf(str, max_len, "LDD r%d, Y+%d", d, q);
+            }
+            break;
+        case LD_Zm:
+            op_get_reg_direct(op, &d);
+            snprintf(str, max_len, "LD  r%d, -Z", d);
+            break;
+        case LD_Zp:
+            op_get_reg_direct(op, &d);
+            snprintf(str, max_len, "LD  r%d, Z+", d);
+            break;
+        case LDD_Z:
+            op_get_reg_displacement(op, &d, &q);
+            if (q == 0){
+                snprintf(str, max_len, "LD  r%d, Z", d);
+            } else {
+                snprintf(str, max_len, "LDD r%d, Z+%d", d, q);
+            }
             break;
         default:
             snprintf(str, max_len, "no dasm");
