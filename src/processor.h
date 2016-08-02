@@ -114,6 +114,8 @@ void PxORI(struct processor* p);
 
 void PxOUT(struct processor* p);
 
+void PxPOP(struct processor* p);
+
 void PxPUSH(struct processor* p);
 
 void PxRCALL(struct processor* p);

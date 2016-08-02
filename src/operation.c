@@ -225,6 +225,7 @@ void disassemble_to_str(struct operation* op, uint16_t pc, char* str, size_t max
         case DEC:
         case INC:
         case NEG:
+        case POP:
         case PUSH:
         case SBC:
             op_get_reg_direct(op, &r);

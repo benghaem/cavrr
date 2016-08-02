@@ -190,6 +190,9 @@ void processor_exec(struct processor* p){
         case OUT:
             PxOUT(p);
             break;
+        case POP:
+            PxPOP(p);
+            break;
         case PUSH:
             PxPUSH(p);
             break;
@@ -1242,6 +1245,32 @@ void PxOUT(struct processor* p){
     datamem_write_io(&p->dmem, a, Rr);
 
     processor_pc_increment(p, 1);
+
+    return;
+}
+
+
+/*----------------------------------*/
+/*  POP 1001 | 000d | dddd | 1111   */
+/*  --> dddd | 1111 | 1001 | 000d   */
+/* d - dest                         */
+/*----------------------------------*/
+void PxPOP(struct processor* p){
+    uint8_t d;
+    uint8_t stack;
+    uint16_t stack_addr;
+
+    /* Isolate d */
+    op_get_reg_direct(&p->oper, &d);
+
+    stack_addr = processor_sp_read(p);
+
+    stack = datamem_read_addr(&p->dmem, ZERO_OFFSET, stack_addr);
+
+    datamem_write_reg(&p->dmem, stack_addr, stack);
+
+    processor_pc_increment(p, 1);
+    processor_sp_increment(p, 1);
 
     return;
 }

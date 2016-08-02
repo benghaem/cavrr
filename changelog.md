@@ -1,5 +1,8 @@
 # Changelog
 
+## 8/1/16
+* Add POP
+
 ## 7/29/16
 * Add LD_X, LD_Xp, LD_Xm, LDD_Y, LD_Yp, LD_Ym, LD_Zp, LD_Zm
 * Add opcode fn for reg and displacement

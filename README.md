@@ -116,6 +116,7 @@ Here is a list of the currently implemented instructions.
 * OUT (!)
 * OR (!)
 * ORI (!)
+* POP (!)
 * PUSH
 * RCALL (!)
 * RET (!)
