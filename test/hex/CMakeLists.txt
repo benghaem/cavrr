@@ -13,7 +13,7 @@ if(COMPILE_IHEX)
             OUTPUT     ${CMAKE_CURRENT_BINARY_DIR}/${program}.o
             DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/src/${program}.c
             COMMAND    ${AVR_COMPILER}
-            ARGS       -g -Os -mmcu=${AVR_MMCU} -c ${CMAKE_CURRENT_SOURCE_DIR}/src/${program}.c
+            ARGS       -g -mmcu=${AVR_MMCU} -c ${CMAKE_CURRENT_SOURCE_DIR}/src/${program}.c
             COMMENT     "Compiling"
         )
         add_custom_command(
