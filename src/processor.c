@@ -1118,8 +1118,7 @@ void PxMOVW(struct processor* p){
     uint16_t Rr16;
 
     /* Isolate r and d */
-    r = (( p->oper.bits & 0x0F00 ) >> 8 );
-    d = (( p->oper.bits & 0xF000 ) >> 12 );
+    op_get_reg_direct_2_short(&p->oper, &r, &d);
 
     Rr16 = datamem_read_reg16(&p->dmem, r, r+1);
 

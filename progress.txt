@@ -44,7 +44,7 @@
 [x] OR
 [x] ORI
 [x] OUT
-[ ] POP
+[x] POP
 [x] PUSH
 [x] RCALL
 [x] RET

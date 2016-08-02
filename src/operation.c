@@ -249,6 +249,7 @@ void disassemble_to_str(struct operation* op, uint16_t pc, char* str, size_t max
         case EOR:
         case OR:
         case SUB:
+        case MOV:
             op_get_reg_direct_2(op, &r, &d);
             snprintf(str, max_len, "%s r%d, r%d", instruction_str(op->inst), d, r);
             break;
@@ -282,6 +283,10 @@ void disassemble_to_str(struct operation* op, uint16_t pc, char* str, size_t max
         case SBIW:
             op_get_reg16_imm(op, &d, &imm);
             snprintf(str,max_len, "%s r%d:r%d, 0x%X", instruction_str(op->inst),d+1, d, imm);
+            break;
+        case MOVW:
+            op_get_reg_direct_2_short(op, &d, &r);
+            snprintf(str,max_len, "%s r%d:r%d,r%d:r%d", instruction_str(op->inst),d+1,d,r+1,r);
             break;
         case NOP:
         case RET:

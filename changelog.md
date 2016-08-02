@@ -2,6 +2,9 @@
 
 ## 8/1/16
 * Add POP
+* Add opcode fn for 2 reg short (movw)
+* Add dasm for MOVW
+* bugfix: fix opcode fn reg and displacement that truncated opcode to 8 bits
 
 ## 7/29/16
 * Add LD_X, LD_Xp, LD_Xm, LDD_Y, LD_Yp, LD_Ym, LD_Zp, LD_Zm
