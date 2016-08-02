@@ -20,6 +20,8 @@ void op_get_reg_direct(struct operation *op, uint8_t* d);
 
 void op_get_reg_direct_2(struct operation* op, uint8_t* r, uint8_t* d);
 
+void op_get_reg_direct_2_short(struct operation* op, uint8_t* r, uint8_t* d);
+
 void op_get_reg_imm(struct operation* op, uint8_t* d, uint8_t* K);
 
 void op_get_reg16_imm(struct operation* op, uint8_t* d, uint8_t* K);

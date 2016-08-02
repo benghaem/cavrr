@@ -24,6 +24,17 @@ void op_get_reg_direct_2(struct operation* op, uint8_t* r, uint8_t* d){
     *d = (( bits & 0xF000 ) >> 12 ) | (( bits & 0x1 ) << 4);
 }
 
+/*---------------------------------*/
+/* op_get_reg_direct_2_short       */
+/*     ---- | ---- | dddd | rrrr   */
+/* --> dddd | rrrr | ---- | ----   */
+/* d | r = 0,2...30                */
+/*---------------------------------*/
+void op_get_reg_direct_2_short(struct operation* op, uint8_t* r, uint8_t* d){
+    uint16_t bits = op->bits;
+    *r = (( bits & 0x0F00 ) >> 8 ) << 1;
+    *d = (( bits & 0xF000 ) >> 12 ) << 1;
+}
 
 /*---------------------------------*/
 /* op_get_reg_imm                  */
@@ -58,9 +69,9 @@ void op_get_reg16_imm(struct operation* op, uint8_t* d, uint8_t* K){
 /* --> dddd | -qqq | --q- | qq-d   */
 /*---------------------------------*/
 void op_get_reg_displacement(struct operation* op, uint8_t* d, uint8_t* q){
-    uint8_t bits = op->bits;
+    uint16_t bits = op->bits;
     *d = (( bits & 0xF000 ) >> 12 ) | (( bits & 0x1 ) << 4 );
-    *q = (( bits & 0x700 ) >> 8 ) | (( bits & 0xc ) << 1) | (( bits & 0x20 ));
+    *q = (( bits & 0x0700 ) >> 8 ) | (( bits & 0xC ) << 1 ) | ( bits & 0x20 );
 }
 
 
@@ -270,7 +281,7 @@ void disassemble_to_str(struct operation* op, uint16_t pc, char* str, size_t max
         case ADIW:
         case SBIW:
             op_get_reg16_imm(op, &d, &imm);
-            snprintf(str,max_len, "%s r%d, 0x%X", instruction_str(op->inst), d, imm);
+            snprintf(str,max_len, "%s r%d:r%d, 0x%X", instruction_str(op->inst),d+1, d, imm);
             break;
         case NOP:
         case RET:

@@ -49,6 +49,29 @@ void test_operation_op_get_reg_direct_2(void **state){
 }
 
 
+void test_operation_op_get_reg_direct_2_short(void **state){
+    struct operation op_max, op_min;
+    uint8_t r, d;
+    /*
+     * ---- | ---- | dddd | rrrr
+     * dddd | rrrr | ---- | ----
+     */
+    op_max.bits = 0xFF00;
+    op_min.bits = 0x00FF;
+
+
+    op_get_reg_direct_2_short(&op_max, &d, &r);
+    assert_int_equal(r, 0x1E);
+    assert_int_equal(d, 0x1E);
+
+    op_get_reg_direct_2_short(&op_min, &d, &r);
+    assert_int_equal(r, 0x00);
+    assert_int_equal(d, 0x00);
+
+    return;
+}
+
+
 void test_operation_op_get_reg_imm(void **state){
     struct operation op_max, op_min;
     uint8_t d, K;
@@ -91,6 +114,42 @@ void test_operation_op_get_reg16_imm(void **state){
     op_get_reg16_imm(&op_min, &d, &K);
     assert_int_equal(K,0x00);
     assert_int_equal(d,24);
+
+    return;
+}
+
+
+void test_operation_op_get_reg_displacement(void **state){
+    struct operation op_max, op_min, op_group_extra;
+    uint8_t d, q;
+
+    /* --q- | qq-d | dddd | -qqq
+     * dddd | -qqq | --q- | qq-d
+     */
+
+
+    op_max.bits = 0xF72D;
+    op_min.bits = 0x08D2;
+
+    op_group_extra.bits = 0x0020;
+
+    op_get_reg_displacement(&op_group_extra, &d, &q);
+    assert_int_equal(q,0x20);
+    assert_int_equal(d,0);
+
+    op_group_extra.bits = 0x0700;
+
+    op_get_reg_displacement(&op_group_extra, &d, &q);
+    assert_int_equal(q,7);
+    assert_int_equal(d,0);
+
+    op_get_reg_displacement(&op_max, &d, &q);
+    assert_int_equal(q,63);
+    assert_int_equal(d,31);
+
+    op_get_reg_displacement(&op_min, &d, &q);
+    assert_int_equal(q,0x00);
+    assert_int_equal(d,0);
 
     return;
 }
@@ -145,8 +204,7 @@ void test_operation_op_get_rel_addr(void **state){
     return;
 
 }
-void test_operation_op_get_rel_addr_sreg(void **state){
-    struct operation op_max, op_min;
+void test_operation_op_get_rel_addr_sreg(void **state){ struct operation op_max, op_min;
     int8_t k;
     int s;
     /*
@@ -179,5 +237,23 @@ void test_operation_op_get_rel_addr_sreg(void **state){
     assert_int_equal(s,0);
     assert_int_equal(k,-64);
 
+
+}
+
+void test_operation_op_get_sreg(void **state){
+    struct operation op_max, op_min;
+    int s;
+    /*
+     * ---- | ---- | -sss | ----
+     * -sss | ---- | ---- | ----
+     */
+    op_max.bits = 0x7000;
+    op_min.bits = 0x0000;
+
+    op_get_sreg(&op_max, &s);
+    assert_int_equal(s,7);
+
+    op_get_sreg(&op_min, &s);
+    assert_int_equal(s,0);
 
 }
