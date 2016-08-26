@@ -84,7 +84,7 @@ Here is a list of the currently implemented instructions.
 
 (p) -&gt; Partial implementation
 
-(!) -&gt; No automated tests
+(!) -&gt; No automated unit tests (may be covered by integration tests)
 
 * ADD
 * ADIW (!)
@@ -124,6 +124,8 @@ Here is a list of the currently implemented instructions.
 * SBC (!)
 * SBCI (!)
 * SBIW (!)
+* SBRC (!)
+* SBRS (!)
 * ST Z
 * STD Z + q (!)
 

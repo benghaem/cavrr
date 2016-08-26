@@ -214,6 +214,12 @@ void processor_exec(struct processor* p){
         case SBIW:
             PxSBIW(p);
             break;
+        case SBRC:
+            PxSBRC(p);
+            break;
+        case SBRS:
+            PxSBRS(p);
+            break;
         case STD_Z:
             PxSTD_Z(p);
             break;
@@ -1504,6 +1510,83 @@ void PxSBIW(struct processor* p){
 
     return;
 }
+
+
+/*---------------------------------*/
+/* SBRC 1111 | 110r | rrrr | 0bbb  */
+/*  --> rrrr | 0bbb | 1111 | 110r  */
+/* r = source reg                  */
+/* b = reg bit                     */
+/*---------------------------------*/
+void PxSBRC(struct processor* p){
+    uint8_t r;
+    uint8_t Rr;
+    uint8_t b;
+    uint16_t next_inst_bits;
+    enum instruction next;
+
+    op_get_reg_bit(&p->oper, &r, &b);
+
+    Rr = datamem_read_reg(&p->dmem, r);
+
+    processor_pc_increment(p, 1);
+
+    /*
+     * If condition is true check if the skipped instruction is
+     * 32b or not and increment pc an additional 1 or 2 to skip
+     * over instruction
+     * */
+    if (bit(Rr, b) == 0){
+        next_inst_bits = progmem_read_addr(&p->pmem, p->pc);
+        next = instruction_decode_bytes(next_inst_bits);
+        if (instruction_is_32b(next)){
+            processor_pc_increment(p, 2);
+        } else {
+            processor_pc_increment(p, 1);
+        }
+    }
+
+    return;
+}
+
+
+/*---------------------------------*/
+/* SBRC 1111 | 111r | rrrr | 0bbb  */
+/*  --> rrrr | 0bbb | 1111 | 111r  */
+/* r = source reg                  */
+/* b = reg bit                     */
+/*---------------------------------*/
+void PxSBRS(struct processor* p){
+    uint8_t r;
+    uint8_t Rr;
+    uint8_t b;
+    uint16_t next_inst_bits;
+    enum instruction next;
+
+    op_get_reg_bit(&p->oper, &r, &b);
+
+    Rr = datamem_read_reg(&p->dmem, r);
+
+    processor_pc_increment(p, 1);
+
+    /*
+     * If condition is true check if the skipped instruction is
+     * 32b or not and increment pc an additional 1 or 2 to skip
+     * over instruction
+     * */
+    if (bit(Rr, b) == 1){
+        next_inst_bits = progmem_read_addr(&p->pmem, p->pc);
+        next = instruction_decode_bytes(next_inst_bits);
+        if (instruction_is_32b(next)){
+            processor_pc_increment(p, 2);
+        } else {
+            processor_pc_increment(p, 1);
+        }
+    }
+
+    return;
+}
+
 
 /*-----------------------------------*/
 /* STD_Z 10q0 | qq1r | rrrr | 0qqq   */

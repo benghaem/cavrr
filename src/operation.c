@@ -76,6 +76,18 @@ void op_get_reg_displacement(struct operation* op, uint8_t* d, uint8_t* q){
 
 
 /*---------------------------------*/
+/* op_get_reg_bit                  */
+/*     ---- | ---r | rrrr | -bbb   */
+/* --> rrrr | -bbb | ---- | ---r   */
+/*---------------------------------*/
+void op_get_reg_bit(struct operation* op, uint8_t* r, uint8_t* b){
+    uint16_t bits = op->bits;
+    *r = (( bits & 0xF000 ) >> 12 ) | (( bits & 0x1 ) << 4 );
+    *b = (( bits & 0x0700 ) >> 8 );
+}
+
+
+/*---------------------------------*/
 /* op_get_io_direct                */
 /*     ---- | -AAd | dddd | AAAA   */
 /* --> dddd | AAAA | ---- | --Ad   */
@@ -229,6 +241,7 @@ void disassemble_to_str(struct operation* op, uint16_t pc, char* str, size_t max
     uint8_t q;
     uint8_t r;
     uint8_t A;
+    uint8_t b;
     int s;
 
     switch (op->inst){
@@ -336,6 +349,10 @@ void disassemble_to_str(struct operation* op, uint16_t pc, char* str, size_t max
                 snprintf(str, max_len, "LDD r%d, Z+%d", d, q);
             }
             break;
+        case SBRC:
+        case SBRS:
+            op_get_reg_bit(op, &d, &b);
+            snprintf(str, max_len, "%s r%d, %d", instruction_str(op->inst), d, b);
         default:
             snprintf(str, max_len, "no dasm");
             break;

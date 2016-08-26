@@ -155,6 +155,31 @@ void test_operation_op_get_reg_displacement(void **state){
 }
 
 
+void test_operation_op_get_reg_bit(void **state){
+    struct operation op_max, op_min;
+    uint8_t r, b;
+
+    /*
+     * ---- | ---r | rrrr | -bbb
+     * rrrr | -bbb | ---- | ---r
+     * 16<= d <= 31
+     */
+    op_max.bits = 0xF701;
+    op_min.bits = 0x08FE;
+
+    op_get_reg_bit(&op_max, &r, &b);
+    assert_int_equal(b,7);
+    assert_int_equal(r,31);
+
+    op_get_reg_bit(&op_min, &r, &b);
+    assert_int_equal(b,0);
+    assert_int_equal(r,0);
+
+    return;
+
+}
+
+
 void test_operation_op_get_io_direct(void **state){
     struct operation op_max, op_min;
     uint8_t A, d;

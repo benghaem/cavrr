@@ -37,6 +37,7 @@ int main(void) {
         cmocka_unit_test(test_operation_op_get_reg_imm),
         cmocka_unit_test(test_operation_op_get_reg16_imm),
         cmocka_unit_test(test_operation_op_get_reg_displacement),
+        cmocka_unit_test(test_operation_op_get_reg_bit),
         cmocka_unit_test(test_operation_op_get_io_direct),
         cmocka_unit_test(test_operation_op_get_rel_addr),
         cmocka_unit_test(test_operation_op_get_rel_addr_sreg),

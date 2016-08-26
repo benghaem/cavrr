@@ -1,5 +1,10 @@
 # Changelog
 
+## 8/25/16
+* Add SBRC, SBRS
+* Add opcode fn reg and bit
+* Add dasm for SBRC, SBRS
+
 ## 8/1/16
 * Add POP
 * Add opcode fn for 2 reg short (movw)

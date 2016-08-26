@@ -130,6 +130,10 @@ void PxSBCI(struct processor* p);
 
 void PxSBIW(struct processor* p);
 
+void PxSBRC(struct processor* p);
+
+void PxSBRS(struct processor* p);
+
 void PxSTD_Z(struct processor* p);
 
 #endif /* processor.h */

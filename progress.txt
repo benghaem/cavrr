@@ -58,8 +58,8 @@
 [ ] SBIC
 [ ] SBIS
 [x] SBIW
-[ ] SBRC
-[ ] SBRS
+[x] SBRC
+[x] SBRS
 [ ] SLEEP
 [ ] SPM
 [ ] STD_Y
